@@ -18,20 +18,45 @@ const MIME_TYPES = {
   '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
-  '.ics': 'text/calendar; charset=utf-8'
+  '.ics': 'text/calendar; charset=utf-8',
+  '.mp4': 'video/mp4',
+  '.m4a': 'audio/mp4',
+  '.mp3': 'audio/mpeg'
 };
 
-function serveFile(res, filePath) {
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
+function serveFile(req, res, filePath) {
+  fs.stat(filePath, (err, stats) => {
+    if (err || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('404 Not Found');
       return;
     }
+
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(data);
+    const range = req.headers.range;
+
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+      const chunksize = (end - start) + 1;
+      const file = fs.createReadStream(filePath, { start, end });
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType,
+      });
+      file.pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Length': stats.size,
+        'Accept-Ranges': 'bytes',
+        'Content-Type': contentType,
+      });
+      fs.createReadStream(filePath).pipe(res);
+    }
   });
 }
 
@@ -41,7 +66,7 @@ const server = http.createServer((req, res) => {
 
   // Admin Server Dashboard (Protected with PIN)
   if (pathname === '/admin-server' || pathname === '/admin-server.html') {
-    return serveFile(res, path.join(ROOT_DIR, 'admin.html'));
+    return serveFile(req, res, path.join(ROOT_DIR, 'admin.html'));
   }
 
   // Redirect /admin to /admin-server
@@ -53,18 +78,18 @@ const server = http.createServer((req, res) => {
 
   // Root or /invite -> Graduation Invitation
   if (pathname === '/' || pathname === '/invite' || pathname === '/invite.html') {
-    return serveFile(res, path.join(ROOT_DIR, 'index.html'));
+    return serveFile(req, res, path.join(ROOT_DIR, 'index.html'));
   }
 
   // Serve static files in assets/ or root if they exist with an extension
   const potentialFile = path.join(ROOT_DIR, pathname);
   if (fs.existsSync(potentialFile) && fs.statSync(potentialFile).isFile()) {
-    return serveFile(res, potentialFile);
+    return serveFile(req, res, potentialFile);
   }
 
   // Rewrite any dynamic name route (e.g. /Minh-Khoa, /Trần-Đức-Hải) to index.html (Invitation)
   if (!pathname.includes('.')) {
-    return serveFile(res, path.join(ROOT_DIR, 'index.html'));
+    return serveFile(req, res, path.join(ROOT_DIR, 'index.html'));
   }
 
   // Fallback 404

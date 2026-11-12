@@ -345,6 +345,24 @@
 
   </main>
 
+  <!-- =====================================================================
+       BACKGROUND SOUNDTRACK & FLOATING MUSIC CONTROLLER
+       ===================================================================== -->
+  <audio id="bgMusic" loop preload="auto" playsinline webkit-playsinline>
+    <source src="/assets/music.m4a" type="audio/mp4" />
+    <source src="/assets/music.mp4" type="video/mp4" />
+  </audio>
+
+  <!-- Floating Music Toggle Button (Góc dưới phải, đĩa than mini xoay khi phát) -->
+  <button id="musicToggleBtn" type="button" onclick="toggleMusic()"
+    class="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-30 px-3.5 py-2 rounded-full bg-[#1F1316]/90 text-[#F7F4F0] border border-white/20 shadow-2xl backdrop-blur-md flex items-center gap-2.5 hover:bg-[#881337] transition-all touch-manipulation group"
+    title="Bật/Tắt bản nhạc tốt nghiệp">
+    <div id="miniVinylDisc" class="w-5 h-5 rounded-full bg-[#120B0D] border border-amber-200/60 flex items-center justify-center shrink-0 shadow-sm">
+      <div class="w-2 h-2 rounded-full bg-[#881337]"></div>
+    </div>
+    <span id="musicToggleText" class="text-[11px] font-medium tracking-wide">Soundtrack ♪</span>
+  </button>
+
   <script>
     /* =====================================================================
        1. EXTRACT & APPLY GUEST NAME FROM PATHNAME OR URL PARAM
@@ -563,7 +581,68 @@
     }
 
     /* =====================================================================
-       4. VINYL RECORD UNLOCK CONTROLLER
+       4. CONTINUOUS SOUNDTRACK CONTROLLER (PHÁT MÃI LUÔN KHI BẤM ĐĨA THAN)
+       ===================================================================== */
+    let bgMusic = null;
+    let isMusicActive = false;
+
+    function getAudioElement() {
+      if (!bgMusic) {
+        bgMusic = document.getElementById('bgMusic');
+        if (bgMusic) {
+          bgMusic.loop = true;
+          bgMusic.volume = 0.9;
+        }
+      }
+      return bgMusic;
+    }
+
+    function startContinuousMusic() {
+      const audio = getAudioElement();
+      if (!audio) return;
+      audio.loop = true;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isMusicActive = true;
+          updateMusicButtonState(true);
+        }).catch((err) => {
+          console.warn('Audio autoplay blocked or waiting gesture:', err);
+        });
+      }
+    }
+
+    function toggleMusic() {
+      const audio = getAudioElement();
+      if (!audio) return;
+      if (audio.paused) {
+        audio.play().then(() => {
+          isMusicActive = true;
+          updateMusicButtonState(true);
+          showStatus('Đang phát bản nhạc tốt nghiệp ♪');
+        });
+      } else {
+        audio.pause();
+        isMusicActive = false;
+        updateMusicButtonState(false);
+        showStatus('Đã tạm dừng nhạc nền');
+      }
+    }
+
+    function updateMusicButtonState(playing) {
+      const disc = document.getElementById('miniVinylDisc');
+      const text = document.getElementById('musicToggleText');
+      if (playing) {
+        disc?.classList.add('vinyl-spinning');
+        if (text) text.textContent = 'Đang phát ♪';
+      } else {
+        disc?.classList.remove('vinyl-spinning');
+        if (text) text.textContent = 'Tạm dừng ⏸';
+      }
+    }
+
+    /* =====================================================================
+       5. VINYL RECORD UNLOCK CONTROLLER
        ===================================================================== */
     let isUnlocked = false;
     let isVinylPlaying = false;
@@ -571,6 +650,8 @@
     function unlockInvitation(toastMsg) {
       if (isUnlocked) return;
       isUnlocked = true;
+      // Start soundtrack if not yet playing
+      startContinuousMusic();
       const overlay = document.getElementById('introGameOverlay');
       if (overlay) overlay.classList.add('is-unlocked');
       if (toastMsg) showStatus(toastMsg);
@@ -589,8 +670,8 @@
       if (hint) hint.classList.add('hidden');
       if (status) status.textContent = 'Đang phát bản nhạc tốt nghiệp...';
 
-      // Play soft graduation melody
-      playGraduationChime();
+      // PHÁT NGAY LẬP TỨC KHI BẠN BÈ BẤM VÀO ĐĨA VÀ PHÁT MÃI LUÔN (LOOP LIÊN TỤC)
+      startContinuousMusic();
 
       setTimeout(() => {
         if (disc) disc.classList.add('vinyl-spinning');
