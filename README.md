@@ -6,8 +6,11 @@ Dự án website thiệp mời tốt nghiệp cá nhân hóa dành riêng cho si
 
 ## 🌟 Tính Năng Nổi Bật
 
-1. **Trang Quản trị & Trình tạo mã QR (`/` hoặc `/admin`)**:
-   - Nhập tên người bạn muốn mời (Ví dụ: `Minh Khoa`, `Trần Bảo Ngọc`, `Thầy Cô`...).
+1. **Trang Quản trị Bảo Mật (`/admin-server`)**:
+   - **Mã bảo vệ PIN**: Truy cập bắt buộc nhập mã PIN bảo mật (mặc định ban đầu: `1111`).
+   - **Đổi mã PIN**: Cho phép admin cập nhật mã PIN bất kỳ lúc nào ngay trên giao diện.
+   - **Nút Khóa nhanh**: Cho phép khóa ngay phiên làm việc của admin khi rời máy.
+   - Nhập tên bạn bè (Ví dụ: `Minh Khoa`, `Trần Bảo Ngọc`, `Thầy Cô`...).
    - Hệ thống tự động sinh đường dẫn endpoint riêng biệt: `https://ten-mien.vercel.app/Minh-Khoa`.
    - Sinh mã QR thời gian thực với màu đỏ rượu thương hiệu HCMUS (`#881337`).
    - Hỗ trợ cả tên có dấu tiếng Việt (`/Trần-Bảo-Ngọc`) và tên không dấu (`/tran-bao-ngoc`).
@@ -16,9 +19,10 @@ Dự án website thiệp mời tốt nghiệp cá nhân hóa dành riêng cho si
    - **Tạo hàng loạt (Batch Generation)**: Dán danh sách 20-50 bạn bè, hệ thống tự động tạo mã cho tất cả chỉ trong 1 giây!
    - **Quản lý danh sách khách mời**: Lưu tự động vào trình duyệt (`localStorage`), tìm kiếm, xuất file danh sách `.txt`.
 
-2. **Thiệp Mời Cá Nhân Hóa (`/tên-của-bạn`)**:
+2. **Thiệp Mời Cá Nhân Hóa (`/tên-của-bạn` & `/`)**:
    - Khi bạn bè quét mã QR hoặc bấm vào link `https://ten-mien.vercel.app/Minh-Khoa`, website tự động đọc tên từ đường dẫn URL.
    - Lời chào, tiêu đề trang và thư mời hiển thị đúng tên người đó: *"Gửi Minh Khoa,"*, *"Thư mời dành riêng cho Minh Khoa"*.
+   - Khi truy cập trang chủ (`/`), thiệp mời hiển thị phiên bản thư mời chung.
    - **Hiệu ứng tương tác đĩa than (Vinyl Record Unlock)**: Chạm hạ kim đĩa than, phát hợp âm tốt nghiệp bằng Web Audio API và mở ra thiệp mời sang trọng mang phong cách báo chí (Editorial Design).
    - Tải tệp lịch hẹn `.ics` để lưu vào Google Calendar / Apple Calendar.
    - Xem bản đồ và định vị Google Maps đến trường ĐH Khoa học Tự nhiên (227 Nguyễn Văn Cừ).
@@ -29,10 +33,11 @@ Dự án website thiệp mời tốt nghiệp cá nhân hóa dành riêng cho si
 
 ```text
 d:\thiepmoi\
-├── index.html          # Trang Admin & Trình tạo mã QR
-├── invite.html         # Trang Thiệp mời tốt nghiệp (kế thừa concept thiepmoihcmus.html)
-├── vercel.json         # Cấu hình rewrite URL linh hoạt cho Vercel (hỗ trợ /:name)
-├── server.js           # Server chạy thử nghiệm cục bộ (Zero-dependency)
+├── admin.html          # Trang Admin Server (Bảo vệ bằng mã PIN 1111)
+├── index.html          # Trang Thiệp mời tốt nghiệp chính
+├── invite.html         # Trang Thiệp mời dự phòng
+├── vercel.json         # Cấu hình routing cho Vercel (hỗ trợ /admin-server và /:name)
+├── server.js           # Server chạy thử nghiệm cục bộ
 ├── package.json        # Định nghĩa dự án & lệnh chạy
 ├── README.md           # Tài liệu hướng dẫn sử dụng
 └── assets/
@@ -45,49 +50,29 @@ d:\thiepmoi\
 
 ## 🚀 Hướng Dẫn Chạy Thử Tại Máy (Local)
 
-Mở terminal tại thư mục dự án và chạy lệnh:
+Mở terminal tại thư mục dự án và chạy:
 
 ```bash
-# Cách 1: Dùng lệnh Node trực tiếp
 node server.js
-
-# Hoặc Cách 2: Dùng npm
-npm run dev
 ```
 
 Truy cập trên trình duyệt:
-- **Trang Admin**: `http://localhost:3000` hoặc `http://localhost:3000/admin`
-- **Thiệp mời mẫu**: `http://localhost:3000/Minh-Khoa`
+- 🔒 **Trang Quản trị (Admin Server)**: [http://localhost:3000/admin-server](http://localhost:3000/admin-server)
+  - **Mã truy cập mặc định**: `1111`
+- 💌 **Trang Thiệp mời tốt nghiệp**: [http://localhost:3000](http://localhost:3000)
+- 👉 **Thiệp mời theo tên**: [http://localhost:3000/Minh-Khoa](http://localhost:3000/Minh-Khoa)
 
 ---
 
 ## 🌐 Hướng Dẫn Deploy Lên Vercel
 
-### Cách 1: Qua GitHub (Đơn giản & Khuyên dùng)
-1. Đẩy thư mục này lên một repository trên GitHub của bạn.
-2. Đăng nhập [Vercel](https://vercel.com) bằng tài khoản GitHub.
-3. Bấm **"Add New"** → **"Project"** → Chọn repository vừa tạo.
-4. Giữ nguyên toàn bộ cấu hình mặc định và bấm **"Deploy"**.
-5. Vercel sẽ cung cấp cho bạn một domain miễn phí (ví dụ: `https://thiepmoi-totnghiep.vercel.app`).
-
-### Cách 2: Bằng Vercel CLI
-Mở terminal tại thư mục này và chạy:
-```bash
-npx vercel
-```
-Làm theo các bước hướng dẫn trên màn hình (chọn `Y` và nhấn `Enter`).
-
-> **Lưu ý quan trọng sau khi Deploy:**
-> Sau khi có tên miền Vercel của bạn (ví dụ: `https://totnghiep-nam.vercel.app`), hãy truy cập vào trang Admin của bạn, bấm nút **"Thay đổi"** ở góc phải phần *Domain hệ thống* và dán tên miền của bạn vào. Mọi mã QR và link được tạo ra từ lúc đó sẽ tự động trỏ đến đúng tên miền Vercel chính thức!
-
----
-
-## 🎨 Cách Tùy Chỉnh Thông Tin & Hình Ảnh
-
-1. **Thông tin cử nhân & buổi lễ:**
-   - Vào tab **"⚙️ Thông tin cử nhân"** ngay trên giao diện Admin để chỉnh sửa Tên, Ngày giờ, Địa điểm, Số điện thoại.
-   - Hoặc chỉnh sửa trực tiếp trong file `invite.html` nếu muốn thay đổi nội dung thư mời.
-
-2. **Ảnh chân dung & Sơ đồ trường:**
-   - Để hiển thị ảnh chân dung của bạn cố định trên web mà không cần tải lên thủ công: Đặt file ảnh của bạn vào thư mục `assets/` với tên `portrait.jpg`.
-   - Để hiển thị sơ đồ trường cố định: Đặt ảnh sơ đồ vào thư mục `assets/` với tên `map.jpg`.
+1. Đẩy thư mục này lên repository trên GitHub của bạn:
+   ```bash
+   git add .
+   git commit -m "Update admin-server route with PIN code protection"
+   git push
+   ```
+2. Đăng nhập [Vercel](https://vercel.com) → Chọn **"Add New"** → **"Project"** → Chọn repo vừa tạo → Bấm **"Deploy"**.
+3. Sau khi deploy xong:
+   - Trang quản trị sẽ nằm ở: `https://ten-mien-cua-ban.vercel.app/admin-server`
+   - Nhập mã PIN mặc định `1111` để mở khóa và bấm **"Đổi mã PIN"** để đặt mật mã mới của riêng bạn!

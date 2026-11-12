@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Trị & Tạo Mã Thiệp Mời Tốt Nghiệp — HCMUS</title>
+
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet" />
+
+  <!-- QR Code Library (Local with CDN fallback) -->
+  <script src="/assets/qrcode.min.js"></script>
+  <script>
+    if (typeof QRCode === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"><\/script>');
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-paper: #F7F4F0;
+      --bg-card: #EFEAE3;
+      --ink-primary: #1F1618;
+      --ink-muted: #5C4E52;
+      --accent-burgundy: #881337;
+      --accent-dark: #1F1316;
+      --border-hairline: rgba(31, 22, 24, 0.14);
+    }
+
+    body {
+      background-color: var(--bg-paper);
+      color: var(--ink-primary);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-editorial {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    .paper-grain {
+      background-image: radial-gradient(rgba(136, 19, 55, 0.035) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+
+    /* Shake animation for incorrect PIN */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .shake-anim {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(136, 19, 55, 0.25);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="paper-grain min-h-screen selection:bg-[#881337] selection:text-white pb-24">
+
+  <!-- =====================================================================
+       STATUS TOAST
+       ===================================================================== -->
+  <div id="statusToast"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-5 py-2.5 rounded-full bg-[#1F1316] text-[#F7F4F0] text-xs font-medium shadow-2xl border border-white/10 opacity-0 translate-y-4 pointer-events-none transition-all duration-300">
+    Thông báo
+  </div>
+
+  <!-- =====================================================================
+       AUTHENTICATION / PIN GATE OVERLAY
+       ===================================================================== -->
+  <div id="pinLockOverlay" class="fixed inset-0 z-50 bg-[#1F1316]/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div id="pinCardBox" class="bg-[#F7F4F0] rounded-3xl max-w-sm w-full p-8 text-center space-y-6 shadow-2xl border border-white/10">
+      
+      <!-- Lock Icon / Seal -->
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-[#881337] text-white flex items-center justify-center shadow-lg">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+
+      <div class="space-y-1.5">
+        <p class="text-[10px] uppercase tracking-[0.25em] text-[#881337] font-bold">HCMUS // ADMIN SERVER</p>
+        <h2 class="font-editorial text-3xl font-bold text-[var(--ink-primary)]">Mã Truy Cập Quản Trị</h2>
+        <p class="text-xs text-[var(--ink-muted)]">Nhập mã bảo vệ để truy cập hệ thống tạo thiệp</p>
+      </div>
+
+      <!-- PIN Input -->
+      <div class="space-y-3">
+        <div class="relative">
+          <input id="pinInput" type="password" maxlength="16" placeholder="••••"
+            class="w-full text-center tracking-[0.5em] text-2xl font-mono py-3.5 px-4 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/40 shadow-inner font-bold text-[#881337]"
+            autocomplete="off" onkeydown="handlePinKeydown(event)" />
+          <button type="button" onclick="togglePinVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 text-xs font-medium">
+            <span id="pinEyeText">Hiện</span>
+          </button>
+        </div>
+
+        <p id="pinErrorMessage" class="text-xs text-rose-600 font-medium hidden">
+          Mã truy cập không đúng. Vui lòng thử lại!
+        </p>
+      </div>
+
+      <!-- Submit PIN Button -->
+      <button type="button" onclick="verifyPinCode()"
+        class="w-full py-3.5 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-md">
+        Mở Khóa Bảng Quản Trị →
+      </button>
+
+      <div class="pt-2 border-t border-[var(--border-hairline)] text-[11px] text-[var(--ink-muted)]">
+        💡 Mã mặc định ban đầu: <strong class="text-[#881337] font-mono">1111</strong>
+        <br /><span class="text-[10px] text-stone-400">(Bạn có thể đổi mã này sau khi đăng nhập)</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       TOP NAVIGATION BAR
+       ===================================================================== -->
+  <header class="border-b border-[var(--border-hairline)] bg-[#F7F4F0]/90 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-[#881337] text-white flex items-center justify-center font-editorial font-bold text-lg shadow-sm">
+          26
+        </div>
+        <div>
+          <h1 class="font-editorial text-xl sm:text-2xl font-bold tracking-tight text-[var(--ink-primary)] leading-tight">
+            HCMUS Graduation
+          </h1>
+          <p class="text-[10px] uppercase tracking-[0.2em] text-[#881337] font-semibold">
+            Admin Server &amp; Trình Tạo Mã Thiệp
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" onclick="openChangePinModal()"
+          class="px-3 py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white/70 hover:bg-white text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all flex items-center gap-1.5 shadow-sm"
+          title="Đổi mã PIN truy cập admin">
+          <span>🔑 Đổi mã PIN</span>
+        </button>
+        <button type="button" onclick="openDeployGuideModal()"
+          class="px-3 py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white/70 hover:bg-white text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all flex items-center gap-1.5 shadow-sm">
+          <svg class="w-3.5 h-3.5 text-[#881337]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
+          <span class="hidden sm:inline">Deploy</span> Vercel
+        </button>
+        <button type="button" onclick="previewSampleInvite()"
+          class="px-3 py-1.5 rounded-lg bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-medium transition-all shadow-sm flex items-center gap-1.5">
+          <span>Xem thiệp mẫu</span> ↗
+        </button>
+        <button type="button" onclick="lockAdminSession()"
+          class="px-2.5 py-1.5 rounded-lg text-stone-500 hover:text-rose-700 text-xs font-medium transition-colors"
+          title="Khóa phiên làm việc">
+          🔒 Khóa
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       MAIN WORKSPACE
+       ===================================================================== -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
+
+    <!-- Hero Introduction -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[var(--border-hairline)]">
+      <div>
+        <p class="text-xs uppercase tracking-[0.22em] text-[#881337] font-semibold mb-1">
+          HỆ THỐNG CÁ NHÂN HÓA ĐƯỜNG LINK &amp; MÃ QR
+        </p>
+        <h2 class="font-editorial text-3xl sm:text-4xl font-semibold text-[var(--ink-primary)]">
+          Tạo thiệp mời riêng cho từng người bạn
+        </h2>
+        <p class="text-sm text-[var(--ink-muted)] mt-1.5 max-w-2xl leading-relaxed">
+          Nhập tên bạn bè, hệ thống sẽ tự động tạo một đường link endpoint độc nhất dạng <code class="px-2 py-0.5 rounded bg-stone-200/70 text-[#881337] font-medium font-mono text-xs">/tên-của-bạn</code> cùng mã QR tương ứng để gửi tặng.
+        </p>
+      </div>
+
+      <!-- Domain Configuration Pill -->
+      <div class="p-3 rounded-xl bg-[#EFEAE3] border border-[var(--border-hairline)] flex flex-col gap-1.5 min-w-[280px]">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="font-semibold text-[var(--ink-primary)] flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Domain hệ thống:
+          </span>
+          <button type="button" onclick="editDomainPrompt()" class="text-[#881337] hover:underline font-medium">Thay đổi</button>
+        </div>
+        <div id="currentDomainDisplay" class="font-mono text-xs text-[var(--ink-muted)] truncate" title="Domain dùng để sinh mã QR">
+          http://localhost:3000
+        </div>
+      </div>
+    </div>
+
+    <!-- Generator & Preview Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- =================================================================
+           LEFT PANEL: TẠO THIỆP & CÀI ĐẶT (7 COLS)
+           ================================================================= -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Tab Selector -->
+        <div class="flex rounded-xl bg-[#EFEAE3] p-1 border border-[var(--border-hairline)]">
+          <button type="button" id="tabBtnSingle" onclick="switchTab('single')"
+            class="flex-1 py-2 text-xs font-semibold rounded-lg bg-white text-[#881337] shadow-sm transition-all">
+            ✨ Tạo thiệp đơn lẻ
+          </button>
+          <button type="button" id="tabBtnBatch" onclick="switchTab('batch')"
+            class="flex-1 py-2 text-xs font-semibold rounded-lg text-[var(--ink-muted)] hover:text-[var(--ink-primary)] transition-all">
+            📋 Tạo danh sách hàng loạt
+          </button>
+          <button type="button" id="tabBtnSettings" onclick="switchTab('settings')"
+            class="flex-1 py-2 text-xs font-semibold rounded-lg text-[var(--ink-muted)] hover:text-[var(--ink-primary)] transition-all">
+            ⚙️ Cài đặt &amp; Bảo mật
+          </button>
+        </div>
+
+        <!-- ==================== TAB 1: TẠO ĐƠN LẺ ==================== -->
+        <div id="tabContentSingle" class="p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-5 shadow-sm">
+          <div>
+            <label for="guestNameInput" class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] mb-2">
+              1. Tên người bạn muốn mời <span class="text-[#881337]">*</span>
+            </label>
+            <input id="guestNameInput" type="text" placeholder="Ví dụ: Minh Khoa, Cô Thảo, Anh Hoàng..."
+              class="w-full px-4 py-3 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-sm font-medium transition-all"
+              oninput="handleGuestNameInput(this.value)" autocomplete="off" />
+            <p class="text-[11px] text-[var(--ink-muted)] mt-1.5 flex items-center gap-1">
+              💡 Gợi ý nhanh:
+              <button type="button" onclick="fillQuickName('Minh Khoa')" class="underline hover:text-[#881337]">Minh Khoa</button>,
+              <button type="button" onclick="fillQuickName('Trần Bảo Ngọc')" class="underline hover:text-[#881337]">Trần Bảo Ngọc</button>,
+              <button type="button" onclick="fillQuickName('Thầy Cô & Bạn Bè')" class="underline hover:text-[#881337]">Thầy Cô</button>
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Salutation Selector -->
+            <div>
+              <label for="salutationSelect" class="block text-xs font-semibold text-[var(--ink-primary)] mb-1.5">
+                Lời xưng hô đầu thư:
+              </label>
+              <select id="salutationSelect" onchange="updateGeneratedResult()"
+                class="w-full px-3 py-2.5 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium focus:outline-none">
+                <option value="Gửi">Gửi [Tên] (Mặc định)</option>
+                <option value="Thân gửi">Thân gửi [Tên]</option>
+                <option value="Kính gửi">Kính gửi [Tên]</option>
+                <option value="Mời">Mời [Tên] cùng bạn bè</option>
+              </select>
+            </div>
+
+            <!-- Slug Format Option -->
+            <div>
+              <label for="slugFormatSelect" class="block text-xs font-semibold text-[var(--ink-primary)] mb-1.5">
+                Kiểu đường dẫn URL:
+              </label>
+              <select id="slugFormatSelect" onchange="updateGeneratedResult()"
+                class="w-full px-3 py-2.5 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium focus:outline-none">
+                <option value="accented">Có dấu tiếng Việt (/Minh-Khoa, /Trần-Đức-Hải)</option>
+                <option value="ascii">Không dấu (/minh-khoa, /tran-duc-hai)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic URL Endpoint Preview -->
+          <div class="p-3.5 rounded-xl bg-white border border-[var(--border-hairline)]">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Đường dẫn thư mời tương ứng (Endpoint)</span>
+            <div class="mt-1 flex items-center justify-between gap-2">
+              <span id="endpointPreview" class="font-mono text-xs sm:text-sm text-[var(--ink-primary)] font-semibold truncate">
+                https://domain.vercel.app/Minh-Khoa
+              </span>
+              <button type="button" onclick="copyCurrentLink()"
+                class="px-2.5 py-1 rounded-md bg-stone-100 hover:bg-stone-200 text-[11px] font-medium text-[var(--ink-primary)] shrink-0 transition-colors">
+                📋 Sao chép
+              </button>
+            </div>
+          </div>
+
+          <!-- Save to List Button -->
+          <button type="button" onclick="saveCurrentGuestToList()"
+            class="w-full py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-medium text-sm transition-all shadow-md flex items-center justify-center gap-2">
+            <span>💾 Lưu vào danh sách &amp; Cập nhật mã QR</span>
+          </button>
+        </div>
+
+        <!-- ==================== TAB 2: TẠO HÀNG LOẠT ==================== -->
+        <div id="tabContentBatch" class="hidden p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-4 shadow-sm">
+          <div>
+            <label for="batchInput" class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] mb-2">
+              Nhập danh sách tên khách mời (Mỗi người 1 dòng)
+            </label>
+            <textarea id="batchInput" rows="7" placeholder="Nguyễn Văn A&#10;Trần Thị B&#10;Lê Minh Khoa&#10;Hoàng Bảo Trân"
+              class="w-full px-4 py-3 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-medium leading-relaxed"></textarea>
+            <p class="text-[11px] text-[var(--ink-muted)] mt-1.5">
+              Hệ thống sẽ tự động tạo mã URL endpoint và lưu vào danh sách cho từng người.
+            </p>
+          </div>
+
+          <button type="button" onclick="processBatchGeneration()"
+            class="w-full py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-medium text-sm transition-all shadow-md flex items-center justify-center gap-2">
+            <span>⚡ Tạo hàng loạt danh sách khách mời</span>
+          </button>
+        </div>
+
+        <!-- ==================== TAB 3: THÔNG TIN CỬ NHÂN & BẢO MẬT ==================== -->
+        <div id="tabContentSettings" class="hidden p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-6 shadow-sm">
+          
+          <!-- Section A: Host Settings -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#881337]">1. Thông tin cử nhân &amp; Buổi lễ</h4>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Tên cử nhân (Chủ tiệc):</label>
+                <input id="cfgHostName" type="text" value="Nguyễn Hoàng Nam"
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Tên trường:</label>
+                <input id="cfgSchoolName" type="text" value="Trường ĐH Khoa học Tự nhiên"
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Ngày giờ lễ tốt nghiệp:</label>
+                <input id="cfgEventDate" type="text" value="Chủ Nhật, 15 . 11 . 2026"
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Số điện thoại liên hệ:</label>
+                <input id="cfgContactPhone" type="text" value="0901 234 567"
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Địa điểm hẹn đón khách:</label>
+              <input id="cfgVenueAddress" type="text" value="Cơ sở 1 — 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh."
+                class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
+            </div>
+
+            <button type="button" onclick="saveHostSettings()"
+              class="w-full py-2.5 rounded-xl bg-[#1F1316] hover:bg-black text-white text-xs font-semibold transition-all">
+              Lưu thông tin cử nhân
+            </button>
+          </div>
+
+          <!-- Section B: Security / Access PIN -->
+          <div class="pt-6 border-t border-[var(--border-hairline)] space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#881337]">2. Bảo mật &amp; Mã truy cập trang Admin</h4>
+                <p class="text-[11px] text-[var(--ink-muted)] mt-0.5">Thay đổi mã PIN bảo vệ khi truy cập đường link <code class="font-mono">/admin-server</code></p>
+              </div>
+              <button type="button" onclick="openChangePinModal()"
+                class="px-3 py-1.5 rounded-lg bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all">
+                Đổi mã PIN ngay
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- =================================================================
+           RIGHT PANEL: THẺ XEM TRƯỚC MÃ QR & KẾT QUẢ (5 COLS)
+           ================================================================= -->
+      <div class="lg:col-span-5 space-y-5">
+
+        <div class="p-6 rounded-2xl bg-white border border-[var(--border-hairline)] shadow-lg space-y-5">
+          <!-- Card Badge Header -->
+          <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
+            <span class="text-[10px] uppercase tracking-[0.24em] text-[#881337] font-bold">
+              KẾT QUẢ MÃ QR TRỰC TIẾP
+            </span>
+            <span class="text-[11px] text-[var(--ink-muted)]">CLASS OF 2026</span>
+          </div>
+
+          <!-- Recipient Greeting Preview -->
+          <div class="text-center space-y-1">
+            <p class="text-xs text-[var(--ink-muted)]">Thư mời cá nhân dành riêng cho:</p>
+            <h3 id="previewGuestName" class="font-editorial text-3xl font-bold text-[#881337] leading-tight">
+              Minh Khoa
+            </h3>
+            <p id="previewEndpointShort" class="font-mono text-xs text-[var(--ink-muted)]">/Minh-Khoa</p>
+          </div>
+
+          <!-- QR Canvas Container -->
+          <div class="relative w-56 h-56 mx-auto rounded-2xl p-3 bg-white border-2 border-[#881337]/20 shadow-inner flex items-center justify-center">
+            <canvas id="qrCodeCanvas" class="w-full h-full block rounded-lg"></canvas>
+            <!-- Center Mini Brand Seal -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-10 h-10 rounded-full bg-white border-2 border-[#881337] shadow-md flex items-center justify-center text-[10px] font-bold font-editorial text-[#881337]">
+                HCMUS
+              </div>
+            </div>
+          </div>
+
+          <p class="text-center text-[11px] text-[var(--ink-muted)]">
+            Quét mã trên điện thoại để mở trực tiếp thiệp mời với hiệu ứng đĩa than!
+          </p>
+
+          <!-- Action Buttons Group -->
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <button type="button" onclick="copyCurrentLink()"
+              class="py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5">
+              <span>📋 Sao chép Link</span>
+            </button>
+            <button type="button" onclick="downloadQRCodePNG()"
+              class="py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5">
+              <span>📥 Tải ảnh QR</span>
+            </button>
+          </div>
+
+          <button type="button" onclick="downloadGraduationBadge()"
+            class="w-full py-2.5 px-3 rounded-xl bg-[#881337]/10 hover:bg-[#881337]/20 text-[#881337] text-xs font-semibold transition-all border border-[#881337]/20 flex items-center justify-center gap-1.5">
+            <span>🎨 Tải Thẻ Thiệp Mời Kèm QR (Để gửi Zalo/Messenger)</span>
+          </button>
+
+          <button type="button" onclick="openCurrentInviteInNewTab()"
+            class="w-full py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all shadow-md flex items-center justify-center gap-1.5">
+            <span>🚀 Mở xem thiệp mời của khách này</span> ↗
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =====================================================================
+         BOTTOM SECTION: DANH SÁCH KHÁCH MỜI ĐÃ TẠO (GUEST LIST MANAGER)
+         ===================================================================== -->
+    <section class="mt-14 pt-10 border-t border-[var(--border-hairline)] space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.2em] text-[#881337] font-semibold">QUẢN LÝ KHÁCH MỜI</p>
+          <h3 class="font-editorial text-3xl font-semibold text-[var(--ink-primary)] mt-1">
+            Danh sách bạn bè đã tạo thiệp (<span id="guestCountBadge">0</span>)
+          </h3>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <input id="searchGuestInput" type="text" placeholder="Tìm tên bạn bè..." oninput="renderGuestList()"
+            class="px-3 py-1.5 rounded-lg bg-white border border-[var(--border-hairline)] text-xs font-medium focus:outline-none w-44" />
+          <button type="button" onclick="copyAllGuestLinks()"
+            class="px-3 py-1.5 rounded-lg bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all">
+            📋 Copy toàn bộ link
+          </button>
+          <button type="button" onclick="exportGuestListTxt()"
+            class="px-3 py-1.5 rounded-lg bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all">
+            📥 Xuất file danh sách
+          </button>
+          <button type="button" onclick="clearAllGuests()"
+            class="px-3 py-1.5 rounded-lg text-xs font-medium text-rose-700 hover:bg-rose-50 transition-all">
+            Xóa hết
+          </button>
+        </div>
+      </div>
+
+      <!-- Guest Table Container -->
+      <div class="rounded-2xl bg-white border border-[var(--border-hairline)] shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#EFEAE3] border-b border-[var(--border-hairline)] text-[10px] uppercase tracking-wider text-[var(--ink-muted)] font-semibold">
+              <tr>
+                <th class="py-3 px-4">#</th>
+                <th class="py-3 px-4">Tên khách mời</th>
+                <th class="py-3 px-4">Đường link Endpoint</th>
+                <th class="py-3 px-4">Ngày tạo</th>
+                <th class="py-3 px-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="guestListTableBody" class="divide-y divide-[var(--border-hairline)]">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="emptyGuestState" class="py-12 text-center text-[var(--ink-muted)] text-xs">
+          Chưa có khách mời nào trong danh sách. Hãy nhập tên ở trên và bấm "Lưu vào danh sách"!
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       CHANGE PIN MODAL
+       ===================================================================== -->
+  <div id="changePinModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-[var(--border-hairline)]">
+      <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🔑</span>
+          <h3 class="font-editorial text-2xl font-bold text-[var(--ink-primary)]">Đổi Mã Truy Cập PIN</h3>
+        </div>
+        <button type="button" onclick="closeChangePinModal()" class="text-stone-400 hover:text-black text-xl font-bold">✕</button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-semibold text-[var(--ink-primary)] mb-1">Mã PIN hiện tại:</label>
+          <input id="oldPinInput" type="password" placeholder="Nhập mã cũ..."
+            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-xs font-mono" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-[var(--ink-primary)] mb-1">Mã PIN mới (tối thiểu 4 ký tự):</label>
+          <input id="newPinInput" type="password" placeholder="Nhập mã mới..."
+            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-xs font-mono" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-[var(--ink-primary)] mb-1">Xác nhận mã PIN mới:</label>
+          <input id="confirmPinInput" type="password" placeholder="Nhập lại mã mới..."
+            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-xs font-mono" />
+        </div>
+
+        <p id="changePinError" class="text-[11px] text-rose-600 font-medium hidden"></p>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <button type="button" onclick="closeChangePinModal()"
+          class="flex-1 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium">
+          Hủy bỏ
+        </button>
+        <button type="button" onclick="submitChangePin()"
+          class="flex-1 py-2.5 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold shadow-md">
+          Lưu mã mới
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       DEPLOY TO VERCEL MODAL
+       ===================================================================== -->
+  <div id="deployGuideModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl border border-[var(--border-hairline)]">
+      <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-4">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
+          <h3 class="font-editorial text-2xl font-bold text-[var(--ink-primary)]">Deploy Lên Vercel</h3>
+        </div>
+        <button type="button" onclick="closeDeployGuideModal()" class="text-stone-400 hover:text-black text-xl font-bold">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-[13px] text-[var(--ink-muted)] leading-relaxed">
+        <p>Đường link truy cập trang Admin trên Vercel của bạn sẽ là: <code class="text-[#881337] font-semibold bg-stone-100 px-1 py-0.5 rounded font-mono">https://tên-miền-của-bạn.vercel.app/admin-server</code></p>
+
+        <div class="p-3.5 rounded-xl bg-[#EFEAE3] space-y-2">
+          <p class="font-bold text-[var(--ink-primary)] text-xs uppercase tracking-wider">Cách triển khai nhanh:</p>
+          <ol class="list-decimal list-inside space-y-1 text-xs">
+            <li>Đẩy dự án lên GitHub của bạn (<code class="font-mono">git push</code>).</li>
+            <li>Đăng nhập <a href="https://vercel.com" target="_blank" class="text-[#881337] underline font-semibold">Vercel.com</a>, chọn <strong>Add New → Project</strong>.</li>
+            <li>Chọn repository và bấm <strong>Deploy</strong>.</li>
+            <li>Sau khi deploy xong, truy cập <code class="font-mono">/admin-server</code> để nhập mã PIN và quản lý thiệp mời!</li>
+          </ol>
+        </div>
+      </div>
+
+      <button type="button" onclick="closeDeployGuideModal()"
+        class="w-full py-2.5 rounded-xl bg-[#881337] text-white font-medium text-xs transition-colors hover:bg-[#6e0f2c]">
+        Đã hiểu, đóng cửa sổ
+      </button>
+    </div>
+  </div>
+
+  <!-- Offscreen canvas for generating shareable graduation badge cards -->
+  <canvas id="badgeCanvas" width="1080" height="1350" class="hidden"></canvas>
+
+  <!-- =====================================================================
+       JAVASCRIPT CONTROLLER
+       ===================================================================== -->
+  <script>
+    // System State
+    let currentGuestName = 'Minh Khoa';
+    let currentDomain = window.location.origin;
+    let guestList = [];
+
+    // Local Storage Keys
+    const LS_DOMAIN_KEY = 'hcmus_custom_domain';
+    const LS_GUESTS_KEY = 'hcmus_guest_list_v1';
+    const LS_SETTINGS_KEY = 'hcmus_host_settings';
+    const LS_PIN_KEY = 'hcmus_admin_pin';
+    const SS_AUTH_KEY = 'hcmus_admin_authenticated';
+
+    const DEFAULT_PIN = '1111';
+
+    /* =====================================================================
+       SECURITY & PIN CODE VERIFICATION
+       ===================================================================== */
+    function getStoredPin() {
+      return localStorage.getItem(LS_PIN_KEY) || DEFAULT_PIN;
+    }
+
+    function checkAuthentication() {
+      const isAuth = sessionStorage.getItem(SS_AUTH_KEY) === 'true';
+      const overlay = document.getElementById('pinLockOverlay');
+      if (isAuth) {
+        if (overlay) overlay.classList.add('hidden');
+      } else {
+        if (overlay) overlay.classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('pinInput')?.focus();
+        }, 150);
+      }
+    }
+
+    function verifyPinCode() {
+      const input = document.getElementById('pinInput');
+      const errorMsg = document.getElementById('pinErrorMessage');
+      const card = document.getElementById('pinCardBox');
+      const entered = input?.value.trim() || '';
+
+      const correctPin = getStoredPin();
+
+      if (entered === correctPin) {
+        sessionStorage.setItem(SS_AUTH_KEY, 'true');
+        document.getElementById('pinLockOverlay')?.classList.add('hidden');
+        showStatus('Mở khóa thành công! Chào mừng Admin.');
+      } else {
+        if (errorMsg) errorMsg.classList.remove('hidden');
+        if (card) {
+          card.classList.remove('shake-anim');
+          void card.offsetWidth; // Trigger reflow
+          card.classList.add('shake-anim');
+        }
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+    }
+
+    function handlePinKeydown(e) {
+      if (e.key === 'Enter') {
+        verifyPinCode();
+      }
+    }
+
+    function togglePinVisibility() {
+      const input = document.getElementById('pinInput');
+      const text = document.getElementById('pinEyeText');
+      if (!input || !text) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        text.textContent = 'Ẩn';
+      } else {
+        input.type = 'password';
+        text.textContent = 'Hiện';
+      }
+    }
+
+    function lockAdminSession() {
+      sessionStorage.removeItem(SS_AUTH_KEY);
+      const input = document.getElementById('pinInput');
+      if (input) input.value = '';
+      checkAuthentication();
+      showStatus('Đã khóa phiên làm việc quản trị.');
+    }
+
+    /* =====================================================================
+       CHANGE PIN MODAL CONTROLLER
+       ===================================================================== */
+    function openChangePinModal() {
+      const modal = document.getElementById('changePinModal');
+      const err = document.getElementById('changePinError');
+      if (err) err.classList.add('hidden');
+      document.getElementById('oldPinInput').value = '';
+      document.getElementById('newPinInput').value = '';
+      document.getElementById('confirmPinInput').value = '';
+      modal?.classList.remove('hidden');
+    }
+
+    function closeChangePinModal() {
+      document.getElementById('changePinModal')?.classList.add('hidden');
+    }
+
+    function submitChangePin() {
+      const oldPin = document.getElementById('oldPinInput')?.value.trim() || '';
+      const newPin = document.getElementById('newPinInput')?.value.trim() || '';
+      const confirmPin = document.getElementById('confirmPinInput')?.value.trim() || '';
+      const err = document.getElementById('changePinError');
+
+      const currentPin = getStoredPin();
+
+      if (oldPin !== currentPin) {
+        showPinError('Mã PIN hiện tại không chính xác!');
+        return;
+      }
+      if (newPin.length < 4) {
+        showPinError('Mã PIN mới phải có ít nhất 4 ký tự!');
+        return;
+      }
+      if (newPin !== confirmPin) {
+        showPinError('Mã PIN mới và xác nhận không trùng khớp!');
+        return;
+      }
+
+      // Save new PIN
+      localStorage.setItem(LS_PIN_KEY, newPin);
+      closeChangePinModal();
+      showStatus('Đã cập nhật mã PIN truy cập mới thành công!');
+    }
+
+    function showPinError(msg) {
+      const err = document.getElementById('changePinError');
+      if (err) {
+        err.textContent = msg;
+        err.classList.remove('hidden');
+      }
+    }
+
+    /* =====================================================================
+       INITIALIZATION
+       ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Security Check
+      checkAuthentication();
+
+      // 2. Load saved domain or use current origin
+      const savedDomain = localStorage.getItem(LS_DOMAIN_KEY);
+      if (savedDomain && savedDomain.trim()) {
+        currentDomain = savedDomain.trim().replace(/\/+$/, '');
+      } else {
+        currentDomain = window.location.origin.replace(/\/+$/, '');
+      }
+      updateDomainDisplay();
+
+      // 3. Load host settings
+      loadHostSettings();
+
+      // 4. Load guest list
+      loadGuestList();
+
+      // 5. Initial generator setup
+      const input = document.getElementById('guestNameInput');
+      input.value = currentGuestName;
+      updateGeneratedResult();
+    });
+
+    /* =====================================================================
+       DOMAIN CONFIGURATION
+       ===================================================================== */
+    function updateDomainDisplay() {
+      const display = document.getElementById('currentDomainDisplay');
+      if (display) display.textContent = currentDomain;
+    }
+
+    function editDomainPrompt() {
+      const newDomain = prompt('Nhập tên miền trang web của bạn (ví dụ: https://thiepmoi-nam.vercel.app):', currentDomain);
+      if (newDomain && newDomain.trim()) {
+        currentDomain = newDomain.trim().replace(/\/+$/, '');
+        localStorage.setItem(LS_DOMAIN_KEY, currentDomain);
+        updateDomainDisplay();
+        updateGeneratedResult();
+        showStatus('Đã cập nhật domain hệ thống!');
+      }
+    }
+
+    /* =====================================================================
+       SLUG GENERATOR & ENCODING
+       ===================================================================== */
+    function removeVietnameseTones(str) {
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+
+    function generateSlug(rawName, format) {
+      if (!rawName || !rawName.trim()) return 'Khach-Moi';
+      const clean = rawName.trim();
+
+      if (format === 'ascii') {
+        return removeVietnameseTones(clean)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      } else {
+        return clean
+          .replace(/[\s\/\\?#&]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      }
+    }
+
+    /* =====================================================================
+       INPUT HANDLER & QR GENERATOR
+       ===================================================================== */
+    function handleGuestNameInput(val) {
+      currentGuestName = val.trim() || 'Minh Khoa';
+      updateGeneratedResult();
+    }
+
+    function fillQuickName(name) {
+      const input = document.getElementById('guestNameInput');
+      input.value = name;
+      currentGuestName = name;
+      updateGeneratedResult();
+    }
+
+    function getFullInviteURL(name) {
+      const format = document.getElementById('slugFormatSelect')?.value || 'accented';
+      const salutation = document.getElementById('salutationSelect')?.value || 'Gửi';
+      const slug = generateSlug(name, format);
+
+      let url = `${currentDomain}/${encodeURI(slug)}`;
+
+      const params = new URLSearchParams();
+      if (salutation && salutation !== 'Gửi') {
+        params.set('salutation', salutation);
+      }
+      if (format === 'ascii' && name !== slug) {
+        params.set('name', name);
+      }
+
+      const queryString = params.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+
+      return { url, slug };
+    }
+
+    function updateGeneratedResult() {
+      const name = currentGuestName || 'Minh Khoa';
+      const { url, slug } = getFullInviteURL(name);
+
+      const nameEl = document.getElementById('previewGuestName');
+      const shortEl = document.getElementById('previewEndpointShort');
+      const fullEl = document.getElementById('endpointPreview');
+
+      if (nameEl) nameEl.textContent = name;
+      if (shortEl) shortEl.textContent = `/${slug}`;
+      if (fullEl) fullEl.textContent = url;
+
+      const canvas = document.getElementById('qrCodeCanvas');
+      if (canvas && typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(canvas, url, {
+          width: 240,
+          margin: 1,
+          color: {
+            dark: '#881337',
+            light: '#FFFFFF'
+          },
+          errorCorrectionLevel: 'H'
+        }, function (error) {
+          if (error) console.error('QR Render error:', error);
+        });
+      }
+    }
+
+    /* =====================================================================
+       ACTION BUTTONS: COPY, DOWNLOAD QR, BADGE, OPEN
+       ===================================================================== */
+    function copyCurrentLink() {
+      const { url } = getFullInviteURL(currentGuestName);
+      navigator.clipboard.writeText(url).then(() => {
+        showStatus('Đã sao chép link mời vào bộ nhớ tạm!');
+      }).catch(() => {
+        prompt('Sao chép đường dẫn này:', url);
+      });
+    }
+
+    function downloadQRCodePNG() {
+      const canvas = document.getElementById('qrCodeCanvas');
+      if (!canvas) return;
+      const { slug } = getFullInviteURL(currentGuestName);
+      const link = document.createElement('a');
+      link.download = `QR-TotNghiep-${slug}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showStatus('Đã tải ảnh mã QR!');
+    }
+
+    function openCurrentInviteInNewTab() {
+      const { url } = getFullInviteURL(currentGuestName);
+      window.open(url, '_blank');
+    }
+
+    function previewSampleInvite() {
+      window.open(`${currentDomain}/invite`, '_blank');
+    }
+
+    /* =====================================================================
+       GRADUATION QR BADGE GENERATOR
+       ===================================================================== */
+    function downloadGraduationBadge() {
+      const badgeCanvas = document.getElementById('badgeCanvas');
+      const qrCanvas = document.getElementById('qrCodeCanvas');
+      if (!badgeCanvas || !qrCanvas) return;
+
+      const ctx = badgeCanvas.getContext('2d');
+      const width = 1080;
+      const height = 1350;
+
+      // Cream background
+      ctx.fillStyle = '#F7F4F0';
+      ctx.fillRect(0, 0, width, height);
+
+      // Borders
+      ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(50, 50, width - 100, height - 100);
+
+      ctx.strokeStyle = '#881337';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(62, 62, width - 124, height - 124);
+
+      // Header text
+      ctx.fillStyle = '#881337';
+      ctx.font = 'bold 26px "Be Vietnam Pro", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('TRƯỜNG ĐH KHOA HỌC TỰ NHIÊN • ĐHQG-HCM', width / 2, 160);
+
+      ctx.fillStyle = '#5C4E52';
+      ctx.font = '22px "Be Vietnam Pro", sans-serif';
+      ctx.fillText('CLASS OF 2026 // GRADUATION INVITATION', width / 2, 205);
+
+      ctx.fillStyle = '#1F1618';
+      ctx.font = 'italic 70px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText('The Final Chapter.', width / 2, 310);
+
+      ctx.fillStyle = '#5C4E52';
+      ctx.font = '26px "Be Vietnam Pro", sans-serif';
+      ctx.fillText('Thư mời tham dự dành riêng cho:', width / 2, 400);
+
+      ctx.fillStyle = '#881337';
+      ctx.font = 'bold 64px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText(currentGuestName, width / 2, 480);
+
+      // QR Frame
+      const qrBoxSize = 460;
+      const qrBoxX = (width - qrBoxSize) / 2;
+      const qrBoxY = 530;
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+      ctx.shadowBlur = 30;
+      ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
+      ctx.shadowBlur = 0;
+
+      ctx.strokeStyle = 'rgba(136, 19, 55, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
+
+      ctx.drawImage(qrCanvas, qrBoxX + 20, qrBoxY + 20, qrBoxSize - 40, qrBoxSize - 40);
+
+      // Footer
+      ctx.fillStyle = '#1F1618';
+      ctx.font = 'bold 28px "Be Vietnam Pro", sans-serif';
+      ctx.fillText('Chủ Nhật, 15 . 11 . 2026 — 09:30 Sáng', width / 2, 1070);
+
+      ctx.fillStyle = '#5C4E52';
+      ctx.font = '24px "Be Vietnam Pro", sans-serif';
+      ctx.fillText('227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM', width / 2, 1120);
+
+      const hostName = document.getElementById('cfgHostName')?.value || 'Nguyễn Hoàng Nam';
+      ctx.fillStyle = '#881337';
+      ctx.font = 'italic 34px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText('Thân mời từ: ' + hostName, width / 2, 1210);
+
+      const { slug } = getFullInviteURL(currentGuestName);
+      const link = document.createElement('a');
+      link.download = `ThiepMoi-${slug}.png`;
+      link.href = badgeCanvas.toDataURL('image/png');
+      link.click();
+      showStatus('Đã tải thiệp mời ảnh kèm mã QR!');
+    }
+
+    /* =====================================================================
+       GUEST MANAGEMENT & LOCAL STORAGE
+       ===================================================================== */
+    function loadGuestList() {
+      try {
+        const stored = localStorage.getItem(LS_GUESTS_KEY);
+        if (stored) {
+          guestList = JSON.parse(stored);
+        } else {
+          guestList = [
+            { id: '1', name: 'Minh Khoa', slug: 'Minh-Khoa', date: 'Mẫu mặc định' }
+          ];
+        }
+      } catch (e) {
+        guestList = [];
+      }
+      renderGuestList();
+    }
+
+    function saveGuestList() {
+      localStorage.setItem(LS_GUESTS_KEY, JSON.stringify(guestList));
+      renderGuestList();
+    }
+
+    function saveCurrentGuestToList() {
+      const name = currentGuestName.trim();
+      if (!name) return;
+      const { slug } = getFullInviteURL(name);
+
+      const existing = guestList.find(g => g.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        existing.slug = slug;
+        existing.date = new Date().toLocaleDateString('vi-VN');
+      } else {
+        guestList.unshift({
+          id: Date.now().toString(),
+          name: name,
+          slug: slug,
+          date: new Date().toLocaleDateString('vi-VN')
+        });
+      }
+
+      saveGuestList();
+      showStatus(`Đã lưu "${name}" vào danh sách!`);
+    }
+
+    function renderGuestList() {
+      const tbody = document.getElementById('guestListTableBody');
+      const emptyState = document.getElementById('emptyGuestState');
+      const countBadge = document.getElementById('guestCountBadge');
+      const query = document.getElementById('searchGuestInput')?.value.toLowerCase().trim() || '';
+
+      const filtered = guestList.filter(g => g.name.toLowerCase().includes(query) || g.slug.toLowerCase().includes(query));
+
+      if (countBadge) countBadge.textContent = guestList.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      tbody.innerHTML = filtered.map((g, idx) => {
+        const url = `${currentDomain}/${encodeURI(g.slug)}`;
+        return `
+          <tr class="hover:bg-stone-50 transition-colors">
+            <td class="py-3 px-4 text-stone-400 font-mono">${idx + 1}</td>
+            <td class="py-3 px-4 font-semibold text-[var(--ink-primary)]">
+              ${g.name}
+            </td>
+            <td class="py-3 px-4 font-mono text-stone-600">
+              <a href="${url}" target="_blank" class="hover:text-[#881337] hover:underline truncate max-w-xs block">
+                /${g.slug}
+              </a>
+            </td>
+            <td class="py-3 px-4 text-stone-400 text-[11px]">${g.date || 'Hôm nay'}</td>
+            <td class="py-3 px-4 text-right space-x-2">
+              <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#881337] font-medium" title="Sao chép link">📋 Copy</button>
+              <button onclick="selectGuestForQR('${g.name}')" class="text-[#881337] hover:underline font-medium" title="Xem mã QR">QR</button>
+              <a href="${url}" target="_blank" class="text-stone-600 hover:text-black font-medium" title="Mở xem">Mở ↗</a>
+              <button onclick="deleteGuest('${g.id}')" class="text-rose-600 hover:underline font-medium" title="Xóa">✕</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function copyGuestLink(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showStatus('Đã sao chép link!');
+      });
+    }
+
+    function selectGuestForQR(name) {
+      fillQuickName(name);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function deleteGuest(id) {
+      if (confirm('Bạn có chắc muốn xóa khách này khỏi danh sách?')) {
+        guestList = guestList.filter(g => g.id !== id);
+        saveGuestList();
+        showStatus('Đã xóa khách mời');
+      }
+    }
+
+    function clearAllGuests() {
+      if (confirm('Bạn có chắc muốn xóa toàn bộ danh sách khách mời?')) {
+        guestList = [];
+        saveGuestList();
+        showStatus('Đã xóa toàn bộ danh sách');
+      }
+    }
+
+    function copyAllGuestLinks() {
+      if (guestList.length === 0) {
+        showStatus('Danh sách đang trống');
+        return;
+      }
+      const lines = guestList.map(g => `${g.name}: ${currentDomain}/${encodeURI(g.slug)}`).join('\n');
+      navigator.clipboard.writeText(lines).then(() => {
+        showStatus(`Đã copy link của ${guestList.length} khách mời!`);
+      });
+    }
+
+    function exportGuestListTxt() {
+      if (guestList.length === 0) {
+        showStatus('Danh sách đang trống');
+        return;
+      }
+      const lines = [
+        'DANH SÁCH THƯ MỜI TỐT NGHIỆP — HCMUS CLASS OF 2026',
+        '--------------------------------------------------',
+        ...guestList.map((g, i) => `${i + 1}. ${g.name} -> ${currentDomain}/${encodeURI(g.slug)}`)
+      ].join('\n');
+
+      const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Danh-Sach-Khach-Moi-Tot-Nghiep.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+      showStatus('Đã tải tệp danh sách (.txt)');
+    }
+
+    /* =====================================================================
+       BATCH GENERATION
+       ===================================================================== */
+    function processBatchGeneration() {
+      const textarea = document.getElementById('batchInput');
+      const text = textarea?.value || '';
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+      if (lines.length === 0) {
+        alert('Vui lòng nhập ít nhất 1 tên bạn bè!');
+        return;
+      }
+
+      const format = document.getElementById('slugFormatSelect')?.value || 'accented';
+      let addedCount = 0;
+
+      lines.forEach(name => {
+        const slug = generateSlug(name, format);
+        if (!guestList.some(g => g.name.toLowerCase() === name.toLowerCase())) {
+          guestList.unshift({
+            id: Date.now() + Math.random().toString(),
+            name: name,
+            slug: slug,
+            date: new Date().toLocaleDateString('vi-VN')
+          });
+          addedCount++;
+        }
+      });
+
+      saveGuestList();
+      textarea.value = '';
+      switchTab('single');
+      showStatus(`Đã thêm thành công ${addedCount} bạn bè vào danh sách!`);
+    }
+
+    /* =====================================================================
+       HOST SETTINGS
+       ===================================================================== */
+    function loadHostSettings() {
+      try {
+        const saved = localStorage.getItem(LS_SETTINGS_KEY);
+        if (saved) {
+          const cfg = JSON.parse(saved);
+          if (cfg.hostName) document.getElementById('cfgHostName').value = cfg.hostName;
+          if (cfg.schoolName) document.getElementById('cfgSchoolName').value = cfg.schoolName;
+          if (cfg.eventDate) document.getElementById('cfgEventDate').value = cfg.eventDate;
+          if (cfg.contactPhone) document.getElementById('cfgContactPhone').value = cfg.contactPhone;
+          if (cfg.venueAddress) document.getElementById('cfgVenueAddress').value = cfg.venueAddress;
+        }
+      } catch (e) {}
+    }
+
+    function saveHostSettings() {
+      const cfg = {
+        hostName: document.getElementById('cfgHostName').value.trim(),
+        schoolName: document.getElementById('cfgSchoolName').value.trim(),
+        eventDate: document.getElementById('cfgEventDate').value.trim(),
+        contactPhone: document.getElementById('cfgContactPhone').value.trim(),
+        venueAddress: document.getElementById('cfgVenueAddress').value.trim()
+      };
+      localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(cfg));
+      showStatus('Đã lưu thông tin cử nhân vào hệ thống!');
+    }
+
+    /* =====================================================================
+       UI TABS & MODALS
+       ===================================================================== */
+    function switchTab(tab) {
+      const tabs = ['single', 'batch', 'settings'];
+      tabs.forEach(t => {
+        const content = document.getElementById(`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tab) {
+          content?.classList.remove('hidden');
+          btn?.classList.add('bg-white', 'text-[#881337]', 'shadow-sm');
+          btn?.classList.remove('text-[var(--ink-muted)]');
+        } else {
+          content?.classList.add('hidden');
+          btn?.classList.remove('bg-white', 'text-[#881337]', 'shadow-sm');
+          btn?.classList.add('text-[var(--ink-muted)]');
+        }
+      });
+    }
+
+    function openDeployGuideModal() {
+      document.getElementById('deployGuideModal')?.classList.remove('hidden');
+    }
+
+    function closeDeployGuideModal() {
+      document.getElementById('deployGuideModal')?.classList.add('hidden');
+    }
+
+    /* =====================================================================
+       STATUS TOAST
+       ===================================================================== */
+    let toastTimer = null;
+    function showStatus(msg) {
+      const toast = document.getElementById('statusToast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

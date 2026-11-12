@@ -4,7 +4,6 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
@@ -37,17 +36,24 @@ function serveFile(res, filePath) {
 }
 
 const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  let pathname = parsedUrl.pathname;
+  const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  let pathname = reqUrl.pathname;
 
-  // Root or /admin -> Admin Dashboard
-  if (pathname === '/' || pathname === '/admin' || pathname === '/index.html') {
-    return serveFile(res, path.join(ROOT_DIR, 'index.html'));
+  // Admin Server Dashboard (Protected with PIN)
+  if (pathname === '/admin-server' || pathname === '/admin-server.html') {
+    return serveFile(res, path.join(ROOT_DIR, 'admin.html'));
   }
 
-  // /invite -> Sample Invitation
-  if (pathname === '/invite' || pathname === '/invite.html') {
-    return serveFile(res, path.join(ROOT_DIR, 'invite.html'));
+  // Redirect /admin to /admin-server
+  if (pathname === '/admin') {
+    res.writeHead(302, { 'Location': '/admin-server' });
+    res.end();
+    return;
+  }
+
+  // Root or /invite -> Graduation Invitation
+  if (pathname === '/' || pathname === '/invite' || pathname === '/invite.html') {
+    return serveFile(res, path.join(ROOT_DIR, 'index.html'));
   }
 
   // Serve static files in assets/ or root if they exist with an extension
@@ -56,10 +62,9 @@ const server = http.createServer((req, res) => {
     return serveFile(res, potentialFile);
   }
 
-  // Rewrite any dynamic name route (e.g. /Minh-Khoa, /Trần-Đức-Hải) to invite.html
-  // Exclude favicon or obvious file extensions
+  // Rewrite any dynamic name route (e.g. /Minh-Khoa, /Trần-Đức-Hải) to index.html (Invitation)
   if (!pathname.includes('.')) {
-    return serveFile(res, path.join(ROOT_DIR, 'invite.html'));
+    return serveFile(res, path.join(ROOT_DIR, 'index.html'));
   }
 
   // Fallback 404
@@ -70,7 +75,8 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`\n======================================================`);
   console.log(`🎓 HCMUS Graduation Invite Server running locally!`);
-  console.log(`👉 Trang Quản trị (Admin):  http://localhost:${PORT}`);
-  console.log(`👉 Thiệp mời thử nghiệm:    http://localhost:${PORT}/Minh-Khoa`);
+  console.log(`🔒 Trang Quản trị (Admin):  http://localhost:${PORT}/admin-server`);
+  console.log(`💌 Trang Chủ Thiệp Mời:     http://localhost:${PORT}`);
+  console.log(`👉 Thiệp mời theo tên:      http://localhost:${PORT}/Minh-Khoa`);
   console.log(`======================================================\n`);
 });

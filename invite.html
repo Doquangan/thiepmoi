@@ -156,7 +156,7 @@
   </div>
 
   <!-- =====================================================================
-       MAIN EDITORIAL INVITATION (CONCEPT 1 — ĐỎ RƯỢU & KEM SỮA — HCMUS)
+       MAIN EDITORIAL INVITATION (HCMUS GRADUATION)
        ===================================================================== -->
   <main class="max-w-3xl mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
 
@@ -320,8 +320,8 @@
           class="font-medium text-[var(--ink-primary)] hover:text-[#881337] underline underline-offset-4 transition-colors">
           Lưu lịch hẹn (.ics)
         </button>
-        <a href="/" class="text-[11px] text-stone-400 hover:text-[#881337] transition-colors ml-2" title="Quản trị tạo thiệp">
-          ⚙️ Admin
+        <a href="/admin-server" class="text-[11px] text-stone-400 hover:text-[#881337] transition-colors ml-2" title="Quản trị tạo thiệp">
+          ⚙️ Admin Server
         </a>
       </div>
     </footer>
@@ -342,15 +342,12 @@
 
       // 2. Endpoint pathname (e.g., /Minh-Khoa, /Nguyen-Van-A, /Trần-Đức-Hải)
       let pathname = window.location.pathname || '';
-      // Strip leading and trailing slashes
       pathname = pathname.replace(/^\/+|\/+$/g, '');
 
-      // Exclude special paths
-      const excluded = ['admin', 'index.html', 'invite', 'invite.html', ''];
+      const excluded = ['admin', 'admin-server', 'index.html', 'invite', 'invite.html', ''];
       if (pathname && !excluded.includes(pathname.toLowerCase())) {
         try {
           const decoded = decodeURIComponent(pathname);
-          // Replace dash or underscore with space
           const formatted = decoded.replace(/[-_]+/g, ' ').trim();
           if (formatted) return formatted;
         } catch (e) {
@@ -372,18 +369,15 @@
     function applyPersonalization() {
       const guestName = getGuestName();
       
-      // Update all elements displaying guest name
       document.querySelectorAll('.guest-name-display').forEach(el => {
         el.textContent = guestName;
       });
 
-      // Update page title
       const titleEl = document.getElementById('pageTitle');
       if (titleEl) {
         titleEl.textContent = `Thiệp Mời Tốt Nghiệp HCMUS — Dành riêng cho ${guestName}`;
       }
 
-      // Salutation prefix (e.g. ?salutation=Kính gửi)
       const params = new URLSearchParams(window.location.search);
       const salutation = params.get('salutation') || params.get('prefix');
       if (salutation && salutation.trim()) {
@@ -391,7 +385,6 @@
         if (salutationEl) salutationEl.textContent = salutation.trim();
       }
 
-      // Load optional saved host settings from localStorage if available
       try {
         const savedSettings = localStorage.getItem('hcmus_host_settings');
         if (savedSettings) {
@@ -410,7 +403,6 @@
         }
       } catch (e) {}
 
-      // Check for default static images if provided in assets/
       checkStaticImage('/assets/portrait.jpg', 'portraitPreviewImg', 'portraitPlaceholder');
       checkStaticImage('/assets/map.jpg', 'campusMapImg', 'campusMapPlaceholder');
     }
@@ -432,7 +424,7 @@
     }
 
     /* =====================================================================
-       2. WEB AUDIO API CHIME (Sound on Vinyl needle drop)
+       2. WEB AUDIO API CHIME
        ===================================================================== */
     function playGraduationChime() {
       try {
@@ -440,7 +432,6 @@
         if (!AudioContext) return;
         const ctx = new AudioContext();
 
-        // Warm melodic chord progression (F4, A4, C5, E5, G5)
         const notes = [349.23, 440.00, 523.25, 659.25, 783.99];
         notes.forEach((freq, idx) => {
           const osc = ctx.createOscillator();
@@ -556,7 +547,6 @@
       if (hint) hint.classList.add('hidden');
       if (status) status.textContent = 'Đang phát: Soundtrack Thanh Xuân 2022–2026...';
 
-      // Play soft chime
       playGraduationChime();
 
       setTimeout(() => {
@@ -568,7 +558,6 @@
       }, 1250);
     }
 
-    // Initialize on page load
     window.addEventListener('DOMContentLoaded', () => {
       applyPersonalization();
     });
