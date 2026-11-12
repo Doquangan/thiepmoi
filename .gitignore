@@ -3,3 +3,9 @@ node_modules
 .DS_Store
 Thumbs.db
 *.log
+scratch*
+test_*.py
+generate_test_design.py
+render_map_design.py
+temp_frames
+
