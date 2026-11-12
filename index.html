@@ -210,34 +210,21 @@
         <div class="pt-4 border-t border-[var(--border-hairline)] flex items-baseline justify-between">
           <div>
             <p class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-[var(--ink-muted)]">Thân mời từ</p>
-            <p id="hostNameDisplay" class="font-editorial text-2xl sm:text-3xl font-semibold text-[var(--ink-primary)] mt-0.5">Nguyễn Hoàng Nam</p>
+            <p id="hostNameDisplay" class="font-editorial text-2xl sm:text-3xl font-semibold text-[var(--ink-primary)] mt-0.5">Đỗ Quang An</p>
           </div>
           <span class="text-xs text-[var(--ink-muted)]">ĐHQG-HCM</span>
         </div>
       </div>
 
-      <!-- Right Column: Portrait Photo Frame -->
+      <!-- Right Column: Portrait Photo Frame (Ảnh cử nhân cố định, không cho phép bạn bè chọn ảnh) -->
       <div class="md:col-span-5 w-full max-w-[280px] sm:max-w-none mx-auto md:mx-0">
-        <label for="portraitInput" class="group block cursor-pointer touch-manipulation">
-          <div class="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#EFEAE3] border border-[var(--border-hairline)] shadow-sm">
-            <img id="portraitPreviewImg" src="" alt="Ảnh chân dung tốt nghiệp" class="hidden w-full h-full object-cover" />
-            <div id="portraitPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-colors group-hover:bg-[#E7E0D6]">
-              <div class="w-11 h-11 rounded-full border border-[#881337]/30 flex items-center justify-center text-[#881337] mb-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
-                </svg>
-              </div>
-              <p class="font-editorial text-lg font-semibold text-[var(--ink-primary)]">Ảnh chân dung cử nhân</p>
-              <p class="text-[11px] text-[var(--ink-muted)] mt-1">Chạm để thử tải ảnh của bạn</p>
-            </div>
-          </div>
-          <div class="mt-2.5 flex items-center justify-between text-[10px] sm:text-[11px] text-[var(--ink-muted)]">
-            <span>FIG 01. GRADUATE PORTRAIT</span>
-            <span>2026</span>
-          </div>
-        </label>
-        <input id="portraitInput" type="file" accept="image/*" class="hidden" onchange="previewLocalImage(this, 'portraitPreviewImg', 'portraitPlaceholder')" />
+        <div class="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#EFEAE3] border border-[var(--border-hairline)] shadow-md">
+          <img id="portraitImg" src="/assets/portrait.png" alt="Ảnh cử nhân Đỗ Quang An" class="w-full h-full object-cover object-top select-none pointer-events-none" loading="eager" />
+        </div>
+        <div class="mt-2.5 flex items-center justify-between text-[10px] sm:text-[11px] text-[var(--ink-muted)]">
+          <span>FIG 01. GRADUATE PORTRAIT</span>
+          <span>CLASS OF 2026</span>
+        </div>
       </div>
 
     </section>
@@ -514,7 +501,7 @@
       const guestName = getGuestName();
       const shareData = {
         title: `Thiệp Mời Tốt Nghiệp — Dành riêng cho ${guestName}`,
-        text: `Thư mời tham dự Lễ tốt nghiệp Trường ĐH Khoa học Tự nhiên — ĐHQG-HCM cùng Nguyễn Hoàng Nam!`,
+        text: `Thư mời tham dự Lễ tốt nghiệp Trường ĐH Khoa học Tự nhiên — ĐHQG-HCM cùng Đỗ Quang An!`,
         url: window.location.href
       };
 
@@ -548,7 +535,7 @@
     }
 
     function downloadCalendarICS() {
-      const hostName = document.getElementById('hostNameDisplay')?.textContent || 'Nguyễn Hoàng Nam';
+      const hostName = document.getElementById('hostNameDisplay')?.textContent || 'Đỗ Quang An';
       const icsLines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
