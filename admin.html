@@ -2,8 +2,9 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
   <title>Quản Trị & Tạo Mã Thiệp Mời Tốt Nghiệp — HCMUS</title>
+  <meta name="theme-color" content="#881337" />
 
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,11 +31,18 @@
       --border-hairline: rgba(31, 22, 24, 0.14);
     }
 
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       background-color: var(--bg-paper);
       color: var(--ink-primary);
       font-family: 'Be Vietnam Pro', sans-serif;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .font-editorial {
@@ -56,10 +64,17 @@
       animation: shake 0.4s ease-in-out;
     }
 
+    /* Prevent iOS auto-zoom on input focus */
+    @media (max-width: 640px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
     /* Custom Scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-thumb {
       background: rgba(136, 19, 55, 0.25);
@@ -67,42 +82,42 @@
     }
   </style>
 </head>
-<body class="paper-grain min-h-screen selection:bg-[#881337] selection:text-white pb-24">
+<body class="paper-grain min-h-screen selection:bg-[#881337] selection:text-white pb-20 sm:pb-24">
 
   <!-- =====================================================================
        STATUS TOAST
        ===================================================================== -->
   <div id="statusToast"
-    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-5 py-2.5 rounded-full bg-[#1F1316] text-[#F7F4F0] text-xs font-medium shadow-2xl border border-white/10 opacity-0 translate-y-4 pointer-events-none transition-all duration-300">
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2.5 rounded-full bg-[#1F1316] text-[#F7F4F0] text-xs font-medium shadow-2xl border border-white/10 opacity-0 translate-y-4 pointer-events-none transition-all duration-300 max-w-[90vw] text-center truncate">
     Thông báo
   </div>
 
   <!-- =====================================================================
        AUTHENTICATION / PIN GATE OVERLAY
        ===================================================================== -->
-  <div id="pinLockOverlay" class="fixed inset-0 z-50 bg-[#1F1316]/95 backdrop-blur-md flex items-center justify-center p-4">
-    <div id="pinCardBox" class="bg-[#F7F4F0] rounded-3xl max-w-sm w-full p-8 text-center space-y-6 shadow-2xl border border-white/10">
+  <div id="pinLockOverlay" class="fixed inset-0 z-50 bg-[#1F1316]/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div id="pinCardBox" class="bg-[#F7F4F0] rounded-3xl max-w-sm w-full p-6 sm:p-8 text-center space-y-5 sm:space-y-6 shadow-2xl border border-white/10 my-auto">
       
       <!-- Lock Icon / Seal -->
-      <div class="w-14 h-14 mx-auto rounded-2xl bg-[#881337] text-white flex items-center justify-center shadow-lg">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl bg-[#881337] text-white flex items-center justify-center shadow-lg">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
         </svg>
       </div>
 
-      <div class="space-y-1.5">
-        <p class="text-[10px] uppercase tracking-[0.25em] text-[#881337] font-bold">HCMUS // ADMIN SERVER</p>
-        <h2 class="font-editorial text-3xl font-bold text-[var(--ink-primary)]">Mã Truy Cập Quản Trị</h2>
-        <p class="text-xs text-[var(--ink-muted)]">Nhập mã bảo vệ để truy cập hệ thống tạo thiệp</p>
+      <div class="space-y-1">
+        <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-[#881337] font-bold">HCMUS // ADMIN SERVER</p>
+        <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[var(--ink-primary)]">Mã Truy Cập Quản Trị</h2>
+        <p class="text-xs text-[var(--ink-muted)]">Nhập mã PIN để truy cập bảng điều khiển</p>
       </div>
 
       <!-- PIN Input -->
-      <div class="space-y-3">
+      <div class="space-y-2.5">
         <div class="relative">
-          <input id="pinInput" type="password" maxlength="16" placeholder="••••"
-            class="w-full text-center tracking-[0.5em] text-2xl font-mono py-3.5 px-4 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/40 shadow-inner font-bold text-[#881337]"
+          <input id="pinInput" type="password" inputmode="numeric" maxlength="16" placeholder="••••"
+            class="w-full text-center tracking-[0.4em] text-2xl font-mono py-3 px-4 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/40 shadow-inner font-bold text-[#881337]"
             autocomplete="off" onkeydown="handlePinKeydown(event)" />
-          <button type="button" onclick="togglePinVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 text-xs font-medium">
+          <button type="button" onclick="togglePinVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-stone-400 hover:text-stone-700 text-xs font-medium">
             <span id="pinEyeText">Hiện</span>
           </button>
         </div>
@@ -114,88 +129,96 @@
 
       <!-- Submit PIN Button -->
       <button type="button" onclick="verifyPinCode()"
-        class="w-full py-3.5 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-md">
+        class="w-full min-h-[46px] py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-md touch-manipulation">
         Mở Khóa Bảng Quản Trị →
       </button>
 
       <div class="pt-2 border-t border-[var(--border-hairline)] text-[11px] text-[var(--ink-muted)]">
-        💡 Mã mặc định ban đầu: <strong class="text-[#881337] font-mono">1111</strong>
-        <br /><span class="text-[10px] text-stone-400">(Bạn có thể đổi mã này sau khi đăng nhập)</span>
+        💡 Mã mặc định: <strong class="text-[#881337] font-mono">1111</strong>
+        <br /><span class="text-[10px] text-stone-400">(Có thể đổi sau khi vào trang)</span>
       </div>
 
     </div>
   </div>
 
   <!-- =====================================================================
-       TOP NAVIGATION BAR
+       TOP NAVIGATION BAR (RESPONSIVE CHO CẢ SMARTPHONE & LAPTOP)
        ===================================================================== -->
-  <header class="border-b border-[var(--border-hairline)] bg-[#F7F4F0]/90 backdrop-blur-md sticky top-0 z-30">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-[#881337] text-white flex items-center justify-center font-editorial font-bold text-lg shadow-sm">
+  <header class="border-b border-[var(--border-hairline)] bg-[#F7F4F0]/95 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
+      
+      <!-- Brand Logo & Title -->
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#881337] text-white flex items-center justify-center font-editorial font-bold text-base sm:text-lg shadow-sm shrink-0">
           26
         </div>
-        <div>
-          <h1 class="font-editorial text-xl sm:text-2xl font-bold tracking-tight text-[var(--ink-primary)] leading-tight">
-            HCMUS Graduation
+        <div class="min-w-0">
+          <h1 class="font-editorial text-lg sm:text-2xl font-bold tracking-tight text-[var(--ink-primary)] leading-tight truncate">
+            HCMUS Grad
           </h1>
-          <p class="text-[10px] uppercase tracking-[0.2em] text-[#881337] font-semibold">
-            Admin Server &amp; Trình Tạo Mã Thiệp
+          <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-[#881337] font-semibold truncate hidden xs:block">
+            Admin Server
           </p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         <button type="button" onclick="openChangePinModal()"
-          class="px-3 py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white/70 hover:bg-white text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all flex items-center gap-1.5 shadow-sm"
-          title="Đổi mã PIN truy cập admin">
-          <span>🔑 Đổi mã PIN</span>
+          class="px-2 sm:px-3 py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white hover:bg-stone-50 text-[11px] sm:text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all flex items-center gap-1 shadow-sm touch-manipulation"
+          title="Đổi mã PIN">
+          <span>🔑</span>
+          <span class="hidden sm:inline">Đổi PIN</span>
         </button>
+
         <button type="button" onclick="openDeployGuideModal()"
-          class="px-3 py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white/70 hover:bg-white text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all flex items-center gap-1.5 shadow-sm">
+          class="px-2 sm:px-3 py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white hover:bg-stone-50 text-[11px] sm:text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all flex items-center gap-1 shadow-sm touch-manipulation">
           <svg class="w-3.5 h-3.5 text-[#881337]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
-          <span class="hidden sm:inline">Deploy</span> Vercel
+          <span class="hidden md:inline">Deploy</span>
         </button>
+
         <button type="button" onclick="previewSampleInvite()"
-          class="px-3 py-1.5 rounded-lg bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-medium transition-all shadow-sm flex items-center gap-1.5">
-          <span>Xem thiệp mẫu</span> ↗
+          class="px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-[#881337] hover:bg-[#6e0f2c] text-white text-[11px] sm:text-xs font-medium transition-all shadow-sm flex items-center gap-1 touch-manipulation">
+          <span>Xem thiệp</span> ↗
         </button>
+
         <button type="button" onclick="lockAdminSession()"
-          class="px-2.5 py-1.5 rounded-lg text-stone-500 hover:text-rose-700 text-xs font-medium transition-colors"
+          class="px-2 py-1.5 rounded-lg text-stone-500 hover:text-rose-700 text-xs font-medium transition-colors touch-manipulation"
           title="Khóa phiên làm việc">
-          🔒 Khóa
+          🔒
         </button>
       </div>
+
     </div>
   </header>
 
   <!-- =====================================================================
        MAIN WORKSPACE
        ===================================================================== -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
+  <main class="max-w-6xl mx-auto px-3 sm:px-6 pt-5 sm:pt-10">
 
-    <!-- Hero Introduction -->
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[var(--border-hairline)]">
+    <!-- Hero Introduction & Domain Setting -->
+    <div class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 sm:pb-6 border-b border-[var(--border-hairline)]">
       <div>
-        <p class="text-xs uppercase tracking-[0.22em] text-[#881337] font-semibold mb-1">
+        <p class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#881337] font-semibold mb-1">
           HỆ THỐNG CÁ NHÂN HÓA ĐƯỜNG LINK &amp; MÃ QR
         </p>
-        <h2 class="font-editorial text-3xl sm:text-4xl font-semibold text-[var(--ink-primary)]">
+        <h2 class="font-editorial text-2xl sm:text-4xl font-semibold text-[var(--ink-primary)]">
           Tạo thiệp mời riêng cho từng người bạn
         </h2>
-        <p class="text-sm text-[var(--ink-muted)] mt-1.5 max-w-2xl leading-relaxed">
-          Nhập tên bạn bè, hệ thống sẽ tự động tạo một đường link endpoint độc nhất dạng <code class="px-2 py-0.5 rounded bg-stone-200/70 text-[#881337] font-medium font-mono text-xs">/tên-của-bạn</code> cùng mã QR tương ứng để gửi tặng.
+        <p class="text-xs sm:text-sm text-[var(--ink-muted)] mt-1 max-w-2xl leading-relaxed">
+          Nhập tên bạn bè, hệ thống sẽ tự động tạo endpoint <code class="px-1.5 py-0.5 rounded bg-stone-200/70 text-[#881337] font-mono text-xs">/tên-của-bạn</code> cùng mã QR tương ứng để gửi tặng.
         </p>
       </div>
 
       <!-- Domain Configuration Pill -->
-      <div class="p-3 rounded-xl bg-[#EFEAE3] border border-[var(--border-hairline)] flex flex-col gap-1.5 min-w-[280px]">
+      <div class="w-full md:w-auto p-3 rounded-xl bg-[#EFEAE3] border border-[var(--border-hairline)] flex flex-col gap-1 sm:min-w-[280px]">
         <div class="flex items-center justify-between text-[11px]">
           <span class="font-semibold text-[var(--ink-primary)] flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             Domain hệ thống:
           </span>
-          <button type="button" onclick="editDomainPrompt()" class="text-[#881337] hover:underline font-medium">Thay đổi</button>
+          <button type="button" onclick="editDomainPrompt()" class="text-[#881337] hover:underline font-semibold touch-manipulation">Thay đổi</button>
         </div>
         <div id="currentDomainDisplay" class="font-mono text-xs text-[var(--ink-muted)] truncate" title="Domain dùng để sinh mã QR">
           http://localhost:3000
@@ -203,51 +226,52 @@
       </div>
     </div>
 
-    <!-- Generator & Preview Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Generator & Preview Grid (Responsive 1 col on mobile, 12 cols on desktop) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
       <!-- =================================================================
            LEFT PANEL: TẠO THIỆP & CÀI ĐẶT (7 COLS)
            ================================================================= -->
-      <div class="lg:col-span-7 space-y-6">
+      <div class="lg:col-span-7 space-y-5 sm:space-y-6">
 
         <!-- Tab Selector -->
-        <div class="flex rounded-xl bg-[#EFEAE3] p-1 border border-[var(--border-hairline)]">
+        <div class="flex rounded-xl bg-[#EFEAE3] p-1 border border-[var(--border-hairline)] text-center">
           <button type="button" id="tabBtnSingle" onclick="switchTab('single')"
-            class="flex-1 py-2 text-xs font-semibold rounded-lg bg-white text-[#881337] shadow-sm transition-all">
-            ✨ Tạo thiệp đơn lẻ
+            class="flex-1 py-2 text-[11px] sm:text-xs font-semibold rounded-lg bg-white text-[#881337] shadow-sm transition-all touch-manipulation truncate">
+            ✨ Tạo thiệp
           </button>
           <button type="button" id="tabBtnBatch" onclick="switchTab('batch')"
-            class="flex-1 py-2 text-xs font-semibold rounded-lg text-[var(--ink-muted)] hover:text-[var(--ink-primary)] transition-all">
-            📋 Tạo danh sách hàng loạt
+            class="flex-1 py-2 text-[11px] sm:text-xs font-semibold rounded-lg text-[var(--ink-muted)] hover:text-[var(--ink-primary)] transition-all touch-manipulation truncate">
+            📋 Hàng loạt
           </button>
           <button type="button" id="tabBtnSettings" onclick="switchTab('settings')"
-            class="flex-1 py-2 text-xs font-semibold rounded-lg text-[var(--ink-muted)] hover:text-[var(--ink-primary)] transition-all">
-            ⚙️ Cài đặt &amp; Bảo mật
+            class="flex-1 py-2 text-[11px] sm:text-xs font-semibold rounded-lg text-[var(--ink-muted)] hover:text-[var(--ink-primary)] transition-all touch-manipulation truncate">
+            ⚙️ Cài đặt
           </button>
         </div>
 
         <!-- ==================== TAB 1: TẠO ĐƠN LẺ ==================== -->
-        <div id="tabContentSingle" class="p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-5 shadow-sm">
+        <div id="tabContentSingle" class="p-4 sm:p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-4 sm:space-y-5 shadow-sm">
           <div>
-            <label for="guestNameInput" class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] mb-2">
+            <label for="guestNameInput" class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] mb-1.5">
               1. Tên người bạn muốn mời <span class="text-[#881337]">*</span>
             </label>
             <input id="guestNameInput" type="text" placeholder="Ví dụ: Minh Khoa, Cô Thảo, Anh Hoàng..."
-              class="w-full px-4 py-3 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-sm font-medium transition-all"
+              class="w-full px-3.5 py-3 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-sm font-medium transition-all shadow-sm"
               oninput="handleGuestNameInput(this.value)" autocomplete="off" />
-            <p class="text-[11px] text-[var(--ink-muted)] mt-1.5 flex items-center gap-1">
-              💡 Gợi ý nhanh:
-              <button type="button" onclick="fillQuickName('Minh Khoa')" class="underline hover:text-[#881337]">Minh Khoa</button>,
-              <button type="button" onclick="fillQuickName('Trần Bảo Ngọc')" class="underline hover:text-[#881337]">Trần Bảo Ngọc</button>,
-              <button type="button" onclick="fillQuickName('Thầy Cô & Bạn Bè')" class="underline hover:text-[#881337]">Thầy Cô</button>
+            
+            <p class="text-[11px] text-[var(--ink-muted)] mt-1.5 flex items-center gap-1 flex-wrap">
+              <span>💡 Gợi ý:</span>
+              <button type="button" onclick="fillQuickName('Minh Khoa')" class="underline hover:text-[#881337] py-0.5">Minh Khoa</button>,
+              <button type="button" onclick="fillQuickName('Trần Bảo Ngọc')" class="underline hover:text-[#881337] py-0.5">Trần Bảo Ngọc</button>,
+              <button type="button" onclick="fillQuickName('Thầy Cô & Bạn Bè')" class="underline hover:text-[#881337] py-0.5">Thầy Cô</button>
             </p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <!-- Salutation Selector -->
             <div>
-              <label for="salutationSelect" class="block text-xs font-semibold text-[var(--ink-primary)] mb-1.5">
+              <label for="salutationSelect" class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">
                 Lời xưng hô đầu thư:
               </label>
               <select id="salutationSelect" onchange="updateGeneratedResult()"
@@ -261,7 +285,7 @@
 
             <!-- Slug Format Option -->
             <div>
-              <label for="slugFormatSelect" class="block text-xs font-semibold text-[var(--ink-primary)] mb-1.5">
+              <label for="slugFormatSelect" class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">
                 Kiểu đường dẫn URL:
               </label>
               <select id="slugFormatSelect" onchange="updateGeneratedResult()"
@@ -273,53 +297,52 @@
           </div>
 
           <!-- Dynamic URL Endpoint Preview -->
-          <div class="p-3.5 rounded-xl bg-white border border-[var(--border-hairline)]">
+          <div class="p-3 sm:p-3.5 rounded-xl bg-white border border-[var(--border-hairline)]">
             <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Đường dẫn thư mời tương ứng (Endpoint)</span>
             <div class="mt-1 flex items-center justify-between gap-2">
               <span id="endpointPreview" class="font-mono text-xs sm:text-sm text-[var(--ink-primary)] font-semibold truncate">
                 https://domain.vercel.app/Minh-Khoa
               </span>
               <button type="button" onclick="copyCurrentLink()"
-                class="px-2.5 py-1 rounded-md bg-stone-100 hover:bg-stone-200 text-[11px] font-medium text-[var(--ink-primary)] shrink-0 transition-colors">
-                📋 Sao chép
+                class="px-2.5 py-1 rounded-md bg-stone-100 hover:bg-stone-200 text-[11px] font-medium text-[var(--ink-primary)] shrink-0 transition-colors touch-manipulation">
+                📋 Copy
               </button>
             </div>
           </div>
 
           <!-- Save to List Button -->
           <button type="button" onclick="saveCurrentGuestToList()"
-            class="w-full py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-medium text-sm transition-all shadow-md flex items-center justify-center gap-2">
+            class="w-full min-h-[46px] py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-medium text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 touch-manipulation">
             <span>💾 Lưu vào danh sách &amp; Cập nhật mã QR</span>
           </button>
         </div>
 
         <!-- ==================== TAB 2: TẠO HÀNG LOẠT ==================== -->
-        <div id="tabContentBatch" class="hidden p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-4 shadow-sm">
+        <div id="tabContentBatch" class="hidden p-4 sm:p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-4 shadow-sm">
           <div>
             <label for="batchInput" class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] mb-2">
               Nhập danh sách tên khách mời (Mỗi người 1 dòng)
             </label>
             <textarea id="batchInput" rows="7" placeholder="Nguyễn Văn A&#10;Trần Thị B&#10;Lê Minh Khoa&#10;Hoàng Bảo Trân"
-              class="w-full px-4 py-3 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-medium leading-relaxed"></textarea>
+              class="w-full px-3.5 py-3 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-medium leading-relaxed"></textarea>
             <p class="text-[11px] text-[var(--ink-muted)] mt-1.5">
               Hệ thống sẽ tự động tạo mã URL endpoint và lưu vào danh sách cho từng người.
             </p>
           </div>
 
           <button type="button" onclick="processBatchGeneration()"
-            class="w-full py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-medium text-sm transition-all shadow-md flex items-center justify-center gap-2">
+            class="w-full min-h-[46px] py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white font-medium text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 touch-manipulation">
             <span>⚡ Tạo hàng loạt danh sách khách mời</span>
           </button>
         </div>
 
         <!-- ==================== TAB 3: THÔNG TIN CỬ NHÂN & BẢO MẬT ==================== -->
-        <div id="tabContentSettings" class="hidden p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-6 shadow-sm">
+        <div id="tabContentSettings" class="hidden p-4 sm:p-6 rounded-2xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)] space-y-6 shadow-sm">
           
-          <!-- Section A: Host Settings -->
           <div class="space-y-4">
             <h4 class="text-xs font-bold uppercase tracking-wider text-[#881337]">1. Thông tin cử nhân &amp; Buổi lễ</h4>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Tên cử nhân (Chủ tiệc):</label>
                 <input id="cfgHostName" type="text" value="Nguyễn Hoàng Nam"
@@ -332,7 +355,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Ngày giờ lễ tốt nghiệp:</label>
                 <input id="cfgEventDate" type="text" value="Chủ Nhật, 15 . 11 . 2026"
@@ -352,21 +375,21 @@
             </div>
 
             <button type="button" onclick="saveHostSettings()"
-              class="w-full py-2.5 rounded-xl bg-[#1F1316] hover:bg-black text-white text-xs font-semibold transition-all">
+              class="w-full min-h-[44px] py-2.5 rounded-xl bg-[#1F1316] hover:bg-black text-white text-xs font-semibold transition-all touch-manipulation">
               Lưu thông tin cử nhân
             </button>
           </div>
 
           <!-- Section B: Security / Access PIN -->
-          <div class="pt-6 border-t border-[var(--border-hairline)] space-y-4">
-            <div class="flex items-center justify-between">
+          <div class="pt-5 border-t border-[var(--border-hairline)] space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-[#881337]">2. Bảo mật &amp; Mã truy cập trang Admin</h4>
-                <p class="text-[11px] text-[var(--ink-muted)] mt-0.5">Thay đổi mã PIN bảo vệ khi truy cập đường link <code class="font-mono">/admin-server</code></p>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#881337]">2. Bảo mật &amp; Mã PIN trang Admin</h4>
+                <p class="text-[11px] text-[var(--ink-muted)] mt-0.5">Đổi mã bảo vệ khi truy cập <code class="font-mono">/admin-server</code></p>
               </div>
               <button type="button" onclick="openChangePinModal()"
-                class="px-3 py-1.5 rounded-lg bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all">
-                Đổi mã PIN ngay
+                class="px-3 py-2 rounded-lg bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all touch-manipulation text-center">
+                🔑 Đổi mã PIN ngay
               </button>
             </div>
           </div>
@@ -380,58 +403,58 @@
            ================================================================= -->
       <div class="lg:col-span-5 space-y-5">
 
-        <div class="p-6 rounded-2xl bg-white border border-[var(--border-hairline)] shadow-lg space-y-5">
+        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-[var(--border-hairline)] shadow-lg space-y-4 sm:space-y-5">
           <!-- Card Badge Header -->
-          <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
-            <span class="text-[10px] uppercase tracking-[0.24em] text-[#881337] font-bold">
+          <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
+            <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#881337] font-bold">
               KẾT QUẢ MÃ QR TRỰC TIẾP
             </span>
-            <span class="text-[11px] text-[var(--ink-muted)]">CLASS OF 2026</span>
+            <span class="text-[10px] sm:text-[11px] text-[var(--ink-muted)]">CLASS OF 2026</span>
           </div>
 
           <!-- Recipient Greeting Preview -->
-          <div class="text-center space-y-1">
+          <div class="text-center space-y-0.5 px-2">
             <p class="text-xs text-[var(--ink-muted)]">Thư mời cá nhân dành riêng cho:</p>
-            <h3 id="previewGuestName" class="font-editorial text-3xl font-bold text-[#881337] leading-tight">
+            <h3 id="previewGuestName" class="font-editorial text-2xl sm:text-3xl font-bold text-[#881337] leading-tight break-words">
               Minh Khoa
             </h3>
-            <p id="previewEndpointShort" class="font-mono text-xs text-[var(--ink-muted)]">/Minh-Khoa</p>
+            <p id="previewEndpointShort" class="font-mono text-xs text-[var(--ink-muted)] truncate">/Minh-Khoa</p>
           </div>
 
           <!-- QR Canvas Container -->
-          <div class="relative w-56 h-56 mx-auto rounded-2xl p-3 bg-white border-2 border-[#881337]/20 shadow-inner flex items-center justify-center">
+          <div class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto rounded-2xl p-2.5 sm:p-3 bg-white border-2 border-[#881337]/20 shadow-inner flex items-center justify-center">
             <canvas id="qrCodeCanvas" class="w-full h-full block rounded-lg"></canvas>
             <!-- Center Mini Brand Seal -->
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-10 h-10 rounded-full bg-white border-2 border-[#881337] shadow-md flex items-center justify-center text-[10px] font-bold font-editorial text-[#881337]">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[#881337] shadow-md flex items-center justify-center text-[9px] sm:text-[10px] font-bold font-editorial text-[#881337]">
                 HCMUS
               </div>
             </div>
           </div>
 
-          <p class="text-center text-[11px] text-[var(--ink-muted)]">
+          <p class="text-center text-[10px] sm:text-[11px] text-[var(--ink-muted)] px-2">
             Quét mã trên điện thoại để mở trực tiếp thiệp mời với hiệu ứng đĩa than!
           </p>
 
-          <!-- Action Buttons Group -->
-          <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <!-- Action Buttons Group (Touch Friendly on Phone) -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
             <button type="button" onclick="copyCurrentLink()"
-              class="py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5">
+              class="min-h-[42px] py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5 touch-manipulation">
               <span>📋 Sao chép Link</span>
             </button>
             <button type="button" onclick="downloadQRCodePNG()"
-              class="py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5">
+              class="min-h-[42px] py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5 touch-manipulation">
               <span>📥 Tải ảnh QR</span>
             </button>
           </div>
 
           <button type="button" onclick="downloadGraduationBadge()"
-            class="w-full py-2.5 px-3 rounded-xl bg-[#881337]/10 hover:bg-[#881337]/20 text-[#881337] text-xs font-semibold transition-all border border-[#881337]/20 flex items-center justify-center gap-1.5">
-            <span>🎨 Tải Thẻ Thiệp Mời Kèm QR (Để gửi Zalo/Messenger)</span>
+            class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-[#881337]/10 hover:bg-[#881337]/20 text-[#881337] text-xs font-semibold transition-all border border-[#881337]/20 flex items-center justify-center gap-1.5 touch-manipulation">
+            <span>🎨 Tải Thẻ Thiệp Kèm QR (Gửi Zalo/Story)</span>
           </button>
 
           <button type="button" onclick="openCurrentInviteInNewTab()"
-            class="w-full py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all shadow-md flex items-center justify-center gap-1.5">
+            class="w-full min-h-[44px] py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all shadow-md flex items-center justify-center gap-1.5 touch-manipulation">
             <span>🚀 Mở xem thiệp mời của khách này</span> ↗
           </button>
         </div>
@@ -441,38 +464,40 @@
     </div>
 
     <!-- =====================================================================
-         BOTTOM SECTION: DANH SÁCH KHÁCH MỜI ĐÃ TẠO (GUEST LIST MANAGER)
+         BOTTOM SECTION: DANH SÁCH KHÁCH MỜI ĐÃ TẠO (RESPONSIVE TABLE + CARDS)
          ===================================================================== -->
-    <section class="mt-14 pt-10 border-t border-[var(--border-hairline)] space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <section class="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-[var(--border-hairline)] space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <p class="text-xs uppercase tracking-[0.2em] text-[#881337] font-semibold">QUẢN LÝ KHÁCH MỜI</p>
-          <h3 class="font-editorial text-3xl font-semibold text-[var(--ink-primary)] mt-1">
-            Danh sách bạn bè đã tạo thiệp (<span id="guestCountBadge">0</span>)
+          <p class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#881337] font-semibold">QUẢN LÝ KHÁCH MỜI</p>
+          <h3 class="font-editorial text-2xl sm:text-3xl font-semibold text-[var(--ink-primary)] mt-0.5">
+            Danh sách bạn bè (<span id="guestCountBadge">0</span>)
           </h3>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
           <input id="searchGuestInput" type="text" placeholder="Tìm tên bạn bè..." oninput="renderGuestList()"
-            class="px-3 py-1.5 rounded-lg bg-white border border-[var(--border-hairline)] text-xs font-medium focus:outline-none w-44" />
+            class="px-3 py-1.5 rounded-lg bg-white border border-[var(--border-hairline)] text-xs font-medium focus:outline-none flex-1 sm:flex-none sm:w-44" />
           <button type="button" onclick="copyAllGuestLinks()"
-            class="px-3 py-1.5 rounded-lg bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all">
-            📋 Copy toàn bộ link
+            class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all touch-manipulation">
+            📋 Copy hết
           </button>
           <button type="button" onclick="exportGuestListTxt()"
-            class="px-3 py-1.5 rounded-lg bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all">
-            📥 Xuất file danh sách
+            class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-xs font-medium text-[var(--ink-muted)] hover:text-[#881337] transition-all touch-manipulation">
+            📥 Xuất file
           </button>
           <button type="button" onclick="clearAllGuests()"
-            class="px-3 py-1.5 rounded-lg text-xs font-medium text-rose-700 hover:bg-rose-50 transition-all">
-            Xóa hết
+            class="px-2.5 py-1.5 rounded-lg text-xs font-medium text-rose-700 hover:bg-rose-50 transition-all touch-manipulation">
+            Xóa
           </button>
         </div>
       </div>
 
-      <!-- Guest Table Container -->
+      <!-- Guest Container: Hybrid Table for Desktop & Cards for Mobile -->
       <div class="rounded-2xl bg-white border border-[var(--border-hairline)] shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
+        
+        <!-- 1. DESKTOP / LAPTOP TABLE VIEW (Hidden on Mobile) -->
+        <div class="hidden sm:block overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-[#EFEAE3] border-b border-[var(--border-hairline)] text-[10px] uppercase tracking-wider text-[var(--ink-muted)] font-semibold">
               <tr>
@@ -488,7 +513,13 @@
             </tbody>
           </table>
         </div>
-        <div id="emptyGuestState" class="py-12 text-center text-[var(--ink-muted)] text-xs">
+
+        <!-- 2. MOBILE CARD VIEW (Visible only on Smartphones < 640px) -->
+        <div id="guestListMobileCards" class="sm:hidden divide-y divide-[var(--border-hairline)] p-2">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div id="emptyGuestState" class="py-10 text-center text-[var(--ink-muted)] text-xs px-4">
           Chưa có khách mời nào trong danh sách. Hãy nhập tên ở trên và bấm "Lưu vào danh sách"!
         </div>
       </div>
@@ -499,45 +530,45 @@
   <!-- =====================================================================
        CHANGE PIN MODAL
        ===================================================================== -->
-  <div id="changePinModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-[var(--border-hairline)]">
+  <div id="changePinModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-7 space-y-4 sm:space-y-5 shadow-2xl border border-[var(--border-hairline)] my-auto">
       <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
         <div class="flex items-center gap-2">
           <span class="text-lg">🔑</span>
-          <h3 class="font-editorial text-2xl font-bold text-[var(--ink-primary)]">Đổi Mã Truy Cập PIN</h3>
+          <h3 class="font-editorial text-xl sm:text-2xl font-bold text-[var(--ink-primary)]">Đổi Mã PIN Quản Trị</h3>
         </div>
-        <button type="button" onclick="closeChangePinModal()" class="text-stone-400 hover:text-black text-xl font-bold">✕</button>
+        <button type="button" onclick="closeChangePinModal()" class="text-stone-400 hover:text-black text-xl font-bold p-1">✕</button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
+      <div class="space-y-3 text-xs">
         <div>
           <label class="block font-semibold text-[var(--ink-primary)] mb-1">Mã PIN hiện tại:</label>
-          <input id="oldPinInput" type="password" placeholder="Nhập mã cũ..."
-            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-xs font-mono" />
+          <input id="oldPinInput" type="password" inputmode="numeric" placeholder="Nhập mã cũ (mặc định 1111)..."
+            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-sm font-mono" />
         </div>
 
         <div>
           <label class="block font-semibold text-[var(--ink-primary)] mb-1">Mã PIN mới (tối thiểu 4 ký tự):</label>
-          <input id="newPinInput" type="password" placeholder="Nhập mã mới..."
-            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-xs font-mono" />
+          <input id="newPinInput" type="password" inputmode="numeric" placeholder="Nhập mã mới..."
+            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-sm font-mono" />
         </div>
 
         <div>
           <label class="block font-semibold text-[var(--ink-primary)] mb-1">Xác nhận mã PIN mới:</label>
-          <input id="confirmPinInput" type="password" placeholder="Nhập lại mã mới..."
-            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-xs font-mono" />
+          <input id="confirmPinInput" type="password" inputmode="numeric" placeholder="Nhập lại mã mới..."
+            class="w-full px-3 py-2.5 rounded-xl bg-stone-50 border border-[var(--border-hairline)] focus:bg-white text-sm font-mono" />
         </div>
 
         <p id="changePinError" class="text-[11px] text-rose-600 font-medium hidden"></p>
       </div>
 
-      <div class="flex items-center gap-2 pt-2">
+      <div class="flex items-center gap-2 pt-1">
         <button type="button" onclick="closeChangePinModal()"
-          class="flex-1 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium">
+          class="flex-1 min-h-[42px] py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium touch-manipulation">
           Hủy bỏ
         </button>
         <button type="button" onclick="submitChangePin()"
-          class="flex-1 py-2.5 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold shadow-md">
+          class="flex-1 min-h-[42px] py-2.5 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold shadow-md touch-manipulation">
           Lưu mã mới
         </button>
       </div>
@@ -547,22 +578,22 @@
   <!-- =====================================================================
        DEPLOY TO VERCEL MODAL
        ===================================================================== -->
-  <div id="deployGuideModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl border border-[var(--border-hairline)]">
-      <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-4">
+  <div id="deployGuideModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl border border-[var(--border-hairline)] my-auto">
+      <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
         <div class="flex items-center gap-2">
           <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
-          <h3 class="font-editorial text-2xl font-bold text-[var(--ink-primary)]">Deploy Lên Vercel</h3>
+          <h3 class="font-editorial text-xl sm:text-2xl font-bold text-[var(--ink-primary)]">Deploy Lên Vercel</h3>
         </div>
-        <button type="button" onclick="closeDeployGuideModal()" class="text-stone-400 hover:text-black text-xl font-bold">✕</button>
+        <button type="button" onclick="closeDeployGuideModal()" class="text-stone-400 hover:text-black text-xl font-bold p-1">✕</button>
       </div>
 
-      <div class="space-y-4 text-xs sm:text-[13px] text-[var(--ink-muted)] leading-relaxed">
-        <p>Đường link truy cập trang Admin trên Vercel của bạn sẽ là: <code class="text-[#881337] font-semibold bg-stone-100 px-1 py-0.5 rounded font-mono">https://tên-miền-của-bạn.vercel.app/admin-server</code></p>
+      <div class="space-y-3.5 text-xs sm:text-[13px] text-[var(--ink-muted)] leading-relaxed">
+        <p>Đường dẫn trang Admin trên Vercel của bạn là: <code class="text-[#881337] font-semibold bg-stone-100 px-1 py-0.5 rounded font-mono break-all">https://ten-mien-cua-ban.vercel.app/admin-server</code></p>
 
         <div class="p-3.5 rounded-xl bg-[#EFEAE3] space-y-2">
           <p class="font-bold text-[var(--ink-primary)] text-xs uppercase tracking-wider">Cách triển khai nhanh:</p>
-          <ol class="list-decimal list-inside space-y-1 text-xs">
+          <ol class="list-decimal list-inside space-y-1.5 text-xs">
             <li>Đẩy dự án lên GitHub của bạn (<code class="font-mono">git push</code>).</li>
             <li>Đăng nhập <a href="https://vercel.com" target="_blank" class="text-[#881337] underline font-semibold">Vercel.com</a>, chọn <strong>Add New → Project</strong>.</li>
             <li>Chọn repository và bấm <strong>Deploy</strong>.</li>
@@ -572,7 +603,7 @@
       </div>
 
       <button type="button" onclick="closeDeployGuideModal()"
-        class="w-full py-2.5 rounded-xl bg-[#881337] text-white font-medium text-xs transition-colors hover:bg-[#6e0f2c]">
+        class="w-full min-h-[44px] py-2.5 rounded-xl bg-[#881337] text-white font-medium text-xs transition-colors hover:bg-[#6e0f2c] touch-manipulation">
         Đã hiểu, đóng cửa sổ
       </button>
     </div>
@@ -585,12 +616,10 @@
        JAVASCRIPT CONTROLLER
        ===================================================================== -->
   <script>
-    // System State
     let currentGuestName = 'Minh Khoa';
     let currentDomain = window.location.origin;
     let guestList = [];
 
-    // Local Storage Keys
     const LS_DOMAIN_KEY = 'hcmus_custom_domain';
     const LS_GUESTS_KEY = 'hcmus_guest_list_v1';
     const LS_SETTINGS_KEY = 'hcmus_host_settings';
@@ -635,7 +664,7 @@
         if (errorMsg) errorMsg.classList.remove('hidden');
         if (card) {
           card.classList.remove('shake-anim');
-          void card.offsetWidth; // Trigger reflow
+          void card.offsetWidth;
           card.classList.add('shake-anim');
         }
         if (input) {
@@ -693,7 +722,6 @@
       const oldPin = document.getElementById('oldPinInput')?.value.trim() || '';
       const newPin = document.getElementById('newPinInput')?.value.trim() || '';
       const confirmPin = document.getElementById('confirmPinInput')?.value.trim() || '';
-      const err = document.getElementById('changePinError');
 
       const currentPin = getStoredPin();
 
@@ -710,10 +738,9 @@
         return;
       }
 
-      // Save new PIN
       localStorage.setItem(LS_PIN_KEY, newPin);
       closeChangePinModal();
-      showStatus('Đã cập nhật mã PIN truy cập mới thành công!');
+      showStatus('Đã cập nhật mã PIN mới thành công!');
     }
 
     function showPinError(msg) {
@@ -728,10 +755,8 @@
        INITIALIZATION
        ===================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
-      // 1. Security Check
       checkAuthentication();
 
-      // 2. Load saved domain or use current origin
       const savedDomain = localStorage.getItem(LS_DOMAIN_KEY);
       if (savedDomain && savedDomain.trim()) {
         currentDomain = savedDomain.trim().replace(/\/+$/, '');
@@ -740,13 +765,9 @@
       }
       updateDomainDisplay();
 
-      // 3. Load host settings
       loadHostSettings();
-
-      // 4. Load guest list
       loadGuestList();
 
-      // 5. Initial generator setup
       const input = document.getElementById('guestNameInput');
       input.value = currentGuestName;
       updateGeneratedResult();
@@ -869,7 +890,7 @@
     function copyCurrentLink() {
       const { url } = getFullInviteURL(currentGuestName);
       navigator.clipboard.writeText(url).then(() => {
-        showStatus('Đã sao chép link mời vào bộ nhớ tạm!');
+        showStatus('Đã sao chép link mời!');
       }).catch(() => {
         prompt('Sao chép đường dẫn này:', url);
       });
@@ -907,11 +928,9 @@
       const width = 1080;
       const height = 1350;
 
-      // Cream background
       ctx.fillStyle = '#F7F4F0';
       ctx.fillRect(0, 0, width, height);
 
-      // Borders
       ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
       ctx.lineWidth = 4;
       ctx.strokeRect(50, 50, width - 100, height - 100);
@@ -920,7 +939,6 @@
       ctx.lineWidth = 1;
       ctx.strokeRect(62, 62, width - 124, height - 124);
 
-      // Header text
       ctx.fillStyle = '#881337';
       ctx.font = 'bold 26px "Be Vietnam Pro", sans-serif';
       ctx.textAlign = 'center';
@@ -942,7 +960,6 @@
       ctx.font = 'bold 64px "Cormorant Garamond", Georgia, serif';
       ctx.fillText(currentGuestName, width / 2, 480);
 
-      // QR Frame
       const qrBoxSize = 460;
       const qrBoxX = (width - qrBoxSize) / 2;
       const qrBoxY = 530;
@@ -959,7 +976,6 @@
 
       ctx.drawImage(qrCanvas, qrBoxX + 20, qrBoxY + 20, qrBoxSize - 40, qrBoxSize - 40);
 
-      // Footer
       ctx.fillStyle = '#1F1618';
       ctx.font = 'bold 28px "Be Vietnam Pro", sans-serif';
       ctx.fillText('Chủ Nhật, 15 . 11 . 2026 — 09:30 Sáng', width / 2, 1070);
@@ -991,7 +1007,7 @@
           guestList = JSON.parse(stored);
         } else {
           guestList = [
-            { id: '1', name: 'Minh Khoa', slug: 'Minh-Khoa', date: 'Mẫu mặc định' }
+            { id: '1', name: 'Minh Khoa', slug: 'Minh-Khoa', date: 'Mặc định' }
           ];
         }
       } catch (e) {
@@ -1029,6 +1045,7 @@
 
     function renderGuestList() {
       const tbody = document.getElementById('guestListTableBody');
+      const mobileCards = document.getElementById('guestListMobileCards');
       const emptyState = document.getElementById('emptyGuestState');
       const countBadge = document.getElementById('guestCountBadge');
       const query = document.getElementById('searchGuestInput')?.value.toLowerCase().trim() || '';
@@ -1038,35 +1055,72 @@
       if (countBadge) countBadge.textContent = guestList.length;
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '';
-        emptyState.classList.remove('hidden');
+        if (tbody) tbody.innerHTML = '';
+        if (mobileCards) mobileCards.innerHTML = '';
+        emptyState?.classList.remove('hidden');
         return;
       }
 
-      emptyState.classList.add('hidden');
-      tbody.innerHTML = filtered.map((g, idx) => {
-        const url = `${currentDomain}/${encodeURI(g.slug)}`;
-        return `
-          <tr class="hover:bg-stone-50 transition-colors">
-            <td class="py-3 px-4 text-stone-400 font-mono">${idx + 1}</td>
-            <td class="py-3 px-4 font-semibold text-[var(--ink-primary)]">
-              ${g.name}
-            </td>
-            <td class="py-3 px-4 font-mono text-stone-600">
-              <a href="${url}" target="_blank" class="hover:text-[#881337] hover:underline truncate max-w-xs block">
+      emptyState?.classList.add('hidden');
+
+      // 1. Render Desktop Table Rows
+      if (tbody) {
+        tbody.innerHTML = filtered.map((g, idx) => {
+          const url = `${currentDomain}/${encodeURI(g.slug)}`;
+          return `
+            <tr class="hover:bg-stone-50 transition-colors">
+              <td class="py-3 px-4 text-stone-400 font-mono">${idx + 1}</td>
+              <td class="py-3 px-4 font-semibold text-[var(--ink-primary)]">
+                ${g.name}
+              </td>
+              <td class="py-3 px-4 font-mono text-stone-600">
+                <a href="${url}" target="_blank" class="hover:text-[#881337] hover:underline truncate max-w-xs block">
+                  /${g.slug}
+                </a>
+              </td>
+              <td class="py-3 px-4 text-stone-400 text-[11px]">${g.date || 'Hôm nay'}</td>
+              <td class="py-3 px-4 text-right space-x-2">
+                <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#881337] font-medium" title="Sao chép link">📋 Copy</button>
+                <button onclick="selectGuestForQR('${g.name}')" class="text-[#881337] hover:underline font-medium" title="Xem mã QR">QR</button>
+                <a href="${url}" target="_blank" class="text-stone-600 hover:text-black font-medium" title="Mở xem">Mở ↗</a>
+                <button onclick="deleteGuest('${g.id}')" class="text-rose-600 hover:underline font-medium" title="Xóa">✕</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 2. Render Mobile Touch Cards
+      if (mobileCards) {
+        mobileCards.innerHTML = filtered.map((g) => {
+          const url = `${currentDomain}/${encodeURI(g.slug)}`;
+          return `
+            <div class="p-3.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-sm text-[var(--ink-primary)]">${g.name}</span>
+                <span class="text-[10px] text-stone-400">${g.date || 'Hôm nay'}</span>
+              </div>
+              <div class="text-xs font-mono text-stone-600 bg-stone-100/80 px-2 py-1 rounded truncate">
                 /${g.slug}
-              </a>
-            </td>
-            <td class="py-3 px-4 text-stone-400 text-[11px]">${g.date || 'Hôm nay'}</td>
-            <td class="py-3 px-4 text-right space-x-2">
-              <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#881337] font-medium" title="Sao chép link">📋 Copy</button>
-              <button onclick="selectGuestForQR('${g.name}')" class="text-[#881337] hover:underline font-medium" title="Xem mã QR">QR</button>
-              <a href="${url}" target="_blank" class="text-stone-600 hover:text-black font-medium" title="Mở xem">Mở ↗</a>
-              <button onclick="deleteGuest('${g.id}')" class="text-rose-600 hover:underline font-medium" title="Xóa">✕</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
+              </div>
+              <div class="flex items-center gap-1.5 pt-1">
+                <button onclick="copyGuestLink('${url}')" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-medium text-center touch-manipulation">
+                  📋 Copy
+                </button>
+                <button onclick="selectGuestForQR('${g.name}')" class="flex-1 py-1.5 px-2 rounded-lg bg-[#881337]/10 text-[#881337] text-xs font-semibold text-center touch-manipulation">
+                  📱 Xem QR
+                </button>
+                <a href="${url}" target="_blank" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-medium text-center touch-manipulation">
+                  👁️ Mở ↗
+                </a>
+                <button onclick="deleteGuest('${g.id}')" class="p-1.5 rounded-lg text-rose-600 text-xs font-medium touch-manipulation">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
     function copyGuestLink(url) {
@@ -1077,7 +1131,7 @@
 
     function selectGuestForQR(name) {
       fillQuickName(name);
-      window.scrollTo({ top: 120, behavior: 'smooth' });
+      window.scrollTo({ top: 100, behavior: 'smooth' });
     }
 
     function deleteGuest(id) {
