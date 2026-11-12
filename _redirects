@@ -1,0 +1,4 @@
+/admin-server       /admin.html        200
+/event-config.json  /event-config.json 200
+/assets/*           /assets/:splat     200
+/*                  /index.html        200
