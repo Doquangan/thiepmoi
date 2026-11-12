@@ -1,0 +1,19 @@
+{
+  "name": "thiep-moi-tot-nghiep-hcmus",
+  "version": "1.0.0",
+  "description": "Trang web thiệp mời tốt nghiệp cá nhân hóa theo từng người bạn với mã QR và endpoint riêng biệt",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "graduation",
+    "invitation",
+    "hcmus",
+    "qr-code",
+    "vercel"
+  ],
+  "author": "HCMUS Graduate",
+  "license": "MIT"
+}

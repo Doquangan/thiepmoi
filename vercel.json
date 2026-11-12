@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/invite", "destination": "/invite.html" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/((?!api|admin|assets|invite|favicon\\.ico|_vercel|.*\\..*).+)", "destination": "/invite.html" }
+  ]
+}

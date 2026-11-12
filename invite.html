@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="pageTitle">Thiệp Mời Tốt Nghiệp — HCMUS</title>
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Thiệp Mời Tốt Nghiệp — HCMUS" />
+  <meta name="description" content="Thư mời tham dự Lễ tốt nghiệp Trường Đại học Khoa học Tự nhiên — ĐHQG-HCM" />
+  
+  <!-- Tailwind CSS & Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-paper: #F7F4F0;
+      --bg-card: #EFEAE3;
+      --ink-primary: #1F1618;
+      --ink-muted: #5C4E52;
+      --accent-burgundy: #881337;
+      --accent-dark: #1F1316;
+      --border-hairline: rgba(31, 22, 24, 0.14);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-paper);
+      color: var(--ink-primary);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .font-editorial {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    /* Subtle Paper Grain Texture */
+    .paper-grain {
+      background-image: radial-gradient(rgba(136, 19, 55, 0.035) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+
+    /* Overlay Transition when Mini-Game is Solved */
+    #introGameOverlay {
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0.65s;
+    }
+
+    #introGameOverlay.is-unlocked {
+      opacity: 0;
+      transform: translateY(-18px) scale(1.02);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Vinyl Record Spin Animation */
+    @keyframes vinylSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .vinyl-spinning {
+      animation: vinylSpin 4.5s linear infinite;
+    }
+  </style>
+</head>
+<body class="paper-grain min-h-screen selection:bg-[#881337] selection:text-white">
+
+  <!-- =====================================================================
+       STATUS TOAST
+       ===================================================================== -->
+  <div id="statusToast"
+    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-[#1F1316] text-[#F7F4F0] text-xs font-medium shadow-xl border border-white/10 opacity-0 translate-y-3 pointer-events-none transition-all duration-300">
+    Đã mở thiệp mời
+  </div>
+
+  <!-- =====================================================================
+       INTERACTIVE VINYL RECORD UNLOCK OVERLAY
+       ===================================================================== -->
+  <div id="introGameOverlay" class="fixed inset-0 z-40 bg-[#1F1316] text-[#F7F4F0] flex flex-col items-center justify-center px-5 py-8 select-none">
+
+    <!-- Subtle Editorial Header inside Overlay -->
+    <div class="text-center mb-6 max-w-md">
+      <p class="text-[10px] uppercase tracking-[0.26em] text-rose-300/80 font-semibold mb-1.5">
+        HCMUS // CLASS OF 2026
+      </p>
+      <p class="text-xs text-stone-400">
+        Thư mời dành riêng cho <span class="guest-name-display text-white font-semibold">Bạn của tôi</span>
+      </p>
+    </div>
+
+    <!-- VINYL RECORD TONEARM CUEING -->
+    <div id="game-panel-vinyl" class="w-full max-w-sm">
+      <div id="vinylDeckBox" onclick="cueVinylRecord()"
+        class="relative w-full aspect-[4/3] rounded-2xl bg-[#2A1A1E] border border-white/15 shadow-2xl p-5 flex items-center justify-center overflow-hidden cursor-pointer touch-none group">
+        <!-- Subtle Deck Corner Screws -->
+        <span class="absolute top-3 left-3 w-1.5 h-1.5 rounded-full bg-white/20"></span>
+        <span class="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-white/20"></span>
+        <span class="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full bg-white/20"></span>
+        <span class="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full bg-white/20"></span>
+
+        <!-- Vinyl Disc -->
+        <div id="vinylDisc" class="relative w-44 h-44 sm:w-48 sm:h-48 rounded-full bg-[#120B0D] border-4 border-stone-800 shadow-2xl flex items-center justify-center transition-transform group-hover:scale-[1.02]">
+          <!-- Vinyl Grooves -->
+          <div class="absolute inset-3 rounded-full border border-white/10"></div>
+          <div class="absolute inset-6 rounded-full border border-white/10"></div>
+          <div class="absolute inset-9 rounded-full border border-white/10"></div>
+          <div class="absolute inset-12 rounded-full border border-white/10"></div>
+          <!-- Light Sheen -->
+          <div class="absolute inset-0 rounded-full bg-[conic-gradient(from_45deg,transparent_0%,rgba(255,255,255,0.08)_12%,transparent_25%,transparent_50%,rgba(255,255,255,0.08)_62%,transparent_75%)] pointer-events-none"></div>
+          <!-- Center Burgundy Record Label -->
+          <div class="relative w-16 h-16 rounded-full bg-[#881337] border-2 border-amber-200/60 flex flex-col items-center justify-center text-center shadow-inner">
+            <span class="text-[7px] uppercase tracking-widest text-amber-200 font-bold">SIDE A</span>
+            <span class="font-editorial text-xs font-bold text-white leading-none mt-0.5">2026</span>
+            <span class="w-2 h-2 rounded-full bg-[#1F1316] mt-1 border border-white/30"></span>
+          </div>
+        </div>
+
+        <!-- Tonearm Assembly (Top Right Pivot) -->
+        <div id="vinylTonearm" style="transform: rotate(-28deg);"
+          class="absolute top-5 right-7 origin-top-right transition-transform duration-500 ease-out pointer-events-none">
+          <!-- Pivot Base -->
+          <div class="w-8 h-8 rounded-full bg-stone-300 border-2 border-stone-500 shadow-lg flex items-center justify-center">
+            <div class="w-3 h-3 rounded-full bg-[#881337]"></div>
+          </div>
+          <!-- Arm Rod -->
+          <div class="w-1.5 h-28 bg-gradient-to-b from-stone-200 to-stone-400 mx-auto -mt-1 rounded-full shadow"></div>
+          <!-- Cartridge Head -->
+          <div class="w-3.5 h-5 bg-[#881337] border border-amber-200/70 rounded-sm mx-auto -mt-0.5 shadow-md"></div>
+        </div>
+
+        <!-- Pulsing Target Ring on Disc Edge -->
+        <div id="vinylDropHint" class="absolute right-16 bottom-12 w-7 h-7 rounded-full border border-dashed border-amber-300/80 animate-ping pointer-events-none"></div>
+      </div>
+
+      <div class="mt-4 text-center space-y-1">
+        <p class="text-xs font-medium text-stone-200">Chạm vào đĩa than để hạ kim phát bản nhạc tốt nghiệp</p>
+        <p id="vinylStatusText" class="text-[11px] text-stone-400">Trạng thái: Đang chờ hạ kim...</p>
+      </div>
+    </div>
+
+    <!-- Subtle Skip Option -->
+    <button type="button" onclick="unlockInvitation('Đã mở thiệp mời')"
+      class="mt-8 text-[11px] uppercase tracking-[0.18em] text-stone-400 hover:text-white underline underline-offset-4 transition-colors">
+      Mở nhanh thiệp mời →
+    </button>
+  </div>
+
+  <!-- =====================================================================
+       MAIN EDITORIAL INVITATION (CONCEPT 1 — ĐỎ RƯỢU & KEM SỮA — HCMUS)
+       ===================================================================== -->
+  <main class="max-w-3xl mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
+
+    <!-- Top Editorial Metadata Bar -->
+    <header class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-4 text-[11px] uppercase tracking-[0.2em] text-[var(--ink-muted)]">
+      <span>HCMUS // GRADUATION</span>
+      <span class="font-semibold text-[var(--accent-burgundy)]">CLASS OF 2026</span>
+    </header>
+
+    <!-- Asymmetric Editorial Hero Section -->
+    <section class="mt-10 sm:mt-14 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-start">
+      <!-- Left Column: Headline & Personal Greeting -->
+      <div class="md:col-span-7 space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#881337]/10 text-[#881337] text-[11px] font-semibold tracking-wider uppercase">
+          <span id="schoolNameDisplay">Trường ĐH Khoa học Tự nhiên</span>
+        </div>
+
+        <h1 class="font-editorial text-5xl sm:text-6xl font-semibold leading-[0.98] tracking-tight text-[var(--ink-primary)]">
+          The Final<br />
+          <span class="italic font-normal text-[#881337]">Chapter.</span>
+        </h1>
+
+        <div class="pt-2 space-y-4 text-sm sm:text-[15px] leading-relaxed text-[var(--ink-muted)]">
+          <p class="text-[var(--ink-primary)] font-medium text-base">
+            <span id="salutationPrefix">Gửi</span> <span class="guest-name-display text-[#881337] font-semibold underline decoration-[#881337]/30 underline-offset-4">Bạn của tôi</span>,
+          </p>
+          <p>
+            Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.
+          </p>
+          <p>
+            Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.
+          </p>
+        </div>
+
+        <!-- Host Signature -->
+        <div class="pt-3 border-t border-[var(--border-hairline)] flex items-baseline justify-between">
+          <div>
+            <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--ink-muted)]">Thân mời từ</p>
+            <p id="hostNameDisplay" class="font-editorial text-2xl font-semibold text-[var(--ink-primary)] mt-0.5">Nguyễn Hoàng Nam</p>
+          </div>
+          <span class="text-xs text-[var(--ink-muted)]">ĐHQG-HCM</span>
+        </div>
+      </div>
+
+      <!-- Right Column: Portrait Photo Frame -->
+      <div class="md:col-span-5">
+        <label for="portraitInput" class="group block cursor-pointer">
+          <div class="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#EFEAE3] border border-[var(--border-hairline)] shadow-sm">
+            <img id="portraitPreviewImg" src="" alt="Ảnh chân dung tốt nghiệp" class="hidden w-full h-full object-cover" />
+            <div id="portraitPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-colors group-hover:bg-[#E7E0D6]">
+              <div class="w-11 h-11 rounded-full border border-[#881337]/30 flex items-center justify-center text-[#881337] mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+                </svg>
+              </div>
+              <p class="font-editorial text-lg font-semibold text-[var(--ink-primary)]">Ảnh chân dung cử nhân</p>
+              <p class="text-[11px] text-[var(--ink-muted)] mt-1">Chạm để thử tải ảnh của bạn</p>
+            </div>
+          </div>
+          <div class="mt-2.5 flex items-center justify-between text-[11px] text-[var(--ink-muted)]">
+            <span>FIG 01. GRADUATE PORTRAIT</span>
+            <span>2026</span>
+          </div>
+        </label>
+        <input id="portraitInput" type="file" accept="image/*" class="hidden" onchange="previewLocalImage(this, 'portraitPreviewImg', 'portraitPlaceholder')" />
+      </div>
+    </section>
+
+    <!-- Editorial Divider -->
+    <div class="my-12 sm:my-16 border-t border-[var(--border-hairline)]"></div>
+
+    <!-- Event Key Details (Time & Venue) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
+      <!-- Time Block -->
+      <div class="space-y-2">
+        <p class="text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold">01 // Thời gian</p>
+        <h2 id="eventDateDisplay" class="font-editorial text-3xl font-semibold text-[var(--ink-primary)]">
+          Chủ Nhật, 15 . 11 . 2026
+        </h2>
+        <p id="eventTimeDesc" class="text-sm text-[var(--ink-muted)] leading-relaxed">
+          Đón khách &amp; chụp ảnh tự do ngoài sân trường từ <strong class="text-[var(--ink-primary)] font-semibold">09:30 Sáng</strong> (sau khi kết thúc nghi thức trong hội trường).
+        </p>
+      </div>
+
+      <!-- Venue Block -->
+      <div class="space-y-2">
+        <p class="text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold">02 // Địa điểm</p>
+        <h2 id="venueNameDisplay" class="font-editorial text-3xl font-semibold text-[var(--ink-primary)]">
+          ĐH Khoa học Tự nhiên
+        </h2>
+        <p id="venueAddressDisplay" class="text-sm text-[var(--ink-muted)] leading-relaxed">
+          Cơ sở 1 — <strong class="text-[var(--ink-primary)] font-semibold">227 Nguyễn Văn Cừ</strong>, Phường 4, Quận 5, TP. Hồ Chí Minh.
+        </p>
+      </div>
+    </section>
+
+    <!-- Editorial Divider -->
+    <div class="my-12 sm:my-16 border-t border-[var(--border-hairline)]"></div>
+
+    <!-- Campus Map Section -->
+    <section class="space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold">03 // Sơ đồ khuôn viên</p>
+          <h2 class="font-editorial text-3xl sm:text-4xl font-semibold text-[var(--ink-primary)] mt-1">
+            Bản đồ khu vực hẹn gặp
+          </h2>
+        </div>
+        <span class="text-xs text-[var(--ink-muted)]">HCMUS — 227 Nguyễn Văn Cừ</span>
+      </div>
+
+      <!-- Campus Map Image Frame -->
+      <label for="campusMapInput" class="group block cursor-pointer">
+        <div class="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#EFEAE3] border border-[var(--border-hairline)]">
+          <img id="campusMapImg" src="" alt="Sơ đồ trường ĐH Khoa học Tự nhiên" class="hidden w-full h-full object-contain bg-white" />
+          <div id="campusMapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-colors group-hover:bg-[#E7E0D6]">
+            <div class="w-12 h-12 rounded-2xl bg-[#881337]/10 text-[#881337] flex items-center justify-center mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+              </svg>
+            </div>
+            <p class="font-editorial text-xl font-semibold text-[var(--ink-primary)]">Khung hiển thị Sơ đồ trường HCMUS</p>
+            <p class="text-xs text-[var(--ink-muted)] mt-1 max-w-md">
+              Chạm vào đây để tải thử ảnh sơ đồ trường của bạn lên xem trực tiếp (hoặc đặt ảnh vào thư mục <code class="text-[#881337]">assets/map.jpg</code>).
+            </p>
+          </div>
+        </div>
+      </label>
+      <input id="campusMapInput" type="file" accept="image/*" class="hidden" onchange="previewLocalImage(this, 'campusMapImg', 'campusMapPlaceholder')" />
+
+      <!-- Compact Wayfinding Legend -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+        <div class="p-3.5 rounded-xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)]">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Điểm A • Lối vào</span>
+          <p class="text-xs font-medium text-[var(--ink-primary)] mt-1">Cổng chính 227 Nguyễn Văn Cừ</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)]">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Điểm B • Gửi xe</span>
+          <p class="text-xs font-medium text-[var(--ink-primary)] mt-1">Bãi giữ xe cổng phụ / Nhà xe trường</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)]">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Điểm C • Điểm hẹn</span>
+          <p class="text-xs font-medium text-[var(--ink-primary)] mt-1">Sân giữa tòa nhà I &amp; Khu vực chụp ảnh</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Minimalist Footer -->
+    <footer class="mt-16 pt-8 border-t border-[var(--border-hairline)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[var(--ink-muted)]">
+      <div class="space-y-1">
+        <p class="font-medium text-[var(--ink-primary)]">Liên hệ khi đến nơi: <a id="contactPhoneDisplay" href="tel:0901234567" class="text-[#881337] underline underline-offset-4">0901 234 567</a></p>
+        <p>Hẹn gặp bạn tại khuôn viên Tự nhiên!</p>
+      </div>
+      <div class="flex items-center gap-5 flex-wrap">
+        <a href="https://maps.google.com/?q=227+Nguyen+Van+Cu,+Quan+5,+Ho+Chi+Minh" target="_blank" rel="noopener noreferrer"
+          class="font-medium text-[var(--ink-primary)] hover:text-[#881337] underline underline-offset-4 transition-colors">
+          Mở Google Maps ↗
+        </a>
+        <button type="button" onclick="downloadCalendarICS()"
+          class="font-medium text-[var(--ink-primary)] hover:text-[#881337] underline underline-offset-4 transition-colors">
+          Lưu lịch hẹn (.ics)
+        </button>
+        <a href="/" class="text-[11px] text-stone-400 hover:text-[#881337] transition-colors ml-2" title="Quản trị tạo thiệp">
+          ⚙️ Admin
+        </a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    /* =====================================================================
+       1. EXTRACT & APPLY GUEST NAME FROM PATHNAME OR URL PARAM
+       ===================================================================== */
+    function getGuestName() {
+      // 1. URL Query Parameter (?to=... or ?name=...)
+      const params = new URLSearchParams(window.location.search);
+      const queryName = params.get('to') || params.get('name');
+      if (queryName && queryName.trim()) {
+        return queryName.trim();
+      }
+
+      // 2. Endpoint pathname (e.g., /Minh-Khoa, /Nguyen-Van-A, /Trần-Đức-Hải)
+      let pathname = window.location.pathname || '';
+      // Strip leading and trailing slashes
+      pathname = pathname.replace(/^\/+|\/+$/g, '');
+
+      // Exclude special paths
+      const excluded = ['admin', 'index.html', 'invite', 'invite.html', ''];
+      if (pathname && !excluded.includes(pathname.toLowerCase())) {
+        try {
+          const decoded = decodeURIComponent(pathname);
+          // Replace dash or underscore with space
+          const formatted = decoded.replace(/[-_]+/g, ' ').trim();
+          if (formatted) return formatted;
+        } catch (e) {
+          console.warn('Cannot decode path:', e);
+        }
+      }
+
+      // 3. Hash fallback (#Minh-Khoa)
+      if (window.location.hash) {
+        try {
+          const hashVal = decodeURIComponent(window.location.hash.substring(1)).replace(/[-_]+/g, ' ').trim();
+          if (hashVal) return hashVal;
+        } catch (e) {}
+      }
+
+      return 'Bạn của tôi';
+    }
+
+    function applyPersonalization() {
+      const guestName = getGuestName();
+      
+      // Update all elements displaying guest name
+      document.querySelectorAll('.guest-name-display').forEach(el => {
+        el.textContent = guestName;
+      });
+
+      // Update page title
+      const titleEl = document.getElementById('pageTitle');
+      if (titleEl) {
+        titleEl.textContent = `Thiệp Mời Tốt Nghiệp HCMUS — Dành riêng cho ${guestName}`;
+      }
+
+      // Salutation prefix (e.g. ?salutation=Kính gửi)
+      const params = new URLSearchParams(window.location.search);
+      const salutation = params.get('salutation') || params.get('prefix');
+      if (salutation && salutation.trim()) {
+        const salutationEl = document.getElementById('salutationPrefix');
+        if (salutationEl) salutationEl.textContent = salutation.trim();
+      }
+
+      // Load optional saved host settings from localStorage if available
+      try {
+        const savedSettings = localStorage.getItem('hcmus_host_settings');
+        if (savedSettings) {
+          const cfg = JSON.parse(savedSettings);
+          if (cfg.hostName) document.getElementById('hostNameDisplay').textContent = cfg.hostName;
+          if (cfg.schoolName) document.getElementById('schoolNameDisplay').textContent = cfg.schoolName;
+          if (cfg.eventDate) document.getElementById('eventDateDisplay').textContent = cfg.eventDate;
+          if (cfg.eventTimeDesc) document.getElementById('eventTimeDesc').innerHTML = cfg.eventTimeDesc;
+          if (cfg.venueName) document.getElementById('venueNameDisplay').textContent = cfg.venueName;
+          if (cfg.venueAddress) document.getElementById('venueAddressDisplay').innerHTML = cfg.venueAddress;
+          if (cfg.contactPhone) {
+            const phoneEl = document.getElementById('contactPhoneDisplay');
+            phoneEl.textContent = cfg.contactPhone;
+            phoneEl.href = `tel:${cfg.contactPhone.replace(/\\s+/g, '')}`;
+          }
+        }
+      } catch (e) {}
+
+      // Check for default static images if provided in assets/
+      checkStaticImage('/assets/portrait.jpg', 'portraitPreviewImg', 'portraitPlaceholder');
+      checkStaticImage('/assets/map.jpg', 'campusMapImg', 'campusMapPlaceholder');
+    }
+
+    function checkStaticImage(url, imgId, placeholderId) {
+      const img = new Image();
+      img.onload = function() {
+        const targetImg = document.getElementById(imgId);
+        const placeholder = document.getElementById(placeholderId);
+        if (targetImg) {
+          targetImg.src = url;
+          targetImg.classList.remove('hidden');
+        }
+        if (placeholder) {
+          placeholder.classList.add('hidden');
+        }
+      };
+      img.src = url;
+    }
+
+    /* =====================================================================
+       2. WEB AUDIO API CHIME (Sound on Vinyl needle drop)
+       ===================================================================== */
+    function playGraduationChime() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        // Warm melodic chord progression (F4, A4, C5, E5, G5)
+        const notes = [349.23, 440.00, 523.25, 659.25, 783.99];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+          const startTime = ctx.currentTime + 0.15 + (idx * 0.16);
+          gain.gain.setValueAtTime(0.001, startTime);
+          gain.gain.linearRampToValueAtTime(0.12, startTime + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.2);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + 1.25);
+        });
+      } catch (err) {
+        console.warn('Web Audio note:', err);
+      }
+    }
+
+    /* =====================================================================
+       3. TOAST & LOCAL IMAGE PREVIEW HELPERS
+       ===================================================================== */
+    let toastTimer = null;
+    function showStatus(message) {
+      const toast = document.getElementById('statusToast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2400);
+    }
+
+    function previewLocalImage(input, imgId, placeholderId) {
+      if (!input.files || !input.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = document.getElementById(imgId);
+        const placeholder = document.getElementById(placeholderId);
+        if (img) {
+          img.src = e.target.result;
+          img.classList.remove('hidden');
+        }
+        if (placeholder) {
+          placeholder.classList.add('hidden');
+        }
+        showStatus('Đã cập nhật ảnh xem trước');
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    function downloadCalendarICS() {
+      const hostName = document.getElementById('hostNameDisplay')?.textContent || 'Nguyễn Hoàng Nam';
+      const icsLines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//HCMUS Graduation//VI',
+        'BEGIN:VEVENT',
+        'DTSTART:20261115T023000Z',
+        'DTEND:20261115T050000Z',
+        'SUMMARY:Lễ Tốt Nghiệp ' + hostName + ' — ĐH Khoa học Tự nhiên (HCMUS)',
+        'LOCATION:227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM',
+        'DESCRIPTION:Hẹn gặp tại sân trường ĐH Khoa học Tự nhiên để chụp ảnh kỷ niệm tốt nghiệp cùng ' + hostName + '!',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([icsLines], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Le-Tot-Nghiep-HCMUS-2026.ics';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showStatus('Đã tải tệp lịch hẹn (.ics)');
+    }
+
+    /* =====================================================================
+       4. VINYL RECORD UNLOCK CONTROLLER
+       ===================================================================== */
+    let isUnlocked = false;
+    let isVinylPlaying = false;
+
+    function unlockInvitation(toastMsg) {
+      if (isUnlocked) return;
+      isUnlocked = true;
+      const overlay = document.getElementById('introGameOverlay');
+      if (overlay) overlay.classList.add('is-unlocked');
+      if (toastMsg) showStatus(toastMsg);
+    }
+
+    function cueVinylRecord() {
+      if (isUnlocked || isVinylPlaying) return;
+      isVinylPlaying = true;
+
+      const disc = document.getElementById('vinylDisc');
+      const arm = document.getElementById('vinylTonearm');
+      const hint = document.getElementById('vinylDropHint');
+      const status = document.getElementById('vinylStatusText');
+
+      if (arm) arm.style.transform = 'rotate(16deg)';
+      if (hint) hint.classList.add('hidden');
+      if (status) status.textContent = 'Đang phát: Soundtrack Thanh Xuân 2022–2026...';
+
+      // Play soft chime
+      playGraduationChime();
+
+      setTimeout(() => {
+        if (disc) disc.classList.add('vinyl-spinning');
+      }, 280);
+
+      setTimeout(() => {
+        unlockInvitation('Chào mừng bạn đến với buổi lễ tốt nghiệp!');
+      }, 1250);
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      applyPersonalization();
+    });
+  </script>
+</body>
+</html>
