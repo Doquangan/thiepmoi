@@ -77,6 +77,44 @@
       animation: vinylSpin 4.5s linear infinite;
     }
 
+    /* Student Walking Animation */
+    .is-walking .student-body {
+      animation: studentWalkBob 0.28s ease-in-out infinite;
+    }
+    .is-walking .student-leg-left {
+      animation: studentLegLeft 0.28s ease-in-out infinite alternate;
+      transform-origin: 14px 37px;
+    }
+    .is-walking .student-leg-right {
+      animation: studentLegRight 0.28s ease-in-out infinite alternate;
+      transform-origin: 22px 37px;
+    }
+
+    @keyframes studentWalkBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @keyframes studentLegLeft {
+      0% { transform: rotate(-22deg); }
+      100% { transform: rotate(22deg); }
+    }
+    @keyframes studentLegRight {
+      0% { transform: rotate(22deg); }
+      100% { transform: rotate(-22deg); }
+    }
+
+    /* Graduation Cap Toss Celebration upon Arrival */
+    .has-arrived .student-cap {
+      animation: capTossCeleb 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+      transform-origin: 18px 12px;
+    }
+    @keyframes capTossCeleb {
+      0% { transform: translateY(0) rotate(0deg); }
+      40% { transform: translateY(-24px) rotate(-22deg) scale(1.2); }
+      75% { transform: translateY(-8px) rotate(8deg) scale(1.1); }
+      100% { transform: translateY(-12px) rotate(4deg) scale(1.08); }
+    }
+
     /* Safe Area insets for notch phones */
     .safe-top {
       padding-top: max(1rem, env(safe-area-inset-top));
@@ -110,6 +148,67 @@
       <p class="text-xs sm:text-sm text-stone-300 font-light">
         Thư mời dành riêng cho <span class="guest-name-display text-white font-semibold underline decoration-rose-400/40 underline-offset-2 break-words">Bạn của tôi</span>
       </p>
+    </div>
+
+    <!-- MÔ HÌNH SINH VIÊN NAM BƯỚC ĐI ĐẾN ĐÍCH TỐT NGHIỆP -->
+    <div id="studentJourneyContainer" class="w-full max-w-[320px] sm:max-w-sm mx-auto mb-3.5 p-3 rounded-2xl bg-[#2A1A1E] border border-white/15 shadow-xl">
+      <!-- Journey Header -->
+      <div class="flex items-center justify-between text-[10px] text-rose-300/80 font-semibold mb-2">
+        <span class="flex items-center gap-1">🌱 <span>2022</span></span>
+        <span id="journeyStatusLabel" class="text-amber-200 font-bold uppercase tracking-wider text-[9px] sm:text-[10px]">Chạm đĩa than để xuất phát</span>
+        <span class="flex items-center gap-1"><span>2026</span> 🎓</span>
+      </div>
+
+      <!-- Walking Track Rail -->
+      <div class="relative w-full h-9 flex items-center px-1">
+        <!-- Background Track Line -->
+        <div class="absolute inset-x-2 h-1.5 rounded-full bg-stone-900 border border-white/10 overflow-hidden">
+          <div id="journeyProgressBar" class="h-full w-0 bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400 transition-all duration-[3000ms] ease-out rounded-full shadow-[0_0_12px_rgba(251,191,36,0.6)]"></div>
+        </div>
+
+        <!-- Start Milestone -->
+        <div class="absolute left-1 -top-1 w-5 h-5 rounded-full bg-[#120B0D] border border-rose-400/40 flex items-center justify-center text-[9px]" title="Năm 1 • Nhập học">
+          🎒
+        </div>
+
+        <!-- Finish Milestone (Đích đến) -->
+        <div id="finishFlagBadge" class="absolute right-1 -top-1.5 w-6 h-6 rounded-full bg-[#881337] border-2 border-amber-300 flex items-center justify-center text-xs shadow-md transition-all duration-300" title="Đích đến • Lễ tốt nghiệp">
+          🎓
+        </div>
+
+        <!-- Animated Student Character (Sinh viên nam cử nhân) -->
+        <div id="studentWalker" style="left: 0%;"
+          class="absolute -top-4 w-9 h-12 transition-all duration-[3000ms] ease-out pointer-events-none select-none z-10 flex flex-col items-center">
+          <svg class="w-7 h-9 overflow-visible" viewBox="0 0 36 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Graduation Cap (Bay lên khi đến đích) -->
+            <g class="student-cap">
+              <path d="M18 2L32 8L18 14L4 8L18 2Z" fill="#1F1316" stroke="#FDE68A" stroke-width="1.2" />
+              <path d="M12 11.5V16C12 18 24 18 24 16V11.5" fill="#881337" />
+              <path d="M18 8L29 11V18" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round" />
+              <circle cx="29" cy="18.5" r="1.5" fill="#F59E0B" />
+            </g>
+
+            <!-- Student Head & Body -->
+            <g class="student-body">
+              <circle cx="18" cy="19" r="6" fill="#FCD34D" stroke="#D97706" stroke-width="0.8" />
+              <path d="M12.5 17C12.5 15 15 13.5 18 13.5C21 13.5 23.5 15 23.5 17" fill="#451A03" />
+              <circle cx="16" cy="18.5" r="0.8" fill="#1F1316" />
+              <circle cx="20" cy="18.5" r="0.8" fill="#1F1316" />
+              <path d="M16.5 21C17.2 21.8 18.8 21.8 19.5 21" stroke="#92400E" stroke-width="0.7" stroke-linecap="round" />
+              <path d="M12 25L10 37H26L24 25H12Z" fill="#1E3A8A" />
+              <path d="M14 25L18 33L22 25" stroke="#881337" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <rect x="23" y="27" width="7" height="3" rx="1.5" fill="#FEF3C7" stroke="#881337" stroke-width="0.8" transform="rotate(25 23 27)" />
+            </g>
+
+            <!-- Moving Legs for Walking -->
+            <g class="student-legs">
+              <line class="student-leg-left" x1="14" y1="37" x2="13" y2="45" stroke="#1F1316" stroke-width="2.2" stroke-linecap="round" />
+              <line class="student-leg-right" x1="22" y1="37" x2="23" y2="45" stroke="#1F1316" stroke-width="2.2" stroke-linecap="round" />
+            </g>
+          </svg>
+          <span class="text-[8px] font-bold text-amber-200 tracking-tight whitespace-nowrap -mt-0.5 drop-shadow">Quang An</span>
+        </div>
+      </div>
     </div>
 
     <!-- VINYL RECORD TONEARM CUEING (RESPONSIVE BOX) -->
@@ -582,7 +681,92 @@
     }
 
     /* =====================================================================
-       4. CONTINUOUS SOUNDTRACK CONTROLLER (PHÁT MÃI LUÔN KHI BẤM ĐĨA THAN)
+       4. REALISTIC VINYL SOUND EFFECT (TIẾNG BỎ ĐĨA VÀO & TIẾNG XOAY ĐĨA)
+       ===================================================================== */
+    let vinylNoiseNode = null;
+    let vinylNoiseGain = null;
+
+    function playVinylDropSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const t0 = audioCtx.currentTime;
+
+        // 1. Tiếng "thump" cơ học khi kim chạm mặt đĩa than
+        const thumpOsc = audioCtx.createOscillator();
+        const thumpGain = audioCtx.createGain();
+        thumpOsc.type = 'sine';
+        thumpOsc.frequency.setValueAtTime(130, t0);
+        thumpOsc.frequency.exponentialRampToValueAtTime(45, t0 + 0.16);
+
+        thumpGain.gain.setValueAtTime(0.45, t0);
+        thumpGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.28);
+
+        thumpOsc.connect(thumpGain);
+        thumpGain.connect(audioCtx.destination);
+        thumpOsc.start(t0);
+        thumpOsc.stop(t0 + 0.3);
+
+        // 2. Tiếng ma sát rãnh đĩa, tiếng lách tách (crackle) và tiếng mô tơ xoay rừ rừ
+        const sampleRate = audioCtx.sampleRate;
+        const durationSec = 3.8;
+        const bufferSize = Math.floor(sampleRate * durationSec);
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, sampleRate);
+        const channelData = noiseBuffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          // Tiếng xì xào mặt đĩa xoay (surface hiss)
+          let s = (Math.random() * 2 - 1) * 0.07;
+          // Tiếng nổ lách tách ngẫu nhiên đặc trưng của đĩa than (vinyl pops)
+          if (Math.random() < 0.004) {
+            s += (Math.random() * 2 - 1) * 0.65;
+          }
+          channelData[i] = s;
+        }
+
+        const noiseSrc = audioCtx.createBufferSource();
+        noiseSrc.buffer = noiseBuffer;
+
+        // Lọc dải tần số đặc trưng của rãnh đĩa than (1500Hz - 3200Hz)
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2200, t0);
+        filter.Q.setValueAtTime(1.8, t0);
+
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0.01, t0);
+        gainNode.gain.linearRampToValueAtTime(0.22, t0 + 0.12);
+        // Nhỏ dần khi sinh viên chạm đích và chuẩn bị mở nhạc thật
+        gainNode.gain.setValueAtTime(0.22, t0 + 2.8);
+        gainNode.gain.linearRampToValueAtTime(0.001, t0 + 3.3);
+
+        noiseSrc.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        noiseSrc.start(t0 + 0.04);
+        noiseSrc.stop(t0 + 3.5);
+
+        vinylNoiseNode = noiseSrc;
+        vinylNoiseGain = gainNode;
+      } catch (e) {
+        console.warn('Vinyl sound error:', e);
+      }
+    }
+
+    function stopVinylSoundNow() {
+      try {
+        if (vinylNoiseGain && audioCtx) {
+          vinylNoiseGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        }
+      } catch (e) {}
+    }
+
+    /* =====================================================================
+       5. CONTINUOUS SOUNDTRACK CONTROLLER (BẢN NHẠC TỐT NGHIỆP PHÁT MÃI LUÔN)
        ===================================================================== */
     let bgMusic = null;
     let isMusicActive = false;
@@ -608,7 +792,7 @@
           isMusicActive = true;
           updateMusicButtonState(true);
         }).catch((err) => {
-          console.warn('Audio autoplay blocked or waiting gesture:', err);
+          console.warn('Audio play restricted:', err);
         });
       }
     }
@@ -643,7 +827,7 @@
     }
 
     /* =====================================================================
-       5. VINYL RECORD UNLOCK CONTROLLER
+       6. VINYL RECORD & STUDENT JOURNEY CONTROLLER
        ===================================================================== */
     let isUnlocked = false;
     let isVinylPlaying = false;
@@ -651,8 +835,9 @@
     function unlockInvitation(toastMsg) {
       if (isUnlocked) return;
       isUnlocked = true;
-      // Start soundtrack if not yet playing
+      stopVinylSoundNow();
       startContinuousMusic();
+
       const overlay = document.getElementById('introGameOverlay');
       if (overlay) overlay.classList.add('is-unlocked');
       if (toastMsg) showStatus(toastMsg);
@@ -667,20 +852,68 @@
       const hint = document.getElementById('vinylDropHint');
       const status = document.getElementById('vinylStatusText');
 
+      const walker = document.getElementById('studentWalker');
+      const progressBar = document.getElementById('journeyProgressBar');
+      const journeyLabel = document.getElementById('journeyStatusLabel');
+      const finishBadge = document.getElementById('finishFlagBadge');
+
+      // 1. Hạ kim đĩa than & đĩa bắt đầu quay
       if (arm) arm.style.transform = 'rotate(16deg)';
       if (hint) hint.classList.add('hidden');
-      if (status) status.textContent = 'Đang phát bản nhạc tốt nghiệp...';
-
-      // PHÁT NGAY LẬP TỨC KHI BẠN BÈ BẤM VÀO ĐĨA VÀ PHÁT MÃI LUÔN (LOOP LIÊN TỤC)
-      startContinuousMusic();
-
       setTimeout(() => {
         if (disc) disc.classList.add('vinyl-spinning');
-      }, 260);
+      }, 200);
 
+      // 2. PHÁT TIẾNG BỎ ĐĨA VÀO & TIẾNG XOAY RÃNH ĐĨA THAN
+      playVinylDropSound();
+
+      // 3. SINH VIÊN BƯỚC ĐI TỪ NĂM 2022 ĐẾN ĐÍCH 2026
+      if (walker) {
+        walker.classList.add('is-walking');
+        walker.style.left = 'calc(100% - 32px)';
+      }
+      if (progressBar) {
+        progressBar.style.width = '100%';
+      }
+      if (journeyLabel) {
+        journeyLabel.textContent = 'Đang bước về đích...';
+      }
+      if (status) {
+        status.textContent = 'Đĩa than đang xoay... Sinh viên đang đến đích!';
+      }
+
+      // Thông báo giữa chặng
       setTimeout(() => {
-        unlockInvitation('Chào mừng bạn đến với buổi lễ tốt nghiệp!');
-      }, 1200);
+        if (journeyLabel && !isUnlocked) {
+          journeyLabel.textContent = 'Sắp hoàn thành chặng đường!';
+        }
+      }, 1600);
+
+      // 4. KHI SINH VIÊN BƯỚC ĐẾN ĐÍCH (3.0 GIÂY)
+      setTimeout(() => {
+        // Sinh viên chạm đích
+        if (walker) {
+          walker.classList.remove('is-walking');
+          walker.classList.add('has-arrived');
+        }
+        if (finishBadge) {
+          finishBadge.classList.add('scale-125', 'ring-4', 'ring-amber-300');
+        }
+        if (journeyLabel) {
+          journeyLabel.textContent = 'ĐÃ TỐT NGHIỆP! 🎓';
+        }
+        if (status) {
+          status.textContent = 'Đã đến đích! Khởi động bản nhạc tốt nghiệp...';
+        }
+
+        // BẢN NHẠC THẬT SỰ CỦA BẠN CHÍNH THỨC VANG LÊN TẠI ĐÍCH ĐẾN!
+        startContinuousMusic();
+      }, 3000);
+
+      // 5. MỞ THIỆP MỜI TRANG TRỌNG (3.6 GIÂY)
+      setTimeout(() => {
+        unlockInvitation('Chúc mừng tốt nghiệp Đỗ Quang An!');
+      }, 3600);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
