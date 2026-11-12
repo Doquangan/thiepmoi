@@ -69,11 +69,35 @@ const server = http.createServer((req, res) => {
     return serveFile(req, res, path.join(ROOT_DIR, 'admin.html'));
   }
 
-  // Redirect /admin to /admin-server
-  if (pathname === '/admin') {
-    res.writeHead(302, { 'Location': '/admin-server' });
-    res.end();
+  // API to save configuration from Admin Dashboard
+  if (pathname === '/api/save-config' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const parsed = JSON.parse(body);
+        fs.writeFileSync(path.join(ROOT_DIR, 'event-config.json'), JSON.stringify(parsed, null, 2), 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: true }));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: e.message }));
+      }
+    });
     return;
+  }
+
+  // Config JSON endpoint
+  if (pathname === '/event-config.json') {
+    const configPath = path.join(ROOT_DIR, 'event-config.json');
+    if (fs.existsSync(configPath)) {
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      });
+      fs.createReadStream(configPath).pipe(res);
+      return;
+    }
   }
 
   // Root or /invite -> Graduation Invitation

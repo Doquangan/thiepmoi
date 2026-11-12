@@ -1,12 +1,10 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "redirects": [
-    { "source": "/admin", "destination": "/admin-server", "permanent": true }
-  ],
   "rewrites": [
     { "source": "/admin-server", "destination": "/admin.html" },
     { "source": "/assets/(.*)", "destination": "/assets/$1" },
-    { "source": "/((?!api|admin-server|admin|assets|favicon\\.ico|_vercel|.*\\..*).+)", "destination": "/index.html" }
+    { "source": "/event-config.json", "destination": "/event-config.json" },
+    { "source": "/((?!api|admin-server|assets|favicon\\.ico|_vercel|.*\\..*).+)", "destination": "/index.html" }
   ]
 }
