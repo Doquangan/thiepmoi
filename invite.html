@@ -366,52 +366,30 @@
     <!-- Editorial Divider -->
     <div class="my-10 sm:my-14 border-t border-[var(--border-hairline)]"></div>
 
-    <!-- Campus Map Section -->
+    <!-- Campus Map Section (Sơ đồ mô phỏng hướng dẫn đường đi) -->
     <section class="space-y-4 sm:space-y-5">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-1 sm:gap-2">
         <div>
           <p class="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold">03 // Sơ đồ khuôn viên</p>
           <h2 class="font-editorial text-2xl sm:text-4xl font-semibold text-[var(--ink-primary)] mt-0.5">
-            Bản đồ khu vực hẹn gặp
+            Hướng dẫn đường đi &amp; Điểm hẹn
           </h2>
         </div>
         <span class="text-[11px] sm:text-xs text-[var(--ink-muted)]">HCMUS — 227 Nguyễn Văn Cừ</span>
       </div>
 
-      <!-- Campus Map Image Frame -->
-      <label for="campusMapInput" class="group block cursor-pointer touch-manipulation">
-        <div class="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#EFEAE3] border border-[var(--border-hairline)] shadow-sm">
-          <img id="campusMapImg" src="" alt="Sơ đồ trường ĐH Khoa học Tự nhiên" class="hidden w-full h-full object-contain bg-white" />
-          <div id="campusMapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center transition-colors group-hover:bg-[#E7E0D6]">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#881337]/10 text-[#881337] flex items-center justify-center mb-2 sm:mb-3">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
-              </svg>
-            </div>
-            <p class="font-editorial text-lg sm:text-xl font-semibold text-[var(--ink-primary)]">Sơ đồ trường HCMUS</p>
-            <p class="text-[11px] sm:text-xs text-[var(--ink-muted)] mt-1 max-w-md">
-              Chạm vào đây để tải thử sơ đồ (hoặc đặt file vào <code class="text-[#881337] font-mono">assets/map.jpg</code>).
-            </p>
-          </div>
-        </div>
-      </label>
-      <input id="campusMapInput" type="file" accept="image/*" class="hidden" onchange="previewLocalImage(this, 'campusMapImg', 'campusMapPlaceholder')" />
-
-      <!-- Compact Wayfinding Legend -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1">
-        <div class="p-3 sm:p-3.5 rounded-xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)]">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Điểm A • Lối vào</span>
-          <p class="text-xs font-medium text-[var(--ink-primary)] mt-0.5">Cổng chính 227 Nguyễn Văn Cừ</p>
-        </div>
-        <div class="p-3 sm:p-3.5 rounded-xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)]">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Điểm B • Gửi xe</span>
-          <p class="text-xs font-medium text-[var(--ink-primary)] mt-0.5">Bãi giữ xe cổng phụ / Nhà xe trường</p>
-        </div>
-        <div class="p-3 sm:p-3.5 rounded-xl bg-[#EFEAE3]/70 border border-[var(--border-hairline)]">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Điểm C • Điểm hẹn</span>
-          <p class="text-xs font-medium text-[var(--ink-primary)] mt-0.5">Sân giữa tòa nhà I &amp; Khu chụp ảnh</p>
-        </div>
+      <!-- Campus Map Simulator Video Frame -->
+      <div class="relative w-full max-w-lg mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#EFEAE3] border border-[var(--border-hairline)] shadow-lg">
+        <video id="campusMapVideo" autoplay loop muted playsinline webkit-playsinline
+          poster="/assets/map_poster.jpg"
+          class="w-full h-auto block select-none pointer-events-none object-contain">
+          <source src="/assets/map.mp4" type="video/mp4" />
+        </video>
       </div>
+
+      <p class="text-center text-[11px] sm:text-xs text-[var(--ink-muted)] pt-0.5">
+        📍 Sơ đồ mô phỏng hướng dẫn đường vào bãi giữ xe và đi bộ đến khu vực chụp ảnh
+      </p>
     </section>
 
     <!-- Minimalist Footer Note (Không còn liên kết admin-server, hoàn toàn riêng tư) -->
@@ -557,7 +535,6 @@
         .catch(() => {});
 
       checkStaticImage('/assets/portrait.jpg', 'portraitPreviewImg', 'portraitPlaceholder');
-      checkStaticImage('/assets/map.jpg', 'campusMapImg', 'campusMapPlaceholder');
     }
 
     function checkStaticImage(url, imgId, placeholderId) {
