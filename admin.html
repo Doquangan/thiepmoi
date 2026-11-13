@@ -364,7 +364,7 @@
               </div>
               <div>
                 <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Cụm thời gian / Khung giờ đón khách:</label>
-                <input id="cfgEventTime" type="text" value="09:30 Sáng — 11:30 Trưa"
+                <input id="cfgEventTime" type="text" value="10:00"
                   class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
               </div>
             </div>
@@ -372,7 +372,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Số điện thoại liên hệ cử nhân:</label>
-                <input id="cfgContactPhone" type="text" value="0901 234 567"
+                <input id="cfgContactPhone" type="text" value="0329486553"
                   class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
               </div>
               <div>
@@ -955,84 +955,140 @@
     }
 
     /* =====================================================================
-       GRADUATION QR BADGE GENERATOR
+       GRADUATION QR BADGE GENERATOR (ĐỒNG BỘ ĐỘNG THEO CẤU HÌNH)
        ===================================================================== */
     function downloadGraduationBadge() {
       const badgeCanvas = document.getElementById('badgeCanvas');
       const qrCanvas = document.getElementById('qrCodeCanvas');
       if (!badgeCanvas || !qrCanvas) return;
 
-      const ctx = badgeCanvas.getContext('2d');
-      const width = 1080;
-      const height = 1350;
+      const renderBadge = () => {
+        const ctx = badgeCanvas.getContext('2d');
+        const width = 1080;
+        const height = 1350;
 
-      ctx.fillStyle = '#F7F4F0';
-      ctx.fillRect(0, 0, width, height);
+        // Lấy cấu hình sự kiện hiện tại (từ form hoặc config đã tải)
+        const hostName = document.getElementById('cfgHostName')?.value.trim() || currentHostConfig?.hostName || 'Đỗ Quang An';
+        const rawSchool = document.getElementById('cfgSchoolName')?.value.trim() || currentHostConfig?.schoolName || 'Trường ĐH Khoa học Tự nhiên';
+        const eventDate = document.getElementById('cfgEventDate')?.value.trim() || currentHostConfig?.eventDate || 'Thứ 5, 26.11.2026';
+        const eventTime = document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '10:00';
+        const venueName = document.getElementById('cfgVenueName')?.value.trim() || currentHostConfig?.venueName || 'ĐH Khoa học Tự nhiên';
+        const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || '227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM';
 
-      ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(50, 50, width - 100, height - 100);
+        // 1. Nền thẻ thiệp
+        ctx.fillStyle = '#F7F4F0';
+        ctx.fillRect(0, 0, width, height);
 
-      ctx.strokeStyle = '#881337';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(62, 62, width - 124, height - 124);
+        // 2. Đường viền đôi trang nhã
+        ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(50, 50, width - 100, height - 100);
 
-      ctx.fillStyle = '#881337';
-      ctx.font = 'bold 26px "Be Vietnam Pro", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('TRƯỜNG ĐH KHOA HỌC TỰ NHIÊN • ĐHQG-HCM', width / 2, 160);
+        ctx.strokeStyle = '#881337';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(62, 62, width - 124, height - 124);
 
-      ctx.fillStyle = '#5C4E52';
-      ctx.font = '22px "Be Vietnam Pro", sans-serif';
-      ctx.fillText('CLASS OF 2026 // GRADUATION INVITATION', width / 2, 205);
+        // 3. Tiêu đề trường học
+        let schoolHeader = rawSchool.toUpperCase();
+        if (!schoolHeader.includes('ĐHQG')) {
+          schoolHeader += ' • ĐHQG-HCM';
+        }
+        ctx.fillStyle = '#881337';
+        ctx.textAlign = 'center';
+        let schoolFontSize = 26;
+        ctx.font = `bold ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(schoolHeader).width > width - 140 && schoolFontSize > 18) {
+          schoolFontSize -= 1;
+          ctx.font = `bold ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(schoolHeader, width / 2, 160);
 
-      ctx.fillStyle = '#1F1618';
-      ctx.font = 'italic 70px "Cormorant Garamond", Georgia, serif';
-      ctx.fillText('The Final Chapter.', width / 2, 310);
+        // 4. Subtitle
+        ctx.fillStyle = '#5C4E52';
+        ctx.font = '22px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('CLASS OF 2026 // GRADUATION INVITATION', width / 2, 205);
 
-      ctx.fillStyle = '#5C4E52';
-      ctx.font = '26px "Be Vietnam Pro", sans-serif';
-      ctx.fillText('Thư mời tham dự dành riêng cho:', width / 2, 400);
+        // 5. Tiêu đề chính The Final Chapter
+        ctx.fillStyle = '#1F1618';
+        ctx.font = 'italic 70px "Cormorant Garamond", Georgia, serif';
+        ctx.fillText('The Final Chapter.', width / 2, 310);
 
-      ctx.fillStyle = '#881337';
-      ctx.font = 'bold 64px "Cormorant Garamond", Georgia, serif';
-      ctx.fillText(currentGuestName, width / 2, 480);
+        // 6. Lời dẫn & Tên khách mời
+        ctx.fillStyle = '#5C4E52';
+        ctx.font = '26px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('Thư mời tham dự dành riêng cho:', width / 2, 400);
 
-      const qrBoxSize = 460;
-      const qrBoxX = (width - qrBoxSize) / 2;
-      const qrBoxY = 530;
+        ctx.fillStyle = '#881337';
+        let guestFontSize = 64;
+        ctx.font = `bold ${guestFontSize}px "Cormorant Garamond", Georgia, serif`;
+        const guestName = currentGuestName || 'Bạn thân mến';
+        while (ctx.measureText(guestName).width > width - 140 && guestFontSize > 36) {
+          guestFontSize -= 2;
+          ctx.font = `bold ${guestFontSize}px "Cormorant Garamond", Georgia, serif`;
+        }
+        ctx.fillText(guestName, width / 2, 480);
 
-      ctx.fillStyle = '#FFFFFF';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
-      ctx.shadowBlur = 30;
-      ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
-      ctx.shadowBlur = 0;
+        // 7. Khung mã QR
+        const qrBoxSize = 460;
+        const qrBoxX = (width - qrBoxSize) / 2;
+        const qrBoxY = 530;
 
-      ctx.strokeStyle = 'rgba(136, 19, 55, 0.3)';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+        ctx.shadowBlur = 30;
+        ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
+        ctx.shadowBlur = 0;
 
-      ctx.drawImage(qrCanvas, qrBoxX + 20, qrBoxY + 20, qrBoxSize - 40, qrBoxSize - 40);
+        ctx.strokeStyle = 'rgba(136, 19, 55, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
 
-      ctx.fillStyle = '#1F1618';
-      ctx.font = 'bold 28px "Be Vietnam Pro", sans-serif';
-      ctx.fillText('Chủ Nhật, 15 . 11 . 2026 — 09:30 Sáng', width / 2, 1070);
+        ctx.drawImage(qrCanvas, qrBoxX + 20, qrBoxY + 20, qrBoxSize - 40, qrBoxSize - 40);
 
-      ctx.fillStyle = '#5C4E52';
-      ctx.font = '24px "Be Vietnam Pro", sans-serif';
-      ctx.fillText('227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM', width / 2, 1120);
+        // 8. Ngày giờ sự kiện (Động theo cấu hình)
+        const dateTimeStr = eventTime ? `${eventDate} — ${eventTime}` : eventDate;
+        ctx.fillStyle = '#1F1618';
+        let dtFontSize = 28;
+        ctx.font = `bold ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(dateTimeStr).width > width - 140 && dtFontSize > 18) {
+          dtFontSize -= 1;
+          ctx.font = `bold ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(dateTimeStr, width / 2, 1070);
 
-      const hostName = document.getElementById('cfgHostName')?.value || 'Đỗ Quang An';
-      ctx.fillStyle = '#881337';
-      ctx.font = 'italic 34px "Cormorant Garamond", Georgia, serif';
-      ctx.fillText('Thân mời từ: ' + hostName, width / 2, 1210);
+        // 9. Địa chỉ sự kiện (Động theo cấu hình)
+        let displayAddr = venueAddress;
+        if (venueName && !displayAddr.toLowerCase().includes(venueName.toLowerCase())) {
+          displayAddr = `${venueName} • ${displayAddr}`;
+        }
+        ctx.fillStyle = '#5C4E52';
+        let addrFontSize = 24;
+        ctx.font = `${addrFontSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(displayAddr).width > width - 140 && addrFontSize > 16) {
+          addrFontSize -= 1;
+          ctx.font = `${addrFontSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(displayAddr, width / 2, 1120);
 
-      const { slug } = getFullInviteURL(currentGuestName);
-      const link = document.createElement('a');
-      link.download = `ThiepMoi-${slug}.png`;
-      link.href = badgeCanvas.toDataURL('image/png');
-      link.click();
-      showStatus('Đã tải thiệp mời ảnh kèm mã QR!');
+        // 10. Chữ ký người mời (Động theo cấu hình)
+        ctx.fillStyle = '#881337';
+        ctx.font = 'italic 34px "Cormorant Garamond", Georgia, serif';
+        ctx.fillText('Thân mời từ: ' + hostName, width / 2, 1210);
+
+        // 11. Tải về file ảnh
+        const { slug } = getFullInviteURL(currentGuestName);
+        const link = document.createElement('a');
+        link.download = `ThiepMoi-${slug}.png`;
+        link.href = badgeCanvas.toDataURL('image/png');
+        link.click();
+        showStatus('Đã tải thiệp mời ảnh kèm mã QR!');
+      };
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(renderBadge);
+      } else {
+        renderBadge();
+      }
     }
 
     /* =====================================================================
@@ -1258,8 +1314,11 @@
     /* =====================================================================
        HOST SETTINGS & INVITATION CONTENT
        ===================================================================== */
+    let currentHostConfig = null;
+
     function populateConfigInputs(cfg) {
       if (!cfg) return;
+      currentHostConfig = cfg;
       if (cfg.hostName && document.getElementById('cfgHostName')) document.getElementById('cfgHostName').value = cfg.hostName;
       if (cfg.schoolName && document.getElementById('cfgSchoolName')) document.getElementById('cfgSchoolName').value = cfg.schoolName;
       if (cfg.eventDate && document.getElementById('cfgEventDate')) document.getElementById('cfgEventDate').value = cfg.eventDate;
@@ -1295,14 +1354,15 @@
         hostName: document.getElementById('cfgHostName')?.value.trim() || 'Đỗ Quang An',
         schoolName: document.getElementById('cfgSchoolName')?.value.trim() || 'Trường ĐH Khoa học Tự nhiên',
         eventDate: document.getElementById('cfgEventDate')?.value.trim() || 'Thứ 5, 26.11.2026',
-        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '09:30 Sáng — 11:30 Trưa',
-        contactPhone: document.getElementById('cfgContactPhone')?.value.trim() || '0901 234 567',
+        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '10:00',
+        contactPhone: document.getElementById('cfgContactPhone')?.value.trim() || '0329486553',
         venueName: document.getElementById('cfgVenueName')?.value.trim() || 'ĐH Khoa học Tự nhiên',
         venueAddress: document.getElementById('cfgVenueAddress')?.value.trim() || 'Cơ sở 1 — 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.',
         greetingPrefix: document.getElementById('cfgGreetingPrefix')?.value.trim() || 'Mời',
         greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || '',
         greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || ''
       };
+      currentHostConfig = cfg;
 
       // 1. Lưu vào LocalStorage của thiết bị
       localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(cfg));
