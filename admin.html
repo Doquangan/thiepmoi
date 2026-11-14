@@ -304,7 +304,7 @@
               </label>
               <span class="text-[10px] text-[var(--ink-muted)]">Tùy chọn</span>
             </div>
-            <input id="guestCustomTimeInput" type="text" placeholder="Để trống sẽ dùng giờ chung của sự kiện (ví dụ: 10:00)"
+            <input id="guestCustomTimeInput" type="text" placeholder="Để trống sẽ dùng giờ chung của sự kiện (ví dụ: 11:00-12:00)"
               oninput="updateGeneratedResult()"
               class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs font-medium transition-all" />
             <div class="flex items-center gap-1.5 flex-wrap text-[11px]">
@@ -312,7 +312,7 @@
               <button type="button" onclick="setQuickTimeSlot('')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">Mặc định chung</button>
               <button type="button" onclick="setQuickTimeSlot('08:30 — 09:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">08:30 — 09:30 (Sớm)</button>
               <button type="button" onclick="setQuickTimeSlot('09:30 — 10:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">09:30 — 10:30</button>
-              <button type="button" onclick="setQuickTimeSlot('10:00 — 11:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">10:00 — 11:30 (Chính)</button>
+              <button type="button" onclick="setQuickTimeSlot('11:00 — 12:00')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">11:00 — 12:00 (Chính)</button>
               <button type="button" onclick="setQuickTimeSlot('11:30 — 12:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">11:30 — 12:30 (Trưa)</button>
             </div>
           </div>
@@ -462,7 +462,7 @@
               </div>
               <div>
                 <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Cụm thời gian / Khung giờ đón khách:</label>
-                <input id="cfgEventTime" type="text" value="10:00"
+                <input id="cfgEventTime" type="text" value="11:00-12:00"
                   class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium" />
               </div>
             </div>
@@ -501,13 +501,15 @@
             <div>
               <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Đoạn 1 (Lời tâm sự mở đầu):</label>
               <textarea id="cfgGreetingPara1" rows="3"
-                class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium leading-relaxed">Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.</textarea>
+                class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium leading-relaxed">Đến dự lễ tốt nghiệp của Quang An.</textarea>
             </div>
 
             <div>
               <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Đoạn 2 (Thân mời &amp; chụp ảnh kỷ niệm):</label>
               <textarea id="cfgGreetingPara2" rows="3"
-                class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium leading-relaxed">Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.</textarea>
+                class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium leading-relaxed">Đây là một cột mốc quan trọng đối với mình, đánh dấu ngày Quang An chính thức gia nhập thị trường lao động.
+Trước khi bắt đầu chương tiếp theo, An rất muốn được gặp gỡ và chia sẻ niềm vui này cùng bạn.
+Hẹn gặp bạn ở khuôn viên tự nhiên nháa &lt;3</textarea>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
@@ -1104,10 +1106,10 @@
     function getDefaultGreetingParas() {
       const p1 = document.getElementById('cfgGreetingPara1')?.value.trim() 
         || currentHostConfig?.greetingPara1 
-        || 'Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.';
+        || 'Đến dự lễ tốt nghiệp của Quang An.';
       const p2 = document.getElementById('cfgGreetingPara2')?.value.trim() 
         || currentHostConfig?.greetingPara2 
-        || 'Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.';
+        || 'Đây là một cột mốc quan trọng đối với mình, đánh dấu ngày Quang An chính thức gia nhập thị trường lao động.\nTrước khi bắt đầu chương tiếp theo, An rất muốn được gặp gỡ và chia sẻ niềm vui này cùng bạn.\nHẹn gặp bạn ở khuôn viên tự nhiên nháa <3';
       return { p1, p2 };
     }
 
@@ -2085,13 +2087,13 @@
         hostName: document.getElementById('cfgHostName')?.value.trim() || 'Đỗ Quang An',
         schoolName: document.getElementById('cfgSchoolName')?.value.trim() || 'Trường ĐH Khoa học Tự nhiên',
         eventDate: document.getElementById('cfgEventDate')?.value.trim() || 'Thứ 5, 26.11.2026',
-        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '10:00',
+        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '11:00-12:00',
         contactPhone: document.getElementById('cfgContactPhone')?.value.trim() || '0329486553',
         venueName: document.getElementById('cfgVenueName')?.value.trim() || 'ĐH Khoa học Tự nhiên',
         venueAddress: document.getElementById('cfgVenueAddress')?.value.trim() || 'Cơ sở 1 — 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.',
         greetingPrefix: document.getElementById('cfgGreetingPrefix')?.value.trim() || 'Mời',
-        greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || '',
-        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || '',
+        greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || 'Đến dự lễ tốt nghiệp của Quang An.',
+        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || 'Đây là một cột mốc quan trọng đối với mình, đánh dấu ngày Quang An chính thức gia nhập thị trường lao động.\nTrước khi bắt đầu chương tiếp theo, An rất muốn được gặp gỡ và chia sẻ niềm vui này cùng bạn.\nHẹn gặp bạn ở khuôn viên tự nhiên nháa <3',
         updatedAt: Date.now()
       };
       currentHostConfig = cfg;
@@ -2122,13 +2124,13 @@
         hostName: document.getElementById('cfgHostName')?.value.trim() || 'Đỗ Quang An',
         schoolName: document.getElementById('cfgSchoolName')?.value.trim() || 'Trường ĐH Khoa học Tự nhiên',
         eventDate: document.getElementById('cfgEventDate')?.value.trim() || 'Thứ 5, 26.11.2026',
-        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '10:00',
+        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '11:00-12:00',
         contactPhone: document.getElementById('cfgContactPhone')?.value.trim() || '0329486553',
         venueName: document.getElementById('cfgVenueName')?.value.trim() || 'ĐH Khoa học Tự nhiên',
         venueAddress: document.getElementById('cfgVenueAddress')?.value.trim() || 'Cơ sở 1 — 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.',
         greetingPrefix: document.getElementById('cfgGreetingPrefix')?.value.trim() || 'Mời',
-        greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || '',
-        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || '',
+        greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || 'Đến dự lễ tốt nghiệp của Quang An.',
+        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || 'Đây là một cột mốc quan trọng đối với mình, đánh dấu ngày Quang An chính thức gia nhập thị trường lao động.\nTrước khi bắt đầu chương tiếp theo, An rất muốn được gặp gỡ và chia sẻ niềm vui này cùng bạn.\nHẹn gặp bạn ở khuôn viên tự nhiên nháa <3',
         updatedAt: Date.now()
       };
       const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json;charset=utf-8' });

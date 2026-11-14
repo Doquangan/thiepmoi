@@ -321,8 +321,10 @@
             <span id="salutationPrefix">Mời</span> <span class="guest-name-display text-[#881337] font-semibold underline decoration-[#881337]/30 underline-offset-4 break-words">Bạn của tôi</span>,
           </p>
           <div id="greetingMessageContainer" class="space-y-3.5 sm:space-y-4">
-            <p id="greetingPara1" class="whitespace-pre-line">Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.</p>
-            <p id="greetingPara2" class="whitespace-pre-line">Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.</p>
+            <p id="greetingPara1" class="whitespace-pre-line">Đến dự lễ tốt nghiệp của Quang An.</p>
+            <p id="greetingPara2" class="whitespace-pre-line">Đây là một cột mốc quan trọng đối với mình, đánh dấu ngày Quang An chính thức gia nhập thị trường lao động.
+Trước khi bắt đầu chương tiếp theo, An rất muốn được gặp gỡ và chia sẻ niềm vui này cùng bạn.
+Hẹn gặp bạn ở khuôn viên tự nhiên nháa &lt;3</p>
           </div>
         </div>
 
@@ -374,7 +376,7 @@
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 border border-[var(--border-hairline)] shadow-xs">
             <span class="text-sm">⏰</span>
             <span id="eventTimeDisplay" class="text-xs sm:text-sm font-bold text-[var(--ink-primary)]">
-              09:30 Sáng — 11:30 Trưa
+              11:00-12:00
             </span>
           </div>
         </div>
@@ -909,7 +911,7 @@
 
     function downloadCalendarICS() {
       const hostName = document.getElementById('hostNameDisplay')?.textContent || 'Đỗ Quang An';
-      const eventTime = document.getElementById('eventTimeDisplay')?.textContent || '10:00';
+      const eventTime = document.getElementById('eventTimeDisplay')?.textContent || '11:00-12:00';
       const icsLines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
