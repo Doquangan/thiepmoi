@@ -392,6 +392,108 @@
       </p>
     </section>
 
+    <!-- Editorial Divider -->
+    <div class="my-10 sm:my-14 border-t border-[var(--border-hairline)]"></div>
+
+    <!-- =====================================================================
+         LỜI NHẮN GỬI RIÊNG TƯ CHO CỬ NHÂN (GỬI VỀ EMAIL QUA NETLIFY FORMS)
+         ===================================================================== -->
+    <section id="privateWishSection" class="space-y-4 sm:space-y-6 max-w-xl mx-auto">
+      <div class="text-center space-y-1 sm:space-y-1.5">
+        <p class="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold">
+          Góc lưu bút riêng tư // To Đỗ Quang An
+        </p>
+        <h2 class="font-editorial text-2xl sm:text-3xl md:text-4xl font-semibold text-[var(--ink-primary)]">
+          Bạn có điều gì muốn gửi đến mình hem?
+        </h2>
+        <p class="text-xs sm:text-[13px] text-[var(--ink-muted)] leading-relaxed max-w-md mx-auto">
+          Dành một góc nhỏ riêng tư để bạn gửi lời chúc, kỷ niệm hay nhắn nhủ điều gì đó đến An nhé. Lời nhắn này sẽ được gửi trực tiếp đến hộp thư của An! 💌
+        </p>
+      </div>
+
+      <!-- Form Box -->
+      <div class="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#FBF9F5] border border-[var(--border-hairline)] shadow-sm relative overflow-hidden">
+        
+        <!-- Canvas Confetti Overlay -->
+        <canvas id="wishConfettiCanvas" class="pointer-events-none absolute inset-0 w-full h-full z-10 hidden"></canvas>
+
+        <!-- The Interactive Form -->
+        <form name="wishes" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="wishesForm" class="space-y-4 relative z-0">
+          <input type="hidden" name="form-name" value="wishes" />
+          <input type="hidden" name="subject" value="💌 Lời nhắn tốt nghiệp từ bạn bè" id="formSubjectInput" />
+          <input type="hidden" name="guestUrl" id="formGuestUrlInput" value="" />
+          
+          <!-- Bot Honeypot for Anti-spam -->
+          <p class="hidden" style="display:none;">
+            <label>Don’t fill this out: <input name="bot-field" /></label>
+          </p>
+
+          <!-- Field 1: Sender Name -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="wishSenderName" class="block text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
+                Tên của bạn:
+              </label>
+              <span class="text-[10.5px] text-stone-400">Tự động nhận diện</span>
+            </div>
+            <input type="text" id="wishSenderName" name="senderName" required
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-semibold text-[var(--ink-primary)] transition-all"
+              placeholder="Nhập tên của bạn..." />
+          </div>
+
+          <!-- Field 2: Message -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="wishMessage" class="block text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
+                Lời nhắn gửi đến An:
+              </label>
+              <span class="text-[10.5px] text-stone-400">Riêng tư 100%</span>
+            </div>
+            <textarea id="wishMessage" name="message" rows="4" required
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-medium leading-relaxed text-[var(--ink-primary)] transition-all resize-y"
+              placeholder="Chia sẻ kỷ niệm thời sinh viên, lời chúc, hoặc dặn dò mình điều gì đó nha... (xuống dòng thoải mái nhé)"></textarea>
+          </div>
+
+          <!-- Field 3: Sender Contact (Optional) -->
+          <div>
+            <label for="wishContact" class="block text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)] mb-1.5">
+              Cách An nhắn lại cho bạn (Không bắt buộc):
+            </label>
+            <input type="text" id="wishContact" name="contact"
+              class="w-full px-3.5 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs text-[var(--ink-primary)] transition-all"
+              placeholder="Số điện thoại / Zalo hoặc Facebook để An nhắn cảm ơn nha..." />
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-1">
+            <button type="submit" id="wishSubmitBtn"
+              class="w-full py-3.5 px-4 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] active:scale-[0.99] text-white font-semibold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 touch-manipulation">
+              <span id="wishBtnText">Gửi cho An 💌</span>
+              <span id="wishBtnSpinner" class="hidden text-sm animate-spin">⏳</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Thank-you State -->
+        <div id="wishSuccessCard" class="hidden text-center py-7 px-4 space-y-3.5 bg-white/90 rounded-2xl border border-rose-200/80 transition-all">
+          <div class="text-4xl animate-bounce">💌✨</div>
+          <h3 class="font-editorial text-2xl font-semibold text-[var(--ink-primary)]">
+            An đã nhận được lời nhắn của bạn!
+          </h3>
+          <p class="text-xs sm:text-sm text-[var(--ink-muted)] max-w-sm mx-auto leading-relaxed">
+            Cảm ơn <strong id="successSenderNameDisplay" class="text-[#881337] font-semibold">bạn</strong> rất nhiều vì những lời chia sẻ ấm áp. Lời nhắn này đã được chuyển riêng đến hộp thư của An. Hẹn gặp bạn ở sân trường Tự nhiên nha! 🎓
+          </p>
+          <div class="pt-2">
+            <button type="button" onclick="resetWishForm()"
+              class="text-xs text-[#881337] hover:underline font-semibold inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-200/60 touch-manipulation">
+              <span>✏️ Gửi thêm lời nhắn khác</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- Minimalist Footer Note (Không còn liên kết admin-server, hoàn toàn riêng tư) -->
     <footer class="mt-10 sm:mt-14 pt-6 border-t border-[var(--border-hairline)] flex items-center justify-center text-center text-xs text-[var(--ink-muted)]">
       <p>Hẹn gặp bạn tại khuôn viên Tự nhiên! 🎓</p>
@@ -605,6 +707,20 @@
 
       applyURLOverrides();
       checkStaticImage('/assets/portrait.jpg', 'portraitPreviewImg', 'portraitPlaceholder');
+
+      // Tự động điền tên vào form gửi lời nhắn riêng
+      const wishSenderInput = document.getElementById('wishSenderName');
+      if (wishSenderInput && (!wishSenderInput.value || wishSenderInput.value === 'Bạn của tôi')) {
+        wishSenderInput.value = (guestName && guestName !== 'Bạn của tôi') ? guestName : '';
+      }
+      const formSubjectInput = document.getElementById('formSubjectInput');
+      if (formSubjectInput && guestName && guestName !== 'Bạn của tôi') {
+        formSubjectInput.value = `💌 Lời nhắn tốt nghiệp từ ${guestName}`;
+      }
+      const formGuestUrlInput = document.getElementById('formGuestUrlInput');
+      if (formGuestUrlInput) {
+        formGuestUrlInput.value = window.location.href;
+      }
     }
 
     function checkStaticImage(url, imgId, placeholderId) {
@@ -980,8 +1096,131 @@
       }, 3600);
     }
 
+    /* =====================================================================
+       4. PRIVATE WISHES FORM & CONFETTI (NETLIFY FORMS AJAX)
+       ===================================================================== */
+    function triggerConfetti() {
+      const canvas = document.getElementById('wishConfettiCanvas');
+      if (!canvas) return;
+      canvas.classList.remove('hidden');
+      const ctx = canvas.getContext('2d');
+      const parent = canvas.parentElement;
+      canvas.width = parent.clientWidth || 360;
+      canvas.height = parent.clientHeight || 420;
+
+      const colors = ['#881337', '#BE123C', '#F43F5E', '#F59E0B', '#10B981', '#6366F1'];
+      const particles = [];
+      for (let i = 0; i < 48; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * (canvas.height * 0.25),
+          w: Math.random() * 8 + 4,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 3,
+          vy: Math.random() * 3 + 2,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 8
+        });
+      }
+
+      let start = null;
+      function animate(time) {
+        if (!start) start = time;
+        const progress = (time - start) / 2600;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vrot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          canvas.classList.add('hidden');
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function initWishForm() {
+      const form = document.getElementById('wishesForm');
+      if (!form) return;
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('wishSubmitBtn');
+        const btnText = document.getElementById('wishBtnText');
+        const btnSpinner = document.getElementById('wishBtnSpinner');
+        const successCard = document.getElementById('wishSuccessCard');
+        const senderNameInput = document.getElementById('wishSenderName');
+        const senderName = senderNameInput?.value.trim() || 'Bạn của tôi';
+
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnText) btnText.textContent = 'Đang gửi lời nhắn...';
+        if (btnSpinner) btnSpinner.classList.remove('hidden');
+
+        const formData = new FormData(form);
+        const encodedData = new URLSearchParams(formData).toString();
+
+        fetch('/__forms.html', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encodedData
+        })
+        .then(() => {
+          form.classList.add('hidden');
+          if (successCard) {
+            successCard.classList.remove('hidden');
+            const nameEl = document.getElementById('successSenderNameDisplay');
+            if (nameEl) nameEl.textContent = senderName;
+          }
+          triggerConfetti();
+          showStatus('Đã gửi lời nhắn riêng cho An thành công! 💌');
+        })
+        .catch(() => {
+          // Fallback graceful degradation
+          form.classList.add('hidden');
+          if (successCard) {
+            successCard.classList.remove('hidden');
+            const nameEl = document.getElementById('successSenderNameDisplay');
+            if (nameEl) nameEl.textContent = senderName;
+          }
+          triggerConfetti();
+          showStatus('Đã ghi nhận lời nhắn của bạn! 💌');
+        })
+        .finally(() => {
+          if (submitBtn) submitBtn.disabled = false;
+          if (btnText) btnText.textContent = 'Gửi cho An 💌';
+          if (btnSpinner) btnSpinner.classList.add('hidden');
+        });
+      });
+    }
+
+    function resetWishForm() {
+      const form = document.getElementById('wishesForm');
+      const successCard = document.getElementById('wishSuccessCard');
+      const msgInput = document.getElementById('wishMessage');
+      if (form) form.classList.remove('hidden');
+      if (successCard) successCard.classList.add('hidden');
+      if (msgInput) {
+        msgInput.value = '';
+        msgInput.focus();
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       applyPersonalization();
+      initWishForm();
     });
   </script>
 </body>
