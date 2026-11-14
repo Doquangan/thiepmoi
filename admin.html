@@ -296,6 +296,88 @@
             </div>
           </div>
 
+          <!-- Section: Khung giờ hẹn riêng cho bạn này -->
+          <div class="p-3.5 sm:p-4 rounded-xl bg-white/80 border border-[var(--border-hairline)] space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label for="guestCustomTimeInput" class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">
+                ⏰ Khung giờ hẹn riêng cho bạn này
+              </label>
+              <span class="text-[10px] text-[var(--ink-muted)]">Tùy chọn</span>
+            </div>
+            <input id="guestCustomTimeInput" type="text" placeholder="Để trống sẽ dùng giờ chung của sự kiện (ví dụ: 10:00)"
+              oninput="updateGeneratedResult()"
+              class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs font-medium transition-all" />
+            <div class="flex items-center gap-1.5 flex-wrap text-[11px]">
+              <span class="text-[var(--ink-muted)]">Gợi ý ca đón:</span>
+              <button type="button" onclick="setQuickTimeSlot('')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">Mặc định chung</button>
+              <button type="button" onclick="setQuickTimeSlot('08:30 — 09:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">08:30 — 09:30 (Sớm)</button>
+              <button type="button" onclick="setQuickTimeSlot('09:30 — 10:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">09:30 — 10:30</button>
+              <button type="button" onclick="setQuickTimeSlot('10:00 — 11:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">10:00 — 11:30 (Chính)</button>
+              <button type="button" onclick="setQuickTimeSlot('11:30 — 12:30')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700">11:30 — 12:30 (Trưa)</button>
+            </div>
+          </div>
+
+          <!-- Section: Lời tâm sự riêng độc bản cho người này -->
+          <div class="p-3.5 sm:p-4 rounded-xl bg-white/80 border border-[var(--border-hairline)] space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">
+                💌 Lời tâm sự riêng cho bạn này (2 Đoạn)
+              </label>
+              <span class="text-[10px] text-[var(--ink-muted)]">Tùy chọn</span>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-semibold text-[var(--ink-muted)] uppercase tracking-wider">Mẫu tâm sự nhanh:</span>
+              <div class="flex items-center gap-1.5 flex-wrap text-[11px]">
+                <button type="button" onclick="applyMessagePreset('default')"
+                  class="px-2 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 font-medium text-stone-700 transition-colors">
+                  📝 Dùng lời ngỏ chung
+                </button>
+                <button type="button" onclick="applyMessagePreset('close_friend')"
+                  class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-[#881337] font-medium border border-rose-200 transition-colors">
+                  🎓 Bạn thân đại học
+                </button>
+                <button type="button" onclick="applyMessagePreset('teacher')"
+                  class="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 font-medium border border-amber-200 transition-colors">
+                  🙏 Thầy Cô / Trang trọng
+                </button>
+                <button type="button" onclick="applyMessagePreset('family')"
+                  class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-medium border border-emerald-200 transition-colors">
+                  ❤️ Gia đình / Biết ơn
+                </button>
+                <button type="button" onclick="applyMessagePreset('colleague')"
+                  class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 font-medium border border-blue-200 transition-colors">
+                  🤝 Bạn bè / Đồng nghiệp
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <div>
+                <label for="guestCustomPara1Input" class="block text-[11px] font-medium text-[var(--ink-secondary)] mb-1">
+                  Đoạn 1 riêng (Lời mở đầu / kỷ niệm chung):
+                </label>
+                <textarea id="guestCustomPara1Input" rows="2" placeholder="Để trống sẽ dùng Đoạn 1 trong Cài đặt chung..."
+                  oninput="updateGeneratedResult()"
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs font-medium leading-relaxed"></textarea>
+              </div>
+
+              <div>
+                <label for="guestCustomPara2Input" class="block text-[11px] font-medium text-[var(--ink-secondary)] mb-1">
+                  Đoạn 2 riêng (Lời hẹn gặp / chụp ảnh kỷ niệm):
+                </label>
+                <textarea id="guestCustomPara2Input" rows="2" placeholder="Để trống sẽ dùng Đoạn 2 trong Cài đặt chung..."
+                  oninput="updateGeneratedResult()"
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs font-medium leading-relaxed"></textarea>
+              </div>
+            </div>
+
+            <div id="customMsgBadge" class="hidden flex items-center gap-1.5 text-[11px] text-[#881337] bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100 font-medium">
+              <span>✨ Đang gắn lời tâm sự riêng vào link mời &amp; mã QR!</span>
+            </div>
+          </div>
+
           <!-- Dynamic URL Endpoint Preview -->
           <div class="p-3 sm:p-3.5 rounded-xl bg-white border border-[var(--border-hairline)]">
             <span class="text-[10px] font-bold uppercase tracking-wider text-[#881337]">Đường dẫn thư mời tương ứng (Endpoint)</span>
@@ -469,6 +551,7 @@
               Minh Khoa
             </h3>
             <p id="previewEndpointShort" class="font-mono text-xs text-[var(--ink-muted)] truncate">/Minh-Khoa</p>
+            <div id="previewCustomBadges" class="hidden flex items-center justify-center gap-1.5 pt-1 flex-wrap"></div>
           </div>
 
           <!-- QR Canvas Container -->
@@ -894,6 +977,61 @@
     /* =====================================================================
        INPUT HANDLER & QR GENERATOR
        ===================================================================== */
+    const MESSAGE_PRESETS = {
+      default: {
+        name: 'Mặc định chung',
+        salutation: 'Gửi',
+        p1: '',
+        p2: ''
+      },
+      close_friend: {
+        name: 'Bạn thân đại học',
+        salutation: 'Mời',
+        p1: 'Sau bao nhiêu kỳ chạy deadline bở hơi tai và những lần rủ nhau cúp cua la cà quán xá, cuối cùng tao cũng sắp chính thức cầm tấm bằng tốt nghiệp trên tay!',
+        p2: 'Hành trình sinh viên này sẽ chẳng thể trọn vẹn và đáng nhớ đến thế nếu thiếu mày. Thứ 5 này nhất định phải ghé trường chụp chung với tao vài kiểu ảnh kỷ niệm thật xịn nhé!'
+      },
+      teacher: {
+        name: 'Thầy Cô / Trang trọng',
+        salutation: 'Kính gửi',
+        p1: 'Em xin gửi lời tri ân sâu sắc nhất đến Thầy/Cô — người đã luôn tận tâm dìu dắt, truyền đạt tri thức và nâng đỡ em trong suốt những năm tháng học tập dưới mái trường Tự nhiên.',
+        p2: 'Nhân ngày lễ tốt nghiệp đánh dấu sự trưởng thành của mình, sự hiện diện của Thầy/Cô tại buổi lễ sẽ là niềm vinh dự và nguồn động viên vô cùng to lớn đối với em.'
+      },
+      family: {
+        name: 'Gia đình / Biết ơn',
+        salutation: 'Kính gửi',
+        p1: 'Để con có thể vững vàng bước đến ngày hôm nay và hoàn thành trọn vẹn 4 năm đại học là nhờ vào tình yêu thương, sự hy sinh và chỗ dựa vững chắc vô điều kiện của gia đình.',
+        p2: 'Ngày con khoác lên mình chiếc áo cử nhân, con mong muốn được chia sẻ khoảnh khắc thiêng liêng và ý nghĩa này cùng những người thân yêu nhất trong cuộc đời con.'
+      },
+      colleague: {
+        name: 'Bạn bè / Đồng nghiệp',
+        salutation: 'Thân gửi',
+        p1: 'Bốn năm đại học tại HCMUS đã chính thức khép lại, mở ra một hành trình mới nhiều thử thách nhưng cũng đầy hào hứng phía trước.',
+        p2: 'Rất mong có thể gặp bạn vào ngày lễ tốt nghiệp sắp tới — cùng chia sẻ khoảnh khắc kỷ niệm đáng nhớ này trước khi chính thức bước sang chặng đường mới!'
+      }
+    };
+
+    function setQuickTimeSlot(slot) {
+      const input = document.getElementById('guestCustomTimeInput');
+      if (input) {
+        input.value = slot;
+        updateGeneratedResult();
+        showStatus(slot ? `Đã chọn khung giờ: ${slot}` : 'Đã đặt lại giờ mặc định chung');
+      }
+    }
+
+    function applyMessagePreset(key) {
+      const preset = MESSAGE_PRESETS[key];
+      if (!preset) return;
+      const p1Input = document.getElementById('guestCustomPara1Input');
+      const p2Input = document.getElementById('guestCustomPara2Input');
+      const salutationSelect = document.getElementById('salutationSelect');
+      if (p1Input) p1Input.value = preset.p1;
+      if (p2Input) p2Input.value = preset.p2;
+      if (salutationSelect && preset.salutation) salutationSelect.value = preset.salutation;
+      updateGeneratedResult();
+      showStatus(`Đã áp dụng mẫu: ${preset.name}`);
+    }
+
     function handleGuestNameInput(val) {
       currentGuestName = val.trim() || 'Minh Khoa';
       localStorage.setItem(LS_LAST_GUEST_KEY, currentGuestName);
@@ -911,6 +1049,9 @@
     function getFullInviteURL(name) {
       const format = document.getElementById('slugFormatSelect')?.value || 'accented';
       const salutation = document.getElementById('salutationSelect')?.value || 'Gửi';
+      const customTime = document.getElementById('guestCustomTimeInput')?.value.trim() || '';
+      const customP1 = document.getElementById('guestCustomPara1Input')?.value.trim() || '';
+      const customP2 = document.getElementById('guestCustomPara2Input')?.value.trim() || '';
       const slug = generateSlug(name, format);
 
       let url = `${currentDomain}/${encodeURI(slug)}`;
@@ -922,13 +1063,22 @@
       if (format === 'ascii' && name !== slug) {
         params.set('name', name);
       }
+      if (customTime) {
+        params.set('time', customTime);
+      }
+      if (customP1) {
+        params.set('p1', customP1);
+      }
+      if (customP2) {
+        params.set('p2', customP2);
+      }
 
       const queryString = params.toString();
       if (queryString) {
         url += `?${queryString}`;
       }
 
-      return { url, slug };
+      return { url, slug, customTime, customP1, customP2, salutation };
     }
 
     function updateGeneratedResult() {
@@ -942,7 +1092,7 @@
         localStorage.setItem(LS_LAST_SLUG_FORMAT_KEY, slugFormatEl.value);
       }
 
-      const { url, slug } = getFullInviteURL(name);
+      const { url, slug, customTime, customP1, customP2 } = getFullInviteURL(name);
 
       const nameEl = document.getElementById('previewGuestName');
       const shortEl = document.getElementById('previewEndpointShort');
@@ -952,8 +1102,29 @@
       if (shortEl) shortEl.textContent = `/${slug}`;
       if (fullEl) fullEl.textContent = url;
 
+      // Badges in preview card
+      const badgeContainer = document.getElementById('previewCustomBadges');
+      if (badgeContainer) {
+        let badgeHtml = '';
+        if (customTime) {
+          badgeHtml += `<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-medium">⏰ ${customTime}</span>`;
+        }
+        if (customP1 || customP2) {
+          badgeHtml += `<span class="px-2 py-0.5 rounded-md bg-rose-50 text-[#881337] border border-rose-200 text-[10px] font-medium">💌 Kèm tâm sự riêng</span>`;
+        }
+        badgeContainer.innerHTML = badgeHtml;
+        badgeContainer.classList.toggle('hidden', !badgeHtml);
+      }
+
+      // Indicator badge below inputs
+      const msgBadge = document.getElementById('customMsgBadge');
+      if (msgBadge) {
+        msgBadge.classList.toggle('hidden', !(customP1 || customP2));
+      }
+
       const canvas = document.getElementById('qrCodeCanvas');
       if (canvas && typeof QRCode !== 'undefined') {
+        const errLevel = url.length > 250 ? 'M' : 'H';
         QRCode.toCanvas(canvas, url, {
           width: 240,
           margin: 1,
@@ -961,7 +1132,7 @@
             dark: '#881337',
             light: '#FFFFFF'
           },
-          errorCorrectionLevel: 'H'
+          errorCorrectionLevel: errLevel
         }, function (error) {
           if (error) console.error('QR Render error:', error);
         });
@@ -1017,7 +1188,8 @@
         const hostName = document.getElementById('cfgHostName')?.value.trim() || currentHostConfig?.hostName || 'Đỗ Quang An';
         const rawSchool = document.getElementById('cfgSchoolName')?.value.trim() || currentHostConfig?.schoolName || 'Trường ĐH Khoa học Tự nhiên';
         const eventDate = document.getElementById('cfgEventDate')?.value.trim() || currentHostConfig?.eventDate || 'Thứ 5, 26.11.2026';
-        const eventTime = document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '10:00';
+        const customTime = document.getElementById('guestCustomTimeInput')?.value.trim();
+        const eventTime = customTime || document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '10:00';
         const venueName = document.getElementById('cfgVenueName')?.value.trim() || currentHostConfig?.venueName || 'ĐH Khoa học Tự nhiên';
         const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || '227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM';
 
@@ -1161,26 +1333,66 @@
       renderGuestList();
     }
 
+    function getInviteURLForGuest(g) {
+      if (g.url) return g.url;
+      const slug = g.slug || generateSlug(g.name, 'accented');
+      let url = `${currentDomain}/${encodeURI(slug)}`;
+      const params = new URLSearchParams();
+      if (g.salutation && g.salutation !== 'Gửi') params.set('salutation', g.salutation);
+      if (g.time) params.set('time', g.time);
+      if (g.p1) params.set('p1', g.p1);
+      if (g.p2) params.set('p2', g.p2);
+      const qs = params.toString();
+      return qs ? `${url}?${qs}` : url;
+    }
+
     function saveCurrentGuestToList() {
       const name = currentGuestName.trim();
       if (!name) return;
-      const { slug } = getFullInviteURL(name);
+      const { url, slug, customTime, customP1, customP2, salutation } = getFullInviteURL(name);
 
-      const existing = guestList.find(g => g.name.toLowerCase() === name.toLowerCase());
-      if (existing) {
-        existing.slug = slug;
-        existing.date = new Date().toLocaleDateString('vi-VN');
+      const existingIndex = guestList.findIndex(g => g.name.toLowerCase() === name.toLowerCase());
+      const guestObj = {
+        id: existingIndex >= 0 ? guestList[existingIndex].id : Date.now().toString(),
+        name: name,
+        slug: slug,
+        time: customTime || '',
+        salutation: salutation || 'Gửi',
+        p1: customP1 || '',
+        p2: customP2 || '',
+        url: url,
+        date: new Date().toLocaleDateString('vi-VN')
+      };
+
+      if (existingIndex >= 0) {
+        guestList[existingIndex] = guestObj;
       } else {
-        guestList.unshift({
-          id: Date.now().toString(),
-          name: name,
-          slug: slug,
-          date: new Date().toLocaleDateString('vi-VN')
-        });
+        guestList.unshift(guestObj);
       }
 
       saveGuestList();
-      showStatus(`Đã lưu "${name}" vào danh sách!`);
+      showStatus(`Đã lưu "${name}" kèm cấu hình riêng vào danh sách!`);
+    }
+
+    function loadGuestToEditor(id) {
+      const g = guestList.find(item => item.id === id);
+      if (!g) return;
+      currentGuestName = g.name;
+      const nameInput = document.getElementById('guestNameInput');
+      if (nameInput) nameInput.value = g.name;
+      const salutationSelect = document.getElementById('salutationSelect');
+      if (salutationSelect && g.salutation) salutationSelect.value = g.salutation;
+      const timeInput = document.getElementById('guestCustomTimeInput');
+      if (timeInput) timeInput.value = g.time || '';
+      const p1Input = document.getElementById('guestCustomPara1Input');
+      if (p1Input) p1Input.value = g.p1 || '';
+      const p2Input = document.getElementById('guestCustomPara2Input');
+      if (p2Input) p2Input.value = g.p2 || '';
+
+      switchTab('single');
+      updateGeneratedResult();
+      showStatus(`Đã nạp thông tin "${g.name}" vào trình soạn thảo!`);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
     }
 
     function renderGuestList() {
@@ -1206,12 +1418,17 @@
       // 1. Render Desktop Table Rows
       if (tbody) {
         tbody.innerHTML = filtered.map((g, idx) => {
-          const url = `${currentDomain}/${encodeURI(g.slug)}`;
+          const url = getInviteURLForGuest(g);
           return `
             <tr class="hover:bg-stone-50 transition-colors">
               <td class="py-3 px-4 text-stone-400 font-mono">${idx + 1}</td>
-              <td class="py-3 px-4 font-semibold text-[var(--ink-primary)]">
-                ${g.name}
+              <td class="py-3 px-4">
+                <div class="font-semibold text-[var(--ink-primary)] flex items-center gap-1.5 flex-wrap">
+                  <span>${g.name}</span>
+                  ${g.salutation && g.salutation !== 'Gửi' ? `<span class="px-1.5 py-0.5 rounded bg-stone-100 text-[10px] text-stone-600">${g.salutation}</span>` : ''}
+                  ${g.time ? `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-[10px] text-amber-800 border border-amber-200 font-medium">⏰ ${g.time}</span>` : ''}
+                  ${g.p1 || g.p2 ? `<span class="px-1.5 py-0.5 rounded bg-rose-50 text-[10px] text-[#881337] border border-rose-200 font-medium">💌 Lời riêng</span>` : ''}
+                </div>
               </td>
               <td class="py-3 px-4 font-mono text-stone-600">
                 <a href="${url}" target="_blank" class="hover:text-[#881337] hover:underline truncate max-w-xs block">
@@ -1219,11 +1436,12 @@
                 </a>
               </td>
               <td class="py-3 px-4 text-stone-400 text-[11px]">${g.date || 'Hôm nay'}</td>
-              <td class="py-3 px-4 text-right space-x-2">
-                <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#881337] font-medium" title="Sao chép link">📋 Copy</button>
-                <button onclick="selectGuestForQR('${g.name}')" class="text-[#881337] hover:underline font-medium" title="Xem mã QR">QR</button>
-                <a href="${url}" target="_blank" class="text-stone-600 hover:text-black font-medium" title="Mở xem">Mở ↗</a>
-                <button onclick="deleteGuest('${g.id}')" class="text-rose-600 hover:underline font-medium" title="Xóa">✕</button>
+              <td class="py-3 px-4 text-right space-x-1 sm:space-x-2">
+                <button onclick="loadGuestToEditor('${g.id}')" class="text-indigo-600 hover:underline font-semibold text-xs" title="Nạp lại để sửa hoặc tải ảnh">✏️ Sửa</button>
+                <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#881337] font-medium text-xs" title="Sao chép link">📋 Copy</button>
+                <button onclick="selectGuestForQR('${g.name}')" class="text-[#881337] hover:underline font-medium text-xs" title="Xem mã QR">QR</button>
+                <a href="${url}" target="_blank" class="text-stone-600 hover:text-black font-medium text-xs" title="Mở xem">Mở ↗</a>
+                <button onclick="deleteGuest('${g.id}')" class="text-rose-600 hover:underline font-medium text-xs" title="Xóa">✕</button>
               </td>
             </tr>
           `;
@@ -1233,22 +1451,29 @@
       // 2. Render Mobile Touch Cards
       if (mobileCards) {
         mobileCards.innerHTML = filtered.map((g) => {
-          const url = `${currentDomain}/${encodeURI(g.slug)}`;
+          const url = getInviteURLForGuest(g);
           return `
             <div class="p-3.5 space-y-2">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-sm text-[var(--ink-primary)]">${g.name}</span>
+                <div class="font-semibold text-sm text-[var(--ink-primary)] flex items-center gap-1.5 flex-wrap">
+                  <span>${g.name}</span>
+                  ${g.time ? `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-[10px] text-amber-800 border border-amber-200">⏰ ${g.time}</span>` : ''}
+                  ${g.p1 || g.p2 ? `<span class="px-1.5 py-0.5 rounded bg-rose-50 text-[10px] text-[#881337] border border-rose-200">💌 Lời riêng</span>` : ''}
+                </div>
                 <span class="text-[10px] text-stone-400">${g.date || 'Hôm nay'}</span>
               </div>
               <div class="text-xs font-mono text-stone-600 bg-stone-100/80 px-2 py-1 rounded truncate">
                 /${g.slug}
               </div>
               <div class="flex items-center gap-1.5 pt-1">
+                <button onclick="loadGuestToEditor('${g.id}')" class="flex-1 py-1.5 px-2 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold text-center touch-manipulation">
+                  ✏️ Sửa
+                </button>
                 <button onclick="copyGuestLink('${url}')" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-medium text-center touch-manipulation">
                   📋 Copy
                 </button>
                 <button onclick="selectGuestForQR('${g.name}')" class="flex-1 py-1.5 px-2 rounded-lg bg-[#881337]/10 text-[#881337] text-xs font-semibold text-center touch-manipulation">
-                  📱 Xem QR
+                  📱 QR
                 </button>
                 <a href="${url}" target="_blank" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-medium text-center touch-manipulation">
                   👁️ Mở ↗
@@ -1270,8 +1495,13 @@
     }
 
     function selectGuestForQR(name) {
-      fillQuickName(name);
-      window.scrollTo({ top: 100, behavior: 'smooth' });
+      const g = guestList.find(item => item.name.toLowerCase() === name.toLowerCase());
+      if (g) {
+        loadGuestToEditor(g.id);
+      } else {
+        fillQuickName(name);
+        window.scrollTo({ top: 100, behavior: 'smooth' });
+      }
     }
 
     function deleteGuest(id) {

@@ -499,6 +499,46 @@
         if (phoneText) phoneText.textContent = cfg.contactPhone;
         if (phoneLink) phoneLink.href = `tel:${cfg.contactPhone.replace(/\s+/g, '')}`;
       }
+
+      applyURLOverrides();
+    }
+
+    function applyURLOverrides() {
+      const params = new URLSearchParams(window.location.search);
+      const customTime = params.get('time') || params.get('slot');
+      const customP1 = params.get('p1');
+      const customP2 = params.get('p2');
+      const customMsg = params.get('msg');
+
+      if (customTime && customTime.trim()) {
+        const el = document.getElementById('eventTimeDisplay');
+        if (el) el.textContent = customTime.trim();
+      }
+      if (customP1 && customP1.trim()) {
+        const el = document.getElementById('greetingPara1');
+        if (el) el.textContent = customP1.trim();
+      }
+      if (customP2 && customP2.trim()) {
+        const el = document.getElementById('greetingPara2');
+        if (el) el.textContent = customP2.trim();
+      }
+      if (customMsg && customMsg.trim()) {
+        try {
+          const decoded = JSON.parse(decodeURIComponent(escape(atob(customMsg.trim()))));
+          if (decoded.time) {
+            const el = document.getElementById('eventTimeDisplay');
+            if (el) el.textContent = decoded.time;
+          }
+          if (decoded.p1) {
+            const el = document.getElementById('greetingPara1');
+            if (el) el.textContent = decoded.p1;
+          }
+          if (decoded.p2) {
+            const el = document.getElementById('greetingPara2');
+            if (el) el.textContent = decoded.p2;
+          }
+        } catch(e) {}
+      }
     }
 
     function applyPersonalization() {
@@ -548,9 +588,13 @@
             // Khách mời hoặc thiết bị mới chưa có local -> lấy từ event-config.json
             updateConfigFields(remoteCfg);
           }
+          applyURLOverrides();
         })
-        .catch(() => {});
+        .catch(() => {
+          applyURLOverrides();
+        });
 
+      applyURLOverrides();
       checkStaticImage('/assets/portrait.jpg', 'portraitPreviewImg', 'portraitPlaceholder');
     }
 
@@ -666,6 +710,7 @@
 
     function downloadCalendarICS() {
       const hostName = document.getElementById('hostNameDisplay')?.textContent || 'Đỗ Quang An';
+      const eventTime = document.getElementById('eventTimeDisplay')?.textContent || '10:00';
       const icsLines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
@@ -675,7 +720,7 @@
         'DTEND:20261115T050000Z',
         'SUMMARY:Lễ Tốt Nghiệp ' + hostName + ' — ĐH Khoa học Tự nhiên (HCMUS)',
         'LOCATION:227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM',
-        'DESCRIPTION:Hẹn gặp tại sân trường ĐH Khoa học Tự nhiên để chụp ảnh kỷ niệm tốt nghiệp cùng ' + hostName + '!',
+        'DESCRIPTION:Hẹn gặp tại sân trường ĐH Khoa học Tự nhiên vào khung giờ ' + eventTime + ' để chụp ảnh kỷ niệm tốt nghiệp cùng ' + hostName + '!',
         'END:VEVENT',
         'END:VCALENDAR'
       ].join('\r\n');
