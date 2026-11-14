@@ -514,19 +514,34 @@
         if (salutationEl) salutationEl.textContent = salutation.trim();
       }
 
-      // 1. Áp dụng ngay từ localStorage (nếu có)
+      // 1. Áp dụng ngay từ localStorage (nếu có trên máy host/admin)
+      let localCfg = null;
       try {
         const savedSettings = localStorage.getItem('hcmus_host_settings');
         if (savedSettings) {
-          updateConfigFields(JSON.parse(savedSettings));
+          localCfg = JSON.parse(savedSettings);
+          updateConfigFields(localCfg);
         }
       } catch (e) {}
 
       // 2. Fetch config từ event-config.json để mọi thiết bị/bạn bè luôn nhận nội dung mới nhất
       fetch(`/event-config.json?v=${Date.now()}`)
         .then(res => res.json())
-        .then(cfg => {
-          updateConfigFields(cfg);
+        .then(remoteCfg => {
+          if (!remoteCfg) return;
+          if (localCfg) {
+            // Nếu file server có updatedAt rõ ràng và mới hơn local thì cập nhật
+            if (remoteCfg.updatedAt && localCfg.updatedAt && remoteCfg.updatedAt > localCfg.updatedAt) {
+              updateConfigFields(remoteCfg);
+            } else {
+              // Ưu tiên giữ cấu hình đã lưu trong localStorage, chỉ gộp nếu còn thiếu
+              const merged = { ...remoteCfg, ...localCfg };
+              updateConfigFields(merged);
+            }
+          } else {
+            // Khách mời hoặc thiết bị mới chưa có local -> lấy từ event-config.json
+            updateConfigFields(remoteCfg);
+          }
         })
         .catch(() => {});
 

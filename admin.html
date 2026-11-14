@@ -412,10 +412,22 @@
                 class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium leading-relaxed">Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.</textarea>
             </div>
 
-            <button type="button" onclick="saveHostSettings()"
-              class="w-full min-h-[44px] py-2.5 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all shadow-md touch-manipulation">
-              💾 Lưu toàn bộ cấu hình thiệp mời
-            </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+              <button type="button" onclick="saveHostSettings()"
+                class="min-h-[44px] py-2.5 px-4 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all shadow-md touch-manipulation flex items-center justify-center gap-1.5">
+                <span>💾 Lưu cấu hình thiệp mời</span>
+              </button>
+              <button type="button" onclick="exportConfigFile()"
+                class="min-h-[44px] py-2.5 px-4 rounded-xl bg-white hover:bg-stone-50 border border-[var(--border-hairline)] text-[var(--ink-primary)] text-xs font-semibold transition-all shadow-sm touch-manipulation flex items-center justify-center gap-1.5">
+                <span>📥 Xuất file event-config.json</span>
+              </button>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-[var(--ink-muted)] pt-1 px-1">
+              <span>✨ Tự động lưu tức thì vào bộ nhớ máy (localStorage) khi bạn gõ.</span>
+              <button type="button" onclick="resetToDefaultConfig()" class="text-[#881337] hover:underline font-medium text-left sm:text-right">
+                🔄 Khôi phục mặc định
+              </button>
+            </div>
           </div>
 
           <!-- Section B: Security / Access PIN -->
@@ -663,6 +675,10 @@
     const LS_SETTINGS_KEY = 'hcmus_host_settings';
     const LS_PIN_KEY = 'hcmus_admin_pin';
     const SS_AUTH_KEY = 'hcmus_admin_authenticated';
+    const LS_ACTIVE_TAB_KEY = 'hcmus_admin_active_tab';
+    const LS_LAST_GUEST_KEY = 'hcmus_last_guest_name';
+    const LS_LAST_SALUTATION_KEY = 'hcmus_last_salutation';
+    const LS_LAST_SLUG_FORMAT_KEY = 'hcmus_last_slug_format';
 
     const DEFAULT_PIN = '1111';
 
@@ -805,9 +821,28 @@
 
       loadHostSettings();
       loadGuestList();
+      setupConfigAutoSave();
+
+      // Khôi phục Tab đang thao tác
+      const savedTab = localStorage.getItem(LS_ACTIVE_TAB_KEY) || 'single';
+      switchTab(savedTab);
+
+      // Khôi phục tên khách và thiết lập tạo thiệp đơn gần nhất
+      const savedGuest = localStorage.getItem(LS_LAST_GUEST_KEY);
+      if (savedGuest) {
+        currentGuestName = savedGuest;
+      }
+      const savedSalutation = localStorage.getItem(LS_LAST_SALUTATION_KEY);
+      if (savedSalutation && document.getElementById('salutationSelect')) {
+        document.getElementById('salutationSelect').value = savedSalutation;
+      }
+      const savedSlugFormat = localStorage.getItem(LS_LAST_SLUG_FORMAT_KEY);
+      if (savedSlugFormat && document.getElementById('slugFormatSelect')) {
+        document.getElementById('slugFormatSelect').value = savedSlugFormat;
+      }
 
       const input = document.getElementById('guestNameInput');
-      input.value = currentGuestName;
+      if (input) input.value = currentGuestName;
       updateGeneratedResult();
     });
 
@@ -861,6 +896,7 @@
        ===================================================================== */
     function handleGuestNameInput(val) {
       currentGuestName = val.trim() || 'Minh Khoa';
+      localStorage.setItem(LS_LAST_GUEST_KEY, currentGuestName);
       updateGeneratedResult();
     }
 
@@ -868,6 +904,7 @@
       const input = document.getElementById('guestNameInput');
       input.value = name;
       currentGuestName = name;
+      localStorage.setItem(LS_LAST_GUEST_KEY, currentGuestName);
       updateGeneratedResult();
     }
 
@@ -896,6 +933,15 @@
 
     function updateGeneratedResult() {
       const name = currentGuestName || 'Minh Khoa';
+      const salutationEl = document.getElementById('salutationSelect');
+      if (salutationEl) {
+        localStorage.setItem(LS_LAST_SALUTATION_KEY, salutationEl.value);
+      }
+      const slugFormatEl = document.getElementById('slugFormatSelect');
+      if (slugFormatEl) {
+        localStorage.setItem(LS_LAST_SLUG_FORMAT_KEY, slugFormatEl.value);
+      }
+
       const { url, slug } = getFullInviteURL(name);
 
       const nameEl = document.getElementById('previewGuestName');
@@ -1315,6 +1361,7 @@
        HOST SETTINGS & INVITATION CONTENT
        ===================================================================== */
     let currentHostConfig = null;
+    let autoSaveTimer = null;
 
     function populateConfigInputs(cfg) {
       if (!cfg) return;
@@ -1332,24 +1379,39 @@
     }
 
     function loadHostSettings() {
-      // 1. Đọc từ localStorage (nếu có)
+      // 1. Đọc từ localStorage (nếu có trên thiết bị admin)
+      let localCfg = null;
       try {
         const saved = localStorage.getItem(LS_SETTINGS_KEY);
         if (saved) {
-          populateConfigInputs(JSON.parse(saved));
+          localCfg = JSON.parse(saved);
+          populateConfigInputs(localCfg);
         }
       } catch (e) {}
 
-      // 2. Tải thêm từ event-config.json để đồng bộ
+      // 2. Tải thêm từ event-config.json
       fetch(`/event-config.json?v=${Date.now()}`)
         .then(res => res.json())
-        .then(cfg => {
-          populateConfigInputs(cfg);
+        .then(remoteCfg => {
+          if (!remoteCfg) return;
+          if (localCfg) {
+            // Nếu file server có updatedAt rõ ràng và mới hơn local thì cập nhật
+            if (remoteCfg.updatedAt && localCfg.updatedAt && remoteCfg.updatedAt > localCfg.updatedAt) {
+              populateConfigInputs(remoteCfg);
+            } else {
+              // Giữ cấu hình người dùng đã lưu trong local, chỉ điền trường nếu local còn thiếu
+              const merged = { ...remoteCfg, ...localCfg };
+              populateConfigInputs(merged);
+            }
+          } else {
+            // Lần đầu mở trang -> áp dụng từ event-config.json
+            populateConfigInputs(remoteCfg);
+          }
         })
         .catch(() => {});
     }
 
-    function saveHostSettings() {
+    function saveHostSettings(isSilent = false) {
       const cfg = {
         hostName: document.getElementById('cfgHostName')?.value.trim() || 'Đỗ Quang An',
         schoolName: document.getElementById('cfgSchoolName')?.value.trim() || 'Trường ĐH Khoa học Tự nhiên',
@@ -1360,25 +1422,88 @@
         venueAddress: document.getElementById('cfgVenueAddress')?.value.trim() || 'Cơ sở 1 — 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.',
         greetingPrefix: document.getElementById('cfgGreetingPrefix')?.value.trim() || 'Mời',
         greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || '',
-        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || ''
+        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || '',
+        updatedAt: Date.now()
       };
       currentHostConfig = cfg;
 
-      // 1. Lưu vào LocalStorage của thiết bị
+      // 1. Luôn lưu vào LocalStorage của trình duyệt
       localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(cfg));
 
-      // 2. Gửi lên server để ghi vào event-config.json (đồng bộ cho tất cả khách mời)
+      // 2. Gửi lên server để ghi vào event-config.json (nếu đang chạy node server.js)
       fetch('/api/save-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cfg)
       })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('API save not available');
+        return r.json();
+      })
       .then(data => {
-        showStatus('Đã lưu cấu hình thành công vào hệ thống!');
+        if (!isSilent) showStatus('✅ Đã lưu cấu hình và đồng bộ vào event-config.json!');
       })
       .catch(() => {
-        showStatus('Đã lưu cấu hình vào bộ nhớ máy!');
+        if (!isSilent) showStatus('💾 Đã lưu cấu hình vào bộ nhớ máy (localStorage)!');
+      });
+    }
+
+    function exportConfigFile() {
+      const cfg = currentHostConfig || {
+        hostName: document.getElementById('cfgHostName')?.value.trim() || 'Đỗ Quang An',
+        schoolName: document.getElementById('cfgSchoolName')?.value.trim() || 'Trường ĐH Khoa học Tự nhiên',
+        eventDate: document.getElementById('cfgEventDate')?.value.trim() || 'Thứ 5, 26.11.2026',
+        eventTime: document.getElementById('cfgEventTime')?.value.trim() || '10:00',
+        contactPhone: document.getElementById('cfgContactPhone')?.value.trim() || '0329486553',
+        venueName: document.getElementById('cfgVenueName')?.value.trim() || 'ĐH Khoa học Tự nhiên',
+        venueAddress: document.getElementById('cfgVenueAddress')?.value.trim() || 'Cơ sở 1 — 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.',
+        greetingPrefix: document.getElementById('cfgGreetingPrefix')?.value.trim() || 'Mời',
+        greetingPara1: document.getElementById('cfgGreetingPara1')?.value.trim() || '',
+        greetingPara2: document.getElementById('cfgGreetingPara2')?.value.trim() || '',
+        updatedAt: Date.now()
+      };
+      const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'event-config.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showStatus('📥 Đã xuất file event-config.json tải về máy!');
+    }
+
+    function resetToDefaultConfig() {
+      if (!confirm('Bạn có chắc chắn muốn đặt lại tất cả thông tin sự kiện về mặc định ban đầu?')) return;
+      localStorage.removeItem(LS_SETTINGS_KEY);
+      fetch(`/event-config.json?v=${Date.now()}`)
+        .then(r => r.json())
+        .then(cfg => {
+          populateConfigInputs(cfg);
+          showStatus('Đã khôi phục thông tin từ event-config.json!');
+        })
+        .catch(() => {
+          location.reload();
+        });
+    }
+
+    function setupConfigAutoSave() {
+      const fieldIds = [
+        'cfgHostName', 'cfgSchoolName', 'cfgEventDate', 'cfgEventTime',
+        'cfgContactPhone', 'cfgVenueName', 'cfgVenueAddress',
+        'cfgGreetingPrefix', 'cfgGreetingPara1', 'cfgGreetingPara2'
+      ];
+      fieldIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+              saveHostSettings(true);
+            }, 300);
+          });
+        }
       });
     }
 
@@ -1386,6 +1511,7 @@
        UI TABS & MODALS
        ===================================================================== */
     function switchTab(tab) {
+      localStorage.setItem(LS_ACTIVE_TAB_KEY, tab);
       const tabs = ['single', 'batch', 'settings'];
       tabs.forEach(t => {
         const content = document.getElementById(`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
