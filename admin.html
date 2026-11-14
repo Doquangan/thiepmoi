@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
 
   <!-- QR Code Library (Local with CDN fallback) -->
   <script src="/assets/qrcode.min.js"></script>
@@ -46,7 +46,7 @@
     }
 
     .font-editorial {
-      font-family: 'Playfair Display', 'Be Vietnam Pro', Georgia, serif;
+      font-family: 'Lora', 'Be Vietnam Pro', Georgia, serif;
     }
 
     .paper-grain {
@@ -1179,142 +1179,368 @@
       const qrCanvas = document.getElementById('qrCodeCanvas');
       if (!badgeCanvas || !qrCanvas) return;
 
-      const renderBadge = () => {
+      // Lấy cấu hình sự kiện hiện tại (từ form hoặc config đã tải)
+      const hostName = document.getElementById('cfgHostName')?.value.trim() || currentHostConfig?.hostName || 'Đỗ Quang An';
+      const rawSchool = document.getElementById('cfgSchoolName')?.value.trim() || currentHostConfig?.schoolName || 'Trường ĐH Khoa học Tự nhiên';
+      const eventDate = document.getElementById('cfgEventDate')?.value.trim() || currentHostConfig?.eventDate || 'Thứ 5, 26.11.2026';
+      const customTime = document.getElementById('guestCustomTimeInput')?.value.trim();
+      const eventTime = customTime || document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '10:00';
+      const venueName = document.getElementById('cfgVenueName')?.value.trim() || currentHostConfig?.venueName || 'ĐH Khoa học Tự nhiên';
+      const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || '227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM';
+
+      const guestName = currentGuestName || 'Bạn thân mến';
+      const dateTimeStr = eventTime ? `${eventDate}   •   ${eventTime}` : eventDate;
+      const { url, slug } = getFullInviteURL(currentGuestName);
+
+      const renderBadgeWithQR = (qrSource) => {
         const ctx = badgeCanvas.getContext('2d');
         const width = 1080;
         const height = 1350;
+        badgeCanvas.width = width;
+        badgeCanvas.height = height;
 
-        // Lấy cấu hình sự kiện hiện tại (từ form hoặc config đã tải)
-        const hostName = document.getElementById('cfgHostName')?.value.trim() || currentHostConfig?.hostName || 'Đỗ Quang An';
-        const rawSchool = document.getElementById('cfgSchoolName')?.value.trim() || currentHostConfig?.schoolName || 'Trường ĐH Khoa học Tự nhiên';
-        const eventDate = document.getElementById('cfgEventDate')?.value.trim() || currentHostConfig?.eventDate || 'Thứ 5, 26.11.2026';
-        const customTime = document.getElementById('guestCustomTimeInput')?.value.trim();
-        const eventTime = customTime || document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '10:00';
-        const venueName = document.getElementById('cfgVenueName')?.value.trim() || currentHostConfig?.venueName || 'ĐH Khoa học Tự nhiên';
-        const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || '227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM';
+        // Helper: draw rounded rect with fallback
+        const drawRoundedRect = (x, y, w, h, r) => {
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.lineTo(x + w - r, y);
+          ctx.arcTo(x + w, y, x + w, y + r, r);
+          ctx.lineTo(x + w, y + h - r);
+          ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+          ctx.lineTo(x + r, y + h);
+          ctx.arcTo(x, y + h, x, y + h - r, r);
+          ctx.lineTo(x, y + r);
+          ctx.arcTo(x, y, x + r, y, r);
+          ctx.closePath();
+        };
 
-        // 1. Nền thẻ thiệp
-        ctx.fillStyle = '#F7F4F0';
+        // Helper: draw diamond ornament
+        const drawDiamond = (x, y, sz, fill) => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(x, y - sz);
+          ctx.lineTo(x + sz, y);
+          ctx.lineTo(x, y + sz);
+          ctx.lineTo(x - sz, y);
+          ctx.closePath();
+          ctx.fillStyle = fill;
+          ctx.fill();
+          ctx.restore();
+        };
+
+        // 1. Nền thẻ thiệp: Radial gradient giấy mỹ thuật cao cấp
+        const grad = ctx.createRadialGradient(width / 2, height / 2, 60, width / 2, height / 2, 780);
+        grad.addColorStop(0, '#FCFAF6');
+        grad.addColorStop(0.75, '#F8F4EC');
+        grad.addColorStop(1, '#F2EBE0');
+        ctx.fillStyle = grad;
         ctx.fillRect(0, 0, width, height);
 
-        // 2. Đường viền đôi trang nhã
-        ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
-        ctx.lineWidth = 4;
+        // 2. Viền đôi hoàng gia & góc hoa văn
+        // Viền ngoài ánh kim đồng cổ
+        ctx.strokeStyle = 'rgba(197, 160, 89, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(40, 40, width - 80, height - 80);
+
+        // Viền chính đỏ rượu Burgundy
+        ctx.strokeStyle = '#881337';
+        ctx.lineWidth = 3;
         ctx.strokeRect(50, 50, width - 100, height - 100);
 
+        // Viền chỉ vàng mảnh bên trong
+        ctx.strokeStyle = '#C5A059';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(58, 58, width - 116, height - 116);
+
+        // 4 góc kim cương hoa văn
+        [
+          [54, 54],
+          [width - 54, 54],
+          [54, height - 54],
+          [width - 54, height - 54]
+        ].forEach(([cx, cy]) => {
+          drawDiamond(cx, cy, 7, '#881337');
+        });
+
+        // 3. Tiêu đề trường học & Đơn vị chủ quản
+        drawDiamond(width / 2 - 24, 90, 4, '#C5A059');
+        drawDiamond(width / 2, 88, 6, '#881337');
+        drawDiamond(width / 2 + 24, 90, 4, '#C5A059');
+
+        let schoolHeader = rawSchool.toUpperCase();
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#881337';
+        let schoolFontSize = 23;
+        ctx.font = `600 ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(schoolHeader).width > width - 180 && schoolFontSize > 16) {
+          schoolFontSize -= 1;
+          ctx.font = `600 ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(schoolHeader, width / 2, 118);
+
+        ctx.fillStyle = '#6B5E62';
+        ctx.font = '500 14px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH', width / 2, 145);
+
+        // Đường chỉ mảnh phân cách kèm quả trám chính giữa
+        ctx.strokeStyle = '#C5A059';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(220, 166);
+        ctx.lineTo(width / 2 - 20, 166);
+        ctx.stroke();
+
+        drawDiamond(width / 2, 166, 4, '#881337');
+
+        ctx.beginPath();
+        ctx.moveTo(width / 2 + 20, 166);
+        ctx.lineTo(width - 220, 166);
+        ctx.stroke();
+
+        // 4. Dòng định danh sự kiện
+        ctx.fillStyle = '#B48C36';
+        ctx.font = '600 13px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('—   GRADUATION INVITATION  •  CLASS OF 2026   —', width / 2, 192);
+
+        // 5. Tiêu đề chính Lễ Tốt Nghiệp (Font Lora thanh thoát)
+        ctx.fillStyle = '#1F1618';
+        ctx.font = 'italic 62px "Lora", "Be Vietnam Pro", Georgia, serif';
+        ctx.fillText('Lễ Tốt Nghiệp', width / 2, 248);
+
+        // 6. Khu vực khách mời danh dự (Biển tên sang trọng)
+        const guestTop = 318;
+        ctx.fillStyle = '#827378';
+        ctx.font = '500 13px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('THƯ MỜI THAM DỰ TRÂN TRỌNG GỬI ĐẾN', width / 2, guestTop);
+
+        let guestFontSize = 46;
+        ctx.font = `bold ${guestFontSize}px "Lora", "Be Vietnam Pro", Georgia, serif`;
+        let gnW = ctx.measureText(guestName).width;
+        while (gnW > width - 260 && guestFontSize > 28) {
+          guestFontSize -= 2;
+          ctx.font = `bold ${guestFontSize}px "Lora", "Be Vietnam Pro", Georgia, serif`;
+          gnW = ctx.measureText(guestName).width;
+        }
+
+        const plaqueW = Math.max(520, Math.min(width - 140, gnW + 160));
+        const plaqueH = 70;
+        const px = (width - plaqueW) / 2;
+        const py = guestTop + 16;
+
+        drawRoundedRect(px, py, plaqueW, plaqueH, 18);
+        ctx.fillStyle = '#FAF6F0';
+        ctx.fill();
         ctx.strokeStyle = '#881337';
         ctx.lineWidth = 1;
-        ctx.strokeRect(62, 62, width - 124, height - 124);
+        ctx.stroke();
 
-        // 3. Tiêu đề trường học
-        let schoolHeader = rawSchool.toUpperCase();
-        if (!schoolHeader.includes('ĐHQG')) {
-          schoolHeader += ' • ĐHQG-HCM';
-        }
+        drawRoundedRect(px + 4, py + 4, plaqueW - 8, plaqueH - 8, 14);
+        ctx.strokeStyle = 'rgba(197, 160, 89, 0.7)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        drawDiamond(width / 2 - gnW / 2 - 26, py + plaqueH / 2, 5, '#C5A059');
         ctx.fillStyle = '#881337';
-        ctx.textAlign = 'center';
-        let schoolFontSize = 26;
-        ctx.font = `bold ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
-        while (ctx.measureText(schoolHeader).width > width - 140 && schoolFontSize > 18) {
-          schoolFontSize -= 1;
-          ctx.font = `bold ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
-        }
-        ctx.fillText(schoolHeader, width / 2, 160);
+        ctx.font = `bold ${guestFontSize}px "Lora", "Be Vietnam Pro", Georgia, serif`;
+        ctx.fillText(guestName, width / 2, py + plaqueH / 2 + (guestFontSize * 0.35));
+        drawDiamond(width / 2 + gnW / 2 + 26, py + plaqueH / 2, 5, '#C5A059');
 
-        // 4. Subtitle
-        ctx.fillStyle = '#5C4E52';
-        ctx.font = '22px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('CLASS OF 2026 // GRADUATION INVITATION', width / 2, 205);
+        // 7. Khung mã QR nổi 3D kèm viền vàng & con dấu trường
+        const qrCardSz = 430;
+        const qx = (width - qrCardSz) / 2;
+        const qy = 435;
 
-        // 5. Tiêu đề chính Lễ Tốt Nghiệp
-        ctx.fillStyle = '#1F1618';
-        ctx.font = 'italic 70px "Playfair Display", "Be Vietnam Pro", Georgia, serif';
-        ctx.fillText('Lễ Tốt Nghiệp', width / 2, 310);
-
-        // 6. Lời dẫn & Tên khách mời
-        ctx.fillStyle = '#5C4E52';
-        ctx.font = '26px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('Thư mời tham dự dành riêng cho:', width / 2, 400);
-
-        ctx.fillStyle = '#881337';
-        let guestFontSize = 64;
-        ctx.font = `bold ${guestFontSize}px "Playfair Display", "Be Vietnam Pro", Georgia, serif`;
-        const guestName = currentGuestName || 'Bạn thân mến';
-        while (ctx.measureText(guestName).width > width - 140 && guestFontSize > 36) {
-          guestFontSize -= 2;
-          ctx.font = `bold ${guestFontSize}px "Playfair Display", "Be Vietnam Pro", Georgia, serif`;
-        }
-        ctx.fillText(guestName, width / 2, 480);
-
-        // 7. Khung mã QR
-        const qrBoxSize = 460;
-        const qrBoxX = (width - qrBoxSize) / 2;
-        const qrBoxY = 530;
-
+        ctx.save();
+        ctx.shadowColor = 'rgba(136, 19, 55, 0.08)';
+        ctx.shadowBlur = 24;
+        ctx.shadowOffsetY = 8;
+        drawRoundedRect(qx, qy, qrCardSz, qrCardSz, 22);
         ctx.fillStyle = '#FFFFFF';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
-        ctx.shadowBlur = 30;
-        ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
-        ctx.shadowBlur = 0;
+        ctx.fill();
+        ctx.restore();
 
-        ctx.strokeStyle = 'rgba(136, 19, 55, 0.3)';
+        drawRoundedRect(qx, qy, qrCardSz, qrCardSz, 22);
+        ctx.strokeStyle = '#C5A059';
         ctx.lineWidth = 2;
-        ctx.strokeRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
+        ctx.stroke();
 
-        ctx.drawImage(qrCanvas, qrBoxX + 20, qrBoxY + 20, qrBoxSize - 40, qrBoxSize - 40);
+        drawRoundedRect(qx + 5, qy + 5, qrCardSz - 10, qrCardSz - 10, 17);
+        ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
 
-        // 8. Ngày giờ sự kiện (Động theo cấu hình)
-        const dateTimeStr = eventTime ? `${eventDate} — ${eventTime}` : eventDate;
-        ctx.fillStyle = '#1F1618';
-        let dtFontSize = 28;
-        ctx.font = `bold ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
-        while (ctx.measureText(dateTimeStr).width > width - 140 && dtFontSize > 18) {
-          dtFontSize -= 1;
-          ctx.font = `bold ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
-        }
-        ctx.fillText(dateTimeStr, width / 2, 1070);
+        const qrSize = 360;
+        const qrX = (width - qrSize) / 2;
+        const qrY = qy + (qrCardSz - qrSize) / 2;
+        ctx.drawImage(qrSource, qrX, qrY, qrSize, qrSize);
 
-        // 9. Địa chỉ sự kiện (Động theo cấu hình)
-        let displayAddr = venueAddress;
-        if (venueName && !displayAddr.toLowerCase().includes(venueName.toLowerCase())) {
-          displayAddr = `${venueName} • ${displayAddr}`;
-        }
-        ctx.fillStyle = '#5C4E52';
-        let addrFontSize = 24;
-        ctx.font = `${addrFontSize}px "Be Vietnam Pro", sans-serif`;
-        while (ctx.measureText(displayAddr).width > width - 140 && addrFontSize > 16) {
-          addrFontSize -= 1;
-          ctx.font = `${addrFontSize}px "Be Vietnam Pro", sans-serif`;
-        }
-        ctx.fillText(displayAddr, width / 2, 1120);
+        // Con dấu thương hiệu HCMUS tâm mã QR
+        const sealR = 38;
+        const sealCX = width / 2;
+        const sealCY = qy + qrCardSz / 2;
 
-        // 10. Chữ ký người mời (Động theo cấu hình)
+        ctx.beginPath();
+        ctx.arc(sealCX, sealCY, sealR, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+        ctx.strokeStyle = '#881337';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(sealCX, sealCY, sealR - 4, 0, Math.PI * 2);
+        ctx.strokeStyle = '#C5A059';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
         ctx.fillStyle = '#881337';
-        ctx.font = 'italic 34px "Playfair Display", "Be Vietnam Pro", Georgia, serif';
-        ctx.fillText('Thân mời từ: ' + hostName, width / 2, 1210);
+        ctx.font = 'bold 15px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('HCMUS', sealCX, sealCY + 5);
 
-        // 11. Tải về file ảnh
-        const { slug } = getFullInviteURL(currentGuestName);
+        // Hướng dẫn quét mã QR
+        ctx.fillStyle = '#701A35';
+        ctx.font = '600 12px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('✦   QUÉT MÃ QR ĐỂ MỞ THIỆP MỜI & CHỈ ĐƯỜNG   ✦', width / 2, qy + qrCardSz + 25);
+
+        // 8. Bảng chi tiết sự kiện (Thời gian & Địa điểm)
+        const infoW = 760;
+        const infoH = 142;
+        const ix = (width - infoW) / 2;
+        const iy = 935;
+
+        drawRoundedRect(ix, iy, infoW, infoH, 16);
+        ctx.fillStyle = '#FEFBF6';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(197, 160, 89, 0.8)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        const bLen = 16;
+        const brackets = [
+          [ix + 6, iy + 6, 1, 1],
+          [ix + infoW - 6, iy + 6, -1, 1],
+          [ix + 6, iy + infoH - 6, 1, -1],
+          [ix + infoW - 6, iy + infoH - 6, -1, -1]
+        ];
+        ctx.strokeStyle = '#881337';
+        ctx.lineWidth = 2;
+        brackets.forEach(([bx, by, dx, dy]) => {
+          ctx.beginPath();
+          ctx.moveTo(bx + dx * bLen, by);
+          ctx.lineTo(bx, by);
+          ctx.lineTo(bx, by + dy * bLen);
+          ctx.stroke();
+        });
+
+        // Dòng ngày giờ
+        ctx.fillStyle = '#1F1618';
+        let dtFontSize = 23;
+        ctx.font = `600 ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(dateTimeStr).width > infoW - 80 && dtFontSize > 16) {
+          dtFontSize -= 1;
+          ctx.font = `600 ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(dateTimeStr, width / 2, iy + 34);
+
+        // Đường gạch trang trí trong bảng
+        ctx.strokeStyle = 'rgba(197, 160, 89, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ix + 50, iy + 60);
+        ctx.lineTo(width / 2 - 15, iy + 60);
+        ctx.stroke();
+
+        drawDiamond(width / 2, iy + 60, 3, '#881337');
+
+        ctx.beginPath();
+        ctx.moveTo(width / 2 + 15, iy + 60);
+        ctx.lineTo(ix + infoW - 50, iy + 60);
+        ctx.stroke();
+
+        // Dòng địa điểm
+        ctx.fillStyle = '#881337';
+        let venueFontSize = 19;
+        ctx.font = `600 ${venueFontSize}px "Be Vietnam Pro", sans-serif`;
+        let displayVenue = venueName || 'Trường ĐH Khoa học Tự nhiên';
+        if (!displayVenue.toLowerCase().includes('khoa học tự nhiên')) {
+          displayVenue = `Trường ĐH Khoa học Tự nhiên • ${displayVenue}`;
+        }
+        ctx.fillText(displayVenue, width / 2, iy + 86);
+
+        // Dòng địa chỉ cụ thể
+        ctx.fillStyle = '#5C4E52';
+        let addrFontSize = 16;
+        ctx.font = `500 ${addrFontSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(venueAddress).width > infoW - 60 && addrFontSize > 12) {
+          addrFontSize -= 1;
+          ctx.font = `500 ${addrFontSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(venueAddress, width / 2, iy + 114);
+
+        // 9. Lời mời và Chữ ký chủ nhân buổi lễ
+        const sigY = 1135;
+        ctx.fillStyle = '#7D6F73';
+        ctx.font = 'italic 16px "Lora", Georgia, serif';
+        ctx.fillText('Rất hân hạnh được đón tiếp bạn trong ngày vui này!', width / 2, sigY);
+
+        ctx.fillStyle = '#881337';
+        ctx.font = 'italic 28px "Lora", Georgia, serif';
+        ctx.fillText('Thân mời từ: ' + hostName, width / 2, sigY + 40);
+
+        // Hoa văn đáy
+        ctx.strokeStyle = '#C5A059';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(width / 2 - 60, sigY + 75);
+        ctx.lineTo(width / 2 - 15, sigY + 75);
+        ctx.stroke();
+
+        drawDiamond(width / 2, sigY + 75, 4, '#881337');
+
+        ctx.beginPath();
+        ctx.moveTo(width / 2 + 15, sigY + 75);
+        ctx.lineTo(width / 2 + 60, sigY + 75);
+        ctx.stroke();
+
+        // 10. Tải về file ảnh PNG chất lượng cao
         const link = document.createElement('a');
         link.download = `ThiepMoi-${slug}.png`;
         link.href = badgeCanvas.toDataURL('image/png');
         link.click();
-        showStatus('Đã tải thiệp mời ảnh kèm mã QR!');
+        showStatus('Đã tải thiệp mời ảnh kèm mã QR cao cấp!');
+      };
+
+      // Tạo QR độ nét cao độc lập để khi render lên ảnh 1080p luôn sắc nét
+      const offscreenQR = document.createElement('canvas');
+      const startRender = () => {
+        if (typeof QRCode !== 'undefined') {
+          QRCode.toCanvas(offscreenQR, url, {
+            width: 440,
+            margin: 1,
+            color: { dark: '#881337', light: '#FFFFFF' },
+            errorCorrectionLevel: 'H'
+          }, (err) => {
+            renderBadgeWithQR(err ? qrCanvas : offscreenQR);
+          });
+        } else {
+          renderBadgeWithQR(qrCanvas);
+        }
       };
 
       if (document.fonts) {
         Promise.all([
-          document.fonts.load('italic 70px "Playfair Display"'),
-          document.fonts.load('bold 64px "Playfair Display"'),
-          document.fonts.load('italic 34px "Playfair Display"'),
-          document.fonts.load('bold 28px "Be Vietnam Pro"')
+          document.fonts.load('italic 62px "Lora"', 'Lễ Tốt Nghiệp'),
+          document.fonts.load('bold 46px "Lora"', guestName),
+          document.fonts.load('italic 28px "Lora"', 'Thân mời từ: ' + hostName),
+          document.fonts.load('600 23px "Be Vietnam Pro"', dateTimeStr),
+          document.fonts.ready
         ]).then(() => {
-          renderBadge();
+          startRender();
         }).catch(() => {
-          renderBadge();
+          startRender();
         });
       } else {
-        renderBadge();
+        startRender();
       }
     }
 
@@ -1793,5 +2019,11 @@
       }, 2500);
     }
   </script>
+  <!-- Offscreen Font Preloader for Canvas High-Fidelity Rendering -->
+  <div style="position:fixed;left:-9999px;top:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+    <span style="font-family:'Lora',serif;font-style:italic;font-weight:700;">Lễ Tốt Nghiệp Thân mời từ Đỗ Quang An</span>
+    <span style="font-family:'Lora',serif;font-weight:700;">Việt Hoàng Minh Khoa Bạn thân mến</span>
+    <span style="font-family:'Lora',serif;font-style:italic;font-weight:400;">Lễ Tốt Nghiệp</span>
+  </div>
 </body>
 </html>
