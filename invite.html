@@ -125,6 +125,48 @@
     #greetingPara1, #greetingPara2 {
       white-space: pre-line;
     }
+
+    /* Bong bóng chat rung lắc định kỳ */
+    @keyframes chatBubbleWiggle {
+      0%, 75%, 100% {
+        transform: rotate(0deg) scale(1);
+      }
+      79% {
+        transform: rotate(-12deg) scale(1.1);
+      }
+      83% {
+        transform: rotate(12deg) scale(1.1);
+      }
+      87% {
+        transform: rotate(-8deg) scale(1.05);
+      }
+      91% {
+        transform: rotate(6deg) scale(1.03);
+      }
+      95% {
+        transform: rotate(0deg) scale(1);
+      }
+    }
+
+    .animate-bubble-wiggle {
+      animation: chatBubbleWiggle 5s ease-in-out infinite;
+    }
+
+    /* Đám mây gợi ý lúc mờ lúc hiện thở nhẹ nhàng */
+    @keyframes cloudPulseFade {
+      0%, 100% {
+        opacity: 0.38;
+        transform: translateY(0px) scale(0.98);
+      }
+      50% {
+        opacity: 0.92;
+        transform: translateY(-4px) scale(1.02);
+      }
+    }
+
+    .animate-cloud-pulse {
+      animation: cloudPulseFade 3.5s ease-in-out infinite;
+    }
   </style>
 </head>
 <body class="paper-grain min-h-screen selection:bg-[#881337] selection:text-white flex flex-col justify-between">
@@ -389,108 +431,6 @@
       </p>
     </section>
 
-    <!-- Editorial Divider -->
-    <div class="my-10 sm:my-14 border-t border-[var(--border-hairline)]"></div>
-
-    <!-- =====================================================================
-         LỜI NHẮN GỬI RIÊNG TƯ CHO CỬ NHÂN (GỬI VỀ EMAIL QUA NETLIFY FORMS)
-         ===================================================================== -->
-    <section id="privateWishSection" class="space-y-4 sm:space-y-6 max-w-xl mx-auto">
-      <div class="text-center space-y-1 sm:space-y-1.5">
-        <p class="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold">
-          Góc lưu bút riêng tư // To Đỗ Quang An
-        </p>
-        <h2 class="font-editorial text-2xl sm:text-3xl md:text-4xl font-semibold text-[var(--ink-primary)]">
-          Bạn có điều gì muốn gửi đến mình hem?
-        </h2>
-        <p class="text-xs sm:text-[13px] text-[var(--ink-muted)] leading-relaxed max-w-md mx-auto">
-          Dành một góc nhỏ riêng tư để bạn gửi lời chúc, kỷ niệm hay nhắn nhủ điều gì đó đến An nhé. Lời nhắn này sẽ được gửi trực tiếp đến hộp thư của An! 💌
-        </p>
-      </div>
-
-      <!-- Form Box -->
-      <div class="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#FBF9F5] border border-[var(--border-hairline)] shadow-sm relative overflow-hidden">
-        
-        <!-- Canvas Confetti Overlay -->
-        <canvas id="wishConfettiCanvas" class="pointer-events-none absolute inset-0 w-full h-full z-10 hidden"></canvas>
-
-        <!-- The Interactive Form -->
-        <form name="wishes" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="wishesForm" class="space-y-4 relative z-0">
-          <input type="hidden" name="form-name" value="wishes" />
-          <input type="hidden" name="subject" value="💌 Lời nhắn tốt nghiệp từ bạn bè" id="formSubjectInput" />
-          <input type="hidden" name="guestUrl" id="formGuestUrlInput" value="" />
-          
-          <!-- Bot Honeypot for Anti-spam -->
-          <p class="hidden" style="display:none;">
-            <label>Don’t fill this out: <input name="bot-field" /></label>
-          </p>
-
-          <!-- Field 1: Sender Name -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="wishSenderName" class="block text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
-                Tên của bạn:
-              </label>
-              <span class="text-[10.5px] text-stone-400">Tự động nhận diện</span>
-            </div>
-            <input type="text" id="wishSenderName" name="senderName" required
-              class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-semibold text-[var(--ink-primary)] transition-all"
-              placeholder="Nhập tên của bạn..." />
-          </div>
-
-          <!-- Field 2: Message -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="wishMessage" class="block text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
-                Lời nhắn gửi đến An:
-              </label>
-              <span class="text-[10.5px] text-stone-400">Riêng tư 100%</span>
-            </div>
-            <textarea id="wishMessage" name="message" rows="4" required
-              class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs sm:text-sm font-medium leading-relaxed text-[var(--ink-primary)] transition-all resize-y"
-              placeholder="Chia sẻ kỷ niệm thời sinh viên, lời chúc, hoặc dặn dò mình điều gì đó nha... (xuống dòng thoải mái nhé)"></textarea>
-          </div>
-
-          <!-- Field 3: Sender Contact (Optional) -->
-          <div>
-            <label for="wishContact" class="block text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)] mb-1.5">
-              Cách An nhắn lại cho bạn (Không bắt buộc):
-            </label>
-            <input type="text" id="wishContact" name="contact"
-              class="w-full px-3.5 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs text-[var(--ink-primary)] transition-all"
-              placeholder="Số điện thoại / Zalo hoặc Facebook để An nhắn cảm ơn nha..." />
-          </div>
-
-          <!-- Submit Button -->
-          <div class="pt-1">
-            <button type="submit" id="wishSubmitBtn"
-              class="w-full py-3.5 px-4 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] active:scale-[0.99] text-white font-semibold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 touch-manipulation">
-              <span id="wishBtnText">Gửi cho An 💌</span>
-              <span id="wishBtnSpinner" class="hidden text-sm animate-spin">⏳</span>
-            </button>
-          </div>
-        </form>
-
-        <!-- Success Thank-you State -->
-        <div id="wishSuccessCard" class="hidden text-center py-7 px-4 space-y-3.5 bg-white/90 rounded-2xl border border-rose-200/80 transition-all">
-          <div class="text-4xl animate-bounce">💌✨</div>
-          <h3 class="font-editorial text-2xl font-semibold text-[var(--ink-primary)]">
-            An đã nhận được lời nhắn của bạn!
-          </h3>
-          <p class="text-xs sm:text-sm text-[var(--ink-muted)] max-w-sm mx-auto leading-relaxed">
-            Cảm ơn <strong id="successSenderNameDisplay" class="text-[#881337] font-semibold">bạn</strong> rất nhiều vì những lời chia sẻ ấm áp. Lời nhắn này đã được chuyển riêng đến hộp thư của An. Hẹn gặp bạn ở sân trường Tự nhiên nha! 🎓
-          </p>
-          <div class="pt-2">
-            <button type="button" onclick="resetWishForm()"
-              class="text-xs text-[#881337] hover:underline font-semibold inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-200/60 touch-manipulation">
-              <span>✏️ Gửi thêm lời nhắn khác</span>
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
     <!-- Minimalist Footer Note (Không còn liên kết admin-server, hoàn toàn riêng tư) -->
     <footer class="mt-10 sm:mt-14 pt-6 border-t border-[var(--border-hairline)] flex items-center justify-center text-center text-xs text-[var(--ink-muted)]">
       <p>Hẹn gặp bạn tại khuôn viên Tự nhiên! 🎓</p>
@@ -516,6 +456,147 @@
     </div>
     <span id="musicToggleText" class="text-[11px] font-medium tracking-wide">Soundtrack ♪</span>
   </button>
+
+  <!-- =====================================================================
+       FLOATING MESSENGER CHAT BUBBLE & CLOUDY TOOLTIP
+       ===================================================================== -->
+  <div id="chatBubbleContainer" class="fixed bottom-[4.5rem] left-4 sm:bottom-20 sm:left-6 z-30 select-none">
+    
+    <!-- Cloudy Tooltip (Đám mây gợi ý mờ mờ nhấp nháy thở nhẹ) -->
+    <div id="chatCloudTooltip" onclick="openChatWindow()"
+      class="absolute bottom-full left-0 mb-2 cursor-pointer animate-cloud-pulse transition-all duration-300 pointer-events-auto"
+      title="Nhấn để gửi lời nhắn riêng cho Quang An nè">
+      <div class="relative px-3.5 py-2 rounded-2xl bg-white/75 border border-[#881337]/20 shadow-md backdrop-blur-md max-w-[210px] sm:max-w-[240px]">
+        <p class="text-[11px] sm:text-xs font-medium text-[#70142C] leading-snug">
+          Bạn có điều gì muốn gửi đến mình hem? ✨
+        </p>
+        <!-- Cloud tails (đuôi đám mây hướng về bong bóng chat) -->
+        <span class="absolute -bottom-1.5 left-5 w-3 h-3 bg-white/75 rotate-45 border-r border-b border-[#881337]/20"></span>
+      </div>
+    </div>
+
+    <!-- Bong bóng chat tròn lắc lắc -->
+    <button id="chatBubbleBtn" type="button" onclick="toggleChatWindow()"
+      class="relative w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-[#881337] hover:bg-[#6e0f2c] active:scale-95 text-white shadow-xl flex items-center justify-center transition-all animate-bubble-wiggle group border-2 border-amber-200/50 touch-manipulation"
+      aria-label="Mở khung trò chuyện với Đỗ Quang An">
+      <svg class="w-6 h-6 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.915 1.455 5.524 3.733 7.197v3.545a.75.75 0 001.144.643l3.692-2.185c.465.066.942.1 1.431.1 5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.066 12.336l-2.614-2.788-5.1 2.788 5.61-5.956 2.678 2.788 5.036-2.788-5.61 5.956z"/>
+      </svg>
+      <!-- Chấm đỏ thông báo nhỏ xinh -->
+      <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-white animate-ping"></span>
+      <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-white"></span>
+    </button>
+  </div>
+
+  <!-- Backdrop overlay when chat is open (click outside to dismiss) -->
+  <div id="chatBackdrop" onclick="closeChatWindow()"
+    class="fixed inset-0 z-40 bg-black/25 backdrop-blur-[2px] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- =====================================================================
+       MESSENGER CHAT WINDOW (TƯƠNG THÍCH HOÀN HẢO LAPTOP & MOBILE)
+       ===================================================================== -->
+  <div id="chatWindow"
+    class="fixed z-50 transition-all duration-300 ease-out opacity-0 pointer-events-none scale-90 origin-bottom-left
+           bottom-3 left-3 right-3 sm:bottom-20 sm:left-6 sm:right-auto sm:w-[380px]
+           h-[490px] max-h-[82vh] sm:max-h-[550px]
+           rounded-3xl bg-[#FDFBF7] border border-[#881337]/20 shadow-2xl flex flex-col overflow-hidden">
+    
+    <!-- Header: Avatar, Name, Online Status, Close Button -->
+    <div class="px-4 py-3 bg-gradient-to-r from-[#881337] to-[#70142C] text-white flex items-center justify-between shrink-0 shadow-sm">
+      <div class="flex items-center gap-2.5">
+        <div class="relative w-9 h-9 rounded-full overflow-hidden border border-white/30 bg-amber-100 shrink-0">
+          <img src="/assets/portrait.png" alt="Đỗ Quang An" class="w-full h-full object-cover object-top" />
+          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white"></span>
+        </div>
+        <div class="leading-tight">
+          <h3 class="font-editorial font-semibold text-sm sm:text-base text-white tracking-wide">
+            Đỗ Quang An
+          </h3>
+          <p class="text-[10.5px] text-rose-200/90 font-sans flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+            <span>Đang lắng nghe bạn nè...</span>
+          </p>
+        </div>
+      </div>
+      <button type="button" onclick="closeChatWindow()"
+        class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white/90 flex items-center justify-center transition-all touch-manipulation text-sm font-bold"
+        aria-label="Đóng khung chat">
+        ✕
+      </button>
+    </div>
+
+    <!-- Messages Body (Scrollable) -->
+    <div id="chatMessagesBody" class="flex-1 p-3.5 sm:p-4 space-y-3 overflow-y-auto overscroll-contain bg-[#F9F6F0]/60 text-xs sm:text-[13px] leading-relaxed">
+      
+      <!-- Timestamp badge -->
+      <div class="text-center my-1">
+        <span class="text-[10px] text-stone-400 bg-white/80 px-2.5 py-0.5 rounded-full border border-stone-200/60">
+          Tin nhắn riêng tư trực tiếp đến email của An 💌
+        </span>
+      </div>
+
+      <!-- Tin nhắn mặc định của Quang An (Left message bubble) -->
+      <div class="flex items-end gap-2 max-w-[85%]">
+        <div class="w-6 h-6 rounded-full overflow-hidden bg-amber-100 shrink-0 mb-0.5 border border-[#881337]/20">
+          <img src="/assets/portrait.png" alt="An" class="w-full h-full object-cover object-top" />
+        </div>
+        <div class="px-3.5 py-2.5 rounded-2xl rounded-bl-sm bg-white border border-stone-200/80 text-[var(--ink-primary)] shadow-xs">
+          <p class="font-medium">Nói đi tui nghe nè... 😊🎓</p>
+          <span class="block text-[9px] text-stone-400 pt-1 text-right">Vừa xong</span>
+        </div>
+      </div>
+
+      <!-- Dynamic Messages injected here -->
+      <div id="dynamicChatContainer" class="space-y-3"></div>
+
+      <!-- Typing indicator (hidden by default) -->
+      <div id="chatTypingIndicator" class="hidden flex items-center gap-2 max-w-[70%]">
+        <div class="w-6 h-6 rounded-full overflow-hidden bg-amber-100 shrink-0 border border-[#881337]/20">
+          <img src="/assets/portrait.png" alt="An" class="w-full h-full object-cover object-top" />
+        </div>
+        <div class="px-3 py-2 rounded-2xl rounded-bl-sm bg-white border border-stone-200/80 flex items-center gap-1 shadow-xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-stone-400 animate-bounce"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-stone-400 animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-stone-400 animate-bounce [animation-delay:0.4s]"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Chat Input Footer -->
+    <div class="p-2.5 sm:p-3 bg-white border-t border-[var(--border-hairline)] shrink-0">
+      <form id="chatMessengerForm" onsubmit="handleSendChatMessage(event)" class="flex items-end gap-2">
+        <textarea id="chatInputMessage" rows="1" required
+          onkeydown="handleChatInputKeyDown(event)"
+          placeholder="Nhập lời nhắn cho Quang An..."
+          class="flex-1 max-h-24 px-3.5 py-2.5 rounded-2xl bg-stone-100 focus:bg-white border border-transparent focus:border-[#881337]/30 focus:outline-none text-xs sm:text-[13px] text-[var(--ink-primary)] leading-normal resize-none transition-all"></textarea>
+        
+        <button type="submit" id="chatSendBtn"
+          class="w-10 h-10 rounded-full bg-[#881337] hover:bg-[#6e0f2c] active:scale-95 text-white flex items-center justify-center shrink-0 transition-all shadow-md touch-manipulation disabled:opacity-50"
+          aria-label="Gửi tin nhắn">
+          <svg class="w-4 h-4 translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+      <p class="text-[9.5px] text-stone-400 text-center pt-1.5 truncate">
+        Nhấn Enter để gửi • Tin nhắn gửi trực tiếp đến email của An 🔒
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Hidden static form for Netlify Forms build-time crawler -->
+  <form name="wishes" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="netlifyHiddenForm" hidden>
+    <input type="hidden" name="form-name" value="wishes" />
+    <input type="hidden" name="subject" value="💌 Lời nhắn tốt nghiệp từ bạn bè" id="formSubjectInput" />
+    <input type="hidden" name="guestUrl" id="formGuestUrlInput" value="" />
+    <input name="bot-field" />
+    <input type="text" name="senderName" id="hiddenSenderNameInput" />
+    <textarea name="message" id="hiddenMessageInput"></textarea>
+    <input type="text" name="contact" />
+  </form>
 
   <script>
     /* =====================================================================
@@ -702,10 +783,10 @@
       applyURLOverrides();
       checkStaticImage('/assets/portrait.jpg', 'portraitPreviewImg', 'portraitPlaceholder');
 
-      // Tự động điền tên vào form gửi lời nhắn riêng
-      const wishSenderInput = document.getElementById('wishSenderName');
-      if (wishSenderInput && (!wishSenderInput.value || wishSenderInput.value === 'Bạn của tôi')) {
-        wishSenderInput.value = (guestName && guestName !== 'Bạn của tôi') ? guestName : '';
+      // Cập nhật tên vào Netlify hidden fields
+      const hiddenSenderInput = document.getElementById('hiddenSenderNameInput');
+      if (hiddenSenderInput) {
+        hiddenSenderInput.value = (guestName && guestName !== 'Bạn của tôi') ? guestName : 'Bạn của tôi';
       }
       const formSubjectInput = document.getElementById('formSubjectInput');
       if (formSubjectInput && guestName && guestName !== 'Bạn của tôi') {
@@ -1078,25 +1159,173 @@
     }
 
     /* =====================================================================
-       4. PRIVATE WISHES FORM & CONFETTI (NETLIFY FORMS AJAX)
+       4. MESSENGER CHAT POPUP & NETLIFY FORMS AJAX
        ===================================================================== */
-    function triggerConfetti() {
-      const canvas = document.getElementById('wishConfettiCanvas');
-      if (!canvas) return;
-      canvas.classList.remove('hidden');
-      const ctx = canvas.getContext('2d');
-      const parent = canvas.parentElement;
-      canvas.width = parent.clientWidth || 360;
-      canvas.height = parent.clientHeight || 420;
+    let isChatOpen = false;
+    let hasUserSentMessage = false;
 
+    function toggleChatWindow() {
+      if (isChatOpen) {
+        closeChatWindow();
+      } else {
+        openChatWindow();
+      }
+    }
+
+    function openChatWindow() {
+      isChatOpen = true;
+      const chatWindow = document.getElementById('chatWindow');
+      const backdrop = document.getElementById('chatBackdrop');
+      const cloud = document.getElementById('chatCloudTooltip');
+      const bubble = document.getElementById('chatBubbleBtn');
+
+      if (chatWindow) {
+        chatWindow.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+        chatWindow.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+      }
+      if (backdrop) {
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100', 'pointer-events-auto');
+      }
+      if (cloud) {
+        cloud.classList.add('opacity-0', 'pointer-events-none');
+      }
+      if (bubble) {
+        bubble.classList.remove('animate-bubble-wiggle');
+      }
+
+      setTimeout(() => {
+        if (window.innerWidth >= 640) {
+          document.getElementById('chatInputMessage')?.focus();
+        }
+        const msgs = document.getElementById('chatMessagesBody');
+        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+      }, 150);
+    }
+
+    function closeChatWindow() {
+      isChatOpen = false;
+      const chatWindow = document.getElementById('chatWindow');
+      const backdrop = document.getElementById('chatBackdrop');
+      const cloud = document.getElementById('chatCloudTooltip');
+      const bubble = document.getElementById('chatBubbleBtn');
+
+      if (chatWindow) {
+        chatWindow.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+        chatWindow.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+      }
+      if (backdrop) {
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+      if (cloud && !hasUserSentMessage) {
+        cloud.classList.remove('opacity-0', 'pointer-events-none');
+      }
+      if (bubble) {
+        bubble.classList.add('animate-bubble-wiggle');
+      }
+    }
+
+    function handleChatInputKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('chatMessengerForm')?.requestSubmit();
+      }
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInputMessage');
+      const container = document.getElementById('dynamicChatContainer');
+      const typingIndicator = document.getElementById('chatTypingIndicator');
+      const messagesBody = document.getElementById('chatMessagesBody');
+
+      const text = input ? input.value.trim() : '';
+      if (!text) return;
+
+      const guestName = getGuestName();
+      hasUserSentMessage = true;
+
+      // 1. Thêm tin nhắn của bạn bè lên bên phải khung chat
+      const userBubble = document.createElement('div');
+      userBubble.className = 'flex items-end justify-end gap-2 ml-auto max-w-[85%] animate-fade-in';
+      userBubble.innerHTML = `
+        <div class="px-3.5 py-2.5 rounded-2xl rounded-br-sm bg-[#881337] text-white shadow-xs">
+          <p class="whitespace-pre-line text-xs sm:text-[13px] leading-relaxed">${escapeHTML(text)}</p>
+          <span class="block text-[9px] text-rose-200/80 pt-1 text-right">Vừa xong ✓</span>
+        </div>
+      `;
+      if (container) container.appendChild(userBubble);
+      if (input) input.value = '';
+      if (messagesBody) messagesBody.scrollTop = messagesBody.scrollHeight;
+
+      // 2. Gửi ngầm về Netlify Forms
+      const payload = new URLSearchParams();
+      payload.append('form-name', 'wishes');
+      payload.append('senderName', guestName !== 'Bạn của tôi' ? guestName : 'Bạn của tôi');
+      payload.append('message', text);
+      payload.append('guestUrl', window.location.href);
+      payload.append('subject', `💌 Lời nhắn tốt nghiệp từ ${guestName}`);
+
+      fetch('/__forms.html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: payload.toString()
+      }).catch(() => {});
+
+      // 3. Phản hồi tự động từ Quang An sau 1.1s
+      if (typingIndicator) typingIndicator.classList.remove('hidden');
+      if (messagesBody) messagesBody.scrollTop = messagesBody.scrollHeight;
+
+      setTimeout(() => {
+        if (typingIndicator) typingIndicator.classList.add('hidden');
+        const anReply = document.createElement('div');
+        anReply.className = 'flex items-end gap-2 max-w-[85%] animate-fade-in';
+        const senderDisplayName = guestName !== 'Bạn của tôi' ? guestName : 'bạn';
+        anReply.innerHTML = `
+          <div class="w-6 h-6 rounded-full overflow-hidden bg-amber-100 shrink-0 mb-0.5 border border-[#881337]/20">
+            <img src="/assets/portrait.png" alt="An" class="w-full h-full object-cover object-top" />
+          </div>
+          <div class="px-3.5 py-2.5 rounded-2xl rounded-bl-sm bg-white border border-stone-200/80 text-[var(--ink-primary)] shadow-xs">
+            <p class="font-medium">An nhận được lời nhắn của ${escapeHTML(senderDisplayName)} rồi nha! Cảm ơn bạn nhiều nhiều, hẹn gặp bạn ở trường Tự nhiên nghen ❤️🎓</p>
+            <span class="block text-[9px] text-stone-400 pt-1 text-right">Vừa xong</span>
+          </div>
+        `;
+        if (container) container.appendChild(anReply);
+        if (messagesBody) messagesBody.scrollTop = messagesBody.scrollHeight;
+        triggerMiniConfetti();
+      }, 1100);
+    }
+
+    function triggerMiniConfetti() {
       const colors = ['#881337', '#BE123C', '#F43F5E', '#F59E0B', '#10B981', '#6366F1'];
+      const container = document.getElementById('chatMessagesBody');
+      if (!container) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pointer-events-none absolute inset-0 w-full h-full z-20';
+      canvas.width = container.clientWidth || 360;
+      canvas.height = container.clientHeight || 480;
+      container.parentElement.style.position = 'relative';
+      container.parentElement.appendChild(canvas);
+
+      const ctx = canvas.getContext('2d');
       const particles = [];
-      for (let i = 0; i < 48; i++) {
+      for (let i = 0; i < 40; i++) {
         particles.push({
           x: Math.random() * canvas.width,
-          y: Math.random() * (canvas.height * 0.25),
-          w: Math.random() * 8 + 4,
-          h: Math.random() * 6 + 4,
+          y: Math.random() * (canvas.height * 0.3),
+          w: Math.random() * 7 + 4,
+          h: Math.random() * 5 + 3,
           color: colors[Math.floor(Math.random() * colors.length)],
           vx: (Math.random() - 0.5) * 3,
           vy: Math.random() * 3 + 2,
@@ -1108,7 +1337,7 @@
       let start = null;
       function animate(time) {
         if (!start) start = time;
-        const progress = (time - start) / 2600;
+        const progress = (time - start) / 2400;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         particles.forEach(p => {
@@ -1126,82 +1355,14 @@
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          canvas.classList.add('hidden');
+          canvas.remove();
         }
       }
       requestAnimationFrame(animate);
     }
 
-    function initWishForm() {
-      const form = document.getElementById('wishesForm');
-      if (!form) return;
-
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const submitBtn = document.getElementById('wishSubmitBtn');
-        const btnText = document.getElementById('wishBtnText');
-        const btnSpinner = document.getElementById('wishBtnSpinner');
-        const successCard = document.getElementById('wishSuccessCard');
-        const senderNameInput = document.getElementById('wishSenderName');
-        const senderName = senderNameInput?.value.trim() || 'Bạn của tôi';
-
-        if (submitBtn) submitBtn.disabled = true;
-        if (btnText) btnText.textContent = 'Đang gửi lời nhắn...';
-        if (btnSpinner) btnSpinner.classList.remove('hidden');
-
-        const formData = new FormData(form);
-        const encodedData = new URLSearchParams(formData).toString();
-
-        fetch('/__forms.html', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: encodedData
-        })
-        .then(() => {
-          form.classList.add('hidden');
-          if (successCard) {
-            successCard.classList.remove('hidden');
-            const nameEl = document.getElementById('successSenderNameDisplay');
-            if (nameEl) nameEl.textContent = senderName;
-          }
-          triggerConfetti();
-          showStatus('Đã gửi lời nhắn riêng cho An thành công! 💌');
-        })
-        .catch(() => {
-          // Fallback graceful degradation
-          form.classList.add('hidden');
-          if (successCard) {
-            successCard.classList.remove('hidden');
-            const nameEl = document.getElementById('successSenderNameDisplay');
-            if (nameEl) nameEl.textContent = senderName;
-          }
-          triggerConfetti();
-          showStatus('Đã ghi nhận lời nhắn của bạn! 💌');
-        })
-        .finally(() => {
-          if (submitBtn) submitBtn.disabled = false;
-          if (btnText) btnText.textContent = 'Gửi cho An 💌';
-          if (btnSpinner) btnSpinner.classList.add('hidden');
-        });
-      });
-    }
-
-    function resetWishForm() {
-      const form = document.getElementById('wishesForm');
-      const successCard = document.getElementById('wishSuccessCard');
-      const msgInput = document.getElementById('wishMessage');
-      if (form) form.classList.remove('hidden');
-      if (successCard) successCard.classList.add('hidden');
-      if (msgInput) {
-        msgInput.value = '';
-        msgInput.focus();
-      }
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       applyPersonalization();
-      initWishForm();
     });
   </script>
 </body>
