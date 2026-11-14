@@ -1400,6 +1400,11 @@ Hẹn gặp bạn ở khuôn viên tự nhiên nháa &lt;3</textarea>
 
         // Helper: draw rounded rectangle
         const drawRoundedRect = (x, y, w, h, r) => {
+          if (typeof ctx.roundRect === 'function') {
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, r);
+            return;
+          }
           if (r > w / 2) r = w / 2;
           if (r > h / 2) r = h / 2;
           ctx.beginPath();
@@ -1410,7 +1415,7 @@ Hẹn gặp bạn ở khuôn viên tự nhiên nháa &lt;3</textarea>
           ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
           ctx.lineTo(x + r, y + h);
           ctx.arcTo(x, y + h, x, y + h - r, r);
-          ctx.lineTo(x + r, y);
+          ctx.lineTo(x, y + r);
           ctx.arcTo(x, y, x + r, y, r);
           ctx.closePath();
         };
