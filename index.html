@@ -1329,15 +1329,14 @@ Hẹn gặp bạn ở khuôn viên tự nhiên nháa &lt;3</p>
 
     function triggerMiniConfetti() {
       const colors = ['#881337', '#BE123C', '#F43F5E', '#F59E0B', '#10B981', '#6366F1'];
-      const container = document.getElementById('chatMessagesBody');
-      if (!container) return;
+      const chatWindow = document.getElementById('chatWindow');
+      if (!chatWindow) return;
 
       const canvas = document.createElement('canvas');
       canvas.className = 'pointer-events-none absolute inset-0 w-full h-full z-20';
-      canvas.width = container.clientWidth || 360;
-      canvas.height = container.clientHeight || 480;
-      container.parentElement.style.position = 'relative';
-      container.parentElement.appendChild(canvas);
+      canvas.width = chatWindow.clientWidth || 360;
+      canvas.height = chatWindow.clientHeight || 480;
+      chatWindow.appendChild(canvas);
 
       const ctx = canvas.getContext('2d');
       const particles = [];
