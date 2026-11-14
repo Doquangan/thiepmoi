@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
 
   <!-- QR Code Library (Local with CDN fallback) -->
   <script src="/assets/qrcode.min.js"></script>
@@ -355,26 +355,42 @@
 
             <div class="space-y-2">
               <div>
-                <label for="guestCustomPara1Input" class="block text-[11px] font-medium text-[var(--ink-secondary)] mb-1">
-                  Đoạn 1 riêng (Lời mở đầu / kỷ niệm chung):
-                </label>
-                <textarea id="guestCustomPara1Input" rows="2" placeholder="Để trống sẽ dùng Đoạn 1 trong Cài đặt chung..."
+                <div class="flex items-center justify-between mb-1">
+                  <label for="guestCustomPara1Input" class="block text-[11px] font-semibold text-[var(--ink-secondary)]">
+                    Đoạn 1 (Lời mở đầu / kỷ niệm chung):
+                  </label>
+                  <span class="text-[10px] text-stone-400">Tự động điền từ Cài đặt chung</span>
+                </div>
+                <textarea id="guestCustomPara1Input" rows="3" placeholder="Điền sẵn từ Cài đặt chung — bạn có thể sửa trực tiếp..."
                   oninput="updateGeneratedResult()"
-                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs font-medium leading-relaxed"></textarea>
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#70142C]/30 text-xs font-medium leading-relaxed"></textarea>
               </div>
 
               <div>
-                <label for="guestCustomPara2Input" class="block text-[11px] font-medium text-[var(--ink-secondary)] mb-1">
-                  Đoạn 2 riêng (Lời hẹn gặp / chụp ảnh kỷ niệm):
-                </label>
-                <textarea id="guestCustomPara2Input" rows="2" placeholder="Để trống sẽ dùng Đoạn 2 trong Cài đặt chung..."
+                <div class="flex items-center justify-between mb-1">
+                  <label for="guestCustomPara2Input" class="block text-[11px] font-semibold text-[var(--ink-secondary)]">
+                    Đoạn 2 (Lời hẹn gặp / chụp ảnh kỷ niệm):
+                  </label>
+                  <span class="text-[10px] text-stone-400">Tự động điền từ Cài đặt chung</span>
+                </div>
+                <textarea id="guestCustomPara2Input" rows="3" placeholder="Điền sẵn từ Cài đặt chung — bạn có thể sửa trực tiếp..."
                   oninput="updateGeneratedResult()"
-                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#881337]/30 text-xs font-medium leading-relaxed"></textarea>
+                  class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] focus:outline-none focus:ring-2 focus:ring-[#70142C]/30 text-xs font-medium leading-relaxed"></textarea>
               </div>
             </div>
 
-            <div id="customMsgBadge" class="hidden flex items-center gap-1.5 text-[11px] text-[#881337] bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100 font-medium">
-              <span>✨ Đang gắn lời tâm sự riêng vào link mời &amp; mã QR!</span>
+            <!-- Status Indicator & Reset Button -->
+            <div class="flex items-center justify-between text-[11px] pt-0.5 flex-wrap gap-1">
+              <span id="customMsgStatusHint" class="text-stone-500 text-[10.5px]">
+                💡 Đã điền sẵn từ Cài đặt chung. Bạn chỉ cần chỉnh sửa câu chữ cho bạn này.
+              </span>
+              <button type="button" onclick="applyMessagePreset('default')" class="text-xs text-[#70142C] hover:underline font-semibold flex items-center gap-1 shrink-0">
+                <span>🔄 Đặt lại lời ngỏ gốc</span>
+              </button>
+            </div>
+
+            <div id="customMsgBadge" class="hidden flex items-center gap-1.5 text-[11px] text-[#70142C] bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200/80 font-medium">
+              <span>✨ Đã phát hiện chỉnh sửa riêng — Lời tâm sự này sẽ được gắn vào link &amp; mã QR!</span>
             </div>
           </div>
 
@@ -484,7 +500,7 @@
 
             <div>
               <label class="block text-xs font-semibold text-[var(--ink-primary)] mb-1">Đoạn 1 (Lời tâm sự mở đầu):</label>
-              <textarea id="cfgGreetingPara1" rows="2"
+              <textarea id="cfgGreetingPara1" rows="3"
                 class="w-full px-3 py-2 rounded-xl bg-white border border-[var(--border-hairline)] text-xs font-medium leading-relaxed">Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.</textarea>
             </div>
 
@@ -535,60 +551,125 @@
            ================================================================= -->
       <div class="lg:col-span-5 space-y-5">
 
-        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-[var(--border-hairline)] shadow-lg space-y-4 sm:space-y-5">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-[var(--border-hairline)] shadow-lg space-y-4">
           <!-- Card Badge Header -->
           <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
-            <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#881337] font-bold">
-              KẾT QUẢ MÃ QR TRỰC TIẾP
+            <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#70142C] font-bold flex items-center gap-1.5">
+              <span>✦</span> XEM TRƯỚC THẺ MỜI KÈM QR
             </span>
             <span class="text-[10px] sm:text-[11px] text-[var(--ink-muted)]">CLASS OF 2026</span>
           </div>
 
-          <!-- Recipient Greeting Preview -->
-          <div class="text-center space-y-0.5 px-2">
-            <p class="text-xs text-[var(--ink-muted)]">Thư mời cá nhân dành riêng cho:</p>
-            <h3 id="previewGuestName" class="font-editorial text-2xl sm:text-3xl font-bold text-[#881337] leading-tight break-words">
-              Minh Khoa
-            </h3>
-            <p id="previewEndpointShort" class="font-mono text-xs text-[var(--ink-muted)] truncate">/Minh-Khoa</p>
-            <div id="previewCustomBadges" class="hidden flex items-center justify-center gap-1.5 pt-1 flex-wrap"></div>
-          </div>
+          <!-- THE EDITORIAL INVITATION CARD (MATCHING USER'S PHOTO) -->
+          <div class="relative w-full rounded-2xl border border-[#D4CDC6] shadow-sm overflow-hidden p-4 sm:p-5 text-center transition-all select-none"
+               style="background-color: #F7F3EA; background-image: radial-gradient(#DDD6CB 1.3px, transparent 1.3px); background-size: 18px 18px;">
+            
+            <!-- 1. Header (Pill + Institution) -->
+            <div class="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-center">
+              <span id="cardPreviewSchool" class="px-2.5 py-0.5 rounded-full bg-[#F3D7DC] text-[#5A1220] text-[8.5px] sm:text-[9.5px] font-bold tracking-tight uppercase shadow-xs">
+                TRƯỜNG ĐH KHOA HỌC TỰ NHIÊN
+              </span>
+              <span class="text-[8.5px] sm:text-[9.5px] text-[#8A8278] font-semibold tracking-tight uppercase">
+                ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH
+              </span>
+            </div>
 
-          <!-- QR Canvas Container -->
-          <div class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto rounded-2xl p-2.5 sm:p-3 bg-white border-2 border-[#881337]/20 shadow-inner flex items-center justify-center">
-            <canvas id="qrCodeCanvas" class="w-full h-full block rounded-lg"></canvas>
-            <!-- Center Mini Brand Seal -->
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[#881337] shadow-md flex items-center justify-center text-[9px] sm:text-[10px] font-bold font-editorial text-[#881337]">
-                HCMUS
+            <!-- 2. Title -->
+            <h3 class="font-serif text-2xl sm:text-3xl font-semibold text-[#300A14] tracking-tight text-center mt-2.5">
+              Lễ Tốt Nghiệp.
+            </h3>
+
+            <!-- 3. Pill Tag -->
+            <div class="text-center mt-1">
+              <span class="inline-block px-3 py-0.5 rounded-full bg-[#CDA799] text-[#3A211A] text-[8px] sm:text-[9px] font-bold tracking-wider uppercase">
+                GRADUATION INVITATION • CLASS OF 2026
+              </span>
+            </div>
+
+            <!-- 4. Recipient Section -->
+            <div class="text-center mt-2.5 space-y-1">
+              <p class="text-[8.5px] tracking-wider text-[#756A67] font-semibold uppercase">
+                THƯ MỜI THAM DỰ TRÂN TRỌNG GỬI ĐẾN
+              </p>
+              <div class="inline-block px-5 py-1.5 rounded-xl border border-[#CDA799] bg-[#FAF7F2] font-serif font-bold text-base sm:text-lg text-[#151111] shadow-xs min-w-[160px] max-w-[95%] truncate" id="previewGuestName">
+                Minh Khoa
+              </div>
+              <p id="previewEndpointShort" class="font-mono text-[10px] text-[var(--ink-muted)] truncate hidden">/Minh-Khoa</p>
+              <div id="previewCustomBadges" class="hidden flex items-center justify-center gap-1.5 pt-0.5 flex-wrap"></div>
+            </div>
+
+            <!-- 5. QR Container Card -->
+            <div class="mt-3 mx-auto p-2 sm:p-2.5 rounded-2xl bg-[#CDA095] shadow-md max-w-[190px] sm:max-w-[210px]">
+              <div class="p-1.5 sm:p-2 rounded-xl bg-white relative flex items-center justify-center">
+                <canvas id="qrCodeCanvas" class="w-full aspect-square block rounded-lg"></canvas>
+                <!-- Center Badge HCMUS -->
+                <div class="absolute inset-0 m-auto w-12 h-5 sm:w-14 sm:h-6 rounded-md bg-white shadow-xs border border-stone-200/40 flex items-center justify-center pointer-events-none">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-[#70142C] tracking-tight">HCMUS</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <p class="text-center text-[10px] sm:text-[11px] text-[var(--ink-muted)] px-2">
-            Quét mã trên điện thoại để mở trực tiếp thiệp mời với hiệu ứng đĩa than!
-          </p>
+            <p class="text-[8.5px] sm:text-[9px] font-bold text-[#70142C] tracking-wider text-center mt-2">
+              ✦ QUÉT MÃ QR ĐỂ MỞ THIỆP MỜI & CHỈ ĐƯỜNG ✦
+            </p>
+
+            <!-- Divider Line 1 -->
+            <div class="my-2.5 border-t border-[#D4CDC6]"></div>
+
+            <!-- 6. Two-Column Info -->
+            <div class="grid grid-cols-2 gap-2 text-left px-1">
+              <div>
+                <span class="text-[8.5px] sm:text-[9px] font-bold text-[#70142C] block">01 // THỜI GIAN</span>
+                <span id="cardPreviewDateTime" class="text-[11px] sm:text-xs font-bold text-[#151111] block leading-tight mt-0.5">
+                  Thứ 5, 26.11.2026 • 11:00
+                </span>
+              </div>
+              <div>
+                <span class="text-[8.5px] sm:text-[9px] font-bold text-[#70142C] block">02 // ĐỊA ĐIỂM</span>
+                <span id="cardPreviewVenueName" class="text-[11px] sm:text-xs font-bold text-[#151111] block leading-tight mt-0.5">
+                  ĐH Khoa học Tự nhiên
+                </span>
+                <span id="cardPreviewAddress" class="text-[9px] sm:text-[9.5px] text-[#66615D] block leading-tight mt-0.5">
+                  Cơ sở 1 – 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM
+                </span>
+              </div>
+            </div>
+
+            <!-- Divider Line 2 -->
+            <div class="my-2.5 border-t border-[#D4CDC6]"></div>
+
+            <!-- 7. Footer -->
+            <div class="text-center pt-0.5 space-y-0.5 relative">
+              <p class="text-[9px] sm:text-[9.5px] text-[#6B635E]">Rất hân hạnh được đón tiếp bạn trong ngày vui này!</p>
+              <p class="font-serif italic text-xs sm:text-sm text-[#200D13]">
+                Thân mời từ <span id="cardPreviewHost">Đỗ Quang An</span>
+              </p>
+              <!-- Subtle Sparkle Star -->
+              <span class="absolute right-1 bottom-0 text-[#DDD6CB] text-xs pointer-events-none">✦</span>
+            </div>
+
+          </div>
 
           <!-- Action Buttons Group (Touch Friendly on Phone) -->
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <button type="button" onclick="copyCurrentLink()"
-              class="min-h-[42px] py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5 touch-manipulation">
-              <span>📋 Sao chép Link</span>
-            </button>
-            <button type="button" onclick="downloadQRCodePNG()"
-              class="min-h-[42px] py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5 touch-manipulation">
-              <span>📥 Tải ảnh QR</span>
-            </button>
-          </div>
-
           <button type="button" onclick="downloadGraduationBadge()"
-            class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-[#881337]/10 hover:bg-[#881337]/20 text-[#881337] text-xs font-semibold transition-all border border-[#881337]/20 flex items-center justify-center gap-1.5 touch-manipulation">
+            class="w-full min-h-[44px] py-3 px-4 rounded-xl bg-gradient-to-r from-[#70142C] to-[#881337] hover:from-[#580e22] hover:to-[#70142C] text-white text-xs sm:text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 touch-manipulation cursor-pointer active:scale-[0.99]">
             <span>🎨 Tải Thẻ Thiệp Kèm QR (Gửi Zalo/Story)</span>
           </button>
 
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="copyCurrentLink()"
+              class="min-h-[40px] py-2 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5 touch-manipulation">
+              <span>📋 Sao chép Link</span>
+            </button>
+            <button type="button" onclick="downloadQRCodePNG()"
+              class="min-h-[40px] py-2 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs font-medium text-[var(--ink-primary)] transition-all flex items-center justify-center gap-1.5 touch-manipulation">
+              <span>📥 Tải ảnh QR vuông</span>
+            </button>
+          </div>
+
           <button type="button" onclick="openCurrentInviteInNewTab()"
-            class="w-full min-h-[44px] py-3 rounded-xl bg-[#881337] hover:bg-[#6e0f2c] text-white text-xs font-semibold transition-all shadow-md flex items-center justify-center gap-1.5 touch-manipulation">
-            <span>🚀 Mở xem thiệp mời của khách này</span> ↗
+            class="w-full min-h-[40px] py-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 text-[var(--ink-muted)] hover:text-[#70142C] text-xs font-medium transition-all flex items-center justify-center gap-1.5 touch-manipulation">
+            <span>🚀 Mở xem trang web thiệp mời</span> ↗
           </button>
         </div>
 
@@ -743,7 +824,7 @@
   </div>
 
   <!-- Offscreen canvas for generating shareable graduation badge cards -->
-  <canvas id="badgeCanvas" width="1080" height="1350" class="hidden"></canvas>
+  <canvas id="badgeCanvas" width="1080" height="1445" class="hidden"></canvas>
 
   <!-- =====================================================================
        JAVASCRIPT CONTROLLER
@@ -926,6 +1007,7 @@
 
       const input = document.getElementById('guestNameInput');
       if (input) input.value = currentGuestName;
+      ensureGuestCustomParasPreFilled();
       updateGeneratedResult();
     });
 
@@ -1019,12 +1101,50 @@
       }
     }
 
+    function getDefaultGreetingParas() {
+      const p1 = document.getElementById('cfgGreetingPara1')?.value.trim() 
+        || currentHostConfig?.greetingPara1 
+        || 'Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.';
+      const p2 = document.getElementById('cfgGreetingPara2')?.value.trim() 
+        || currentHostConfig?.greetingPara2 
+        || 'Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.';
+      return { p1, p2 };
+    }
+
+    function ensureGuestCustomParasPreFilled(force = false) {
+      const p1Input = document.getElementById('guestCustomPara1Input');
+      const p2Input = document.getElementById('guestCustomPara2Input');
+      if (!p1Input || !p2Input) return;
+
+      const defaults = getDefaultGreetingParas();
+      if (force || !p1Input.value.trim()) {
+        p1Input.value = defaults.p1;
+      }
+      if (force || !p2Input.value.trim()) {
+        p2Input.value = defaults.p2;
+      }
+    }
+
     function applyMessagePreset(key) {
-      const preset = MESSAGE_PRESETS[key];
-      if (!preset) return;
       const p1Input = document.getElementById('guestCustomPara1Input');
       const p2Input = document.getElementById('guestCustomPara2Input');
       const salutationSelect = document.getElementById('salutationSelect');
+
+      if (key === 'default') {
+        const defaults = getDefaultGreetingParas();
+        const defaultPrefix = document.getElementById('cfgGreetingPrefix')?.value.trim() 
+          || currentHostConfig?.greetingPrefix 
+          || 'Gửi';
+        if (p1Input) p1Input.value = defaults.p1;
+        if (p2Input) p2Input.value = defaults.p2;
+        if (salutationSelect) salutationSelect.value = defaultPrefix;
+        updateGeneratedResult();
+        showStatus('Đã khôi phục lời ngỏ theo Cài đặt chung!');
+        return;
+      }
+
+      const preset = MESSAGE_PRESETS[key];
+      if (!preset) return;
       if (p1Input) p1Input.value = preset.p1;
       if (p2Input) p2Input.value = preset.p2;
       if (salutationSelect && preset.salutation) salutationSelect.value = preset.salutation;
@@ -1046,6 +1166,15 @@
       updateGeneratedResult();
     }
 
+    function normalizeGreetingText(str) {
+      return (str || '')
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .replace(/\\n/g, '\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .trim();
+    }
+
     function getFullInviteURL(name) {
       const format = document.getElementById('slugFormatSelect')?.value || 'accented';
       const salutation = document.getElementById('salutationSelect')?.value || 'Gửi';
@@ -1055,6 +1184,16 @@
       const slug = generateSlug(name, format);
 
       let url = `${currentDomain}/${encodeURI(slug)}`;
+
+      const defaults = getDefaultGreetingParas();
+      const normP1 = normalizeGreetingText(customP1);
+      const normDefP1 = normalizeGreetingText(defaults.p1);
+      const normP2 = normalizeGreetingText(customP2);
+      const normDefP2 = normalizeGreetingText(defaults.p2);
+
+      // Chỉ đính kèm p1 / p2 vào link nếu người dùng đã thực sự chỉnh sửa khác với Cài đặt chung
+      const isP1Custom = Boolean(normP1 && normP1 !== normDefP1);
+      const isP2Custom = Boolean(normP2 && normP2 !== normDefP2);
 
       const params = new URLSearchParams();
       if (salutation && salutation !== 'Gửi') {
@@ -1066,10 +1205,10 @@
       if (customTime) {
         params.set('time', customTime);
       }
-      if (customP1) {
+      if (isP1Custom) {
         params.set('p1', customP1);
       }
-      if (customP2) {
+      if (isP2Custom) {
         params.set('p2', customP2);
       }
 
@@ -1078,11 +1217,33 @@
         url += `?${queryString}`;
       }
 
-      return { url, slug, customTime, customP1, customP2, salutation };
+      return { url, slug, customTime, customP1, customP2, salutation, isP1Custom, isP2Custom };
+    }
+
+    function updatePreviewCardDetails() {
+      const hostName = document.getElementById('cfgHostName')?.value.trim() || currentHostConfig?.hostName || 'Đỗ Quang An';
+      const rawSchool = document.getElementById('cfgSchoolName')?.value.trim() || currentHostConfig?.schoolName || 'Trường ĐH Khoa học Tự nhiên';
+      const eventDate = document.getElementById('cfgEventDate')?.value.trim() || currentHostConfig?.eventDate || 'Thứ 5, 26.11.2026';
+      const customTime = document.getElementById('guestCustomTimeInput')?.value.trim();
+      const eventTime = customTime || document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '11:00';
+      const venueName = document.getElementById('cfgVenueName')?.value.trim() || currentHostConfig?.venueName || 'ĐH Khoa học Tự nhiên';
+      const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || 'Cơ sở 1 – 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM';
+
+      const cardSchool = document.getElementById('cardPreviewSchool');
+      const cardDateTime = document.getElementById('cardPreviewDateTime');
+      const cardVenue = document.getElementById('cardPreviewVenueName');
+      const cardAddr = document.getElementById('cardPreviewAddress');
+      const cardHost = document.getElementById('cardPreviewHost');
+
+      if (cardSchool) cardSchool.textContent = rawSchool.toUpperCase();
+      if (cardDateTime) cardDateTime.textContent = eventTime ? `${eventDate} • ${eventTime}` : eventDate;
+      if (cardVenue) cardVenue.textContent = venueName;
+      if (cardAddr) cardAddr.textContent = venueAddress;
+      if (cardHost) cardHost.textContent = hostName;
     }
 
     function updateGeneratedResult() {
-      const name = currentGuestName || 'Minh Khoa';
+      const name = currentGuestName || 'Việt Hoàng';
       const salutationEl = document.getElementById('salutationSelect');
       if (salutationEl) {
         localStorage.setItem(LS_LAST_SALUTATION_KEY, salutationEl.value);
@@ -1092,7 +1253,8 @@
         localStorage.setItem(LS_LAST_SLUG_FORMAT_KEY, slugFormatEl.value);
       }
 
-      const { url, slug, customTime, customP1, customP2 } = getFullInviteURL(name);
+      const { url, slug, customTime, customP1, customP2, isP1Custom, isP2Custom } = getFullInviteURL(name);
+      const hasCustomMsg = isP1Custom || isP2Custom;
 
       const nameEl = document.getElementById('previewGuestName');
       const shortEl = document.getElementById('previewEndpointShort');
@@ -1102,6 +1264,9 @@
       if (shortEl) shortEl.textContent = `/${slug}`;
       if (fullEl) fullEl.textContent = url;
 
+      // Update card preview details
+      updatePreviewCardDetails();
+
       // Badges in preview card
       const badgeContainer = document.getElementById('previewCustomBadges');
       if (badgeContainer) {
@@ -1109,8 +1274,8 @@
         if (customTime) {
           badgeHtml += `<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-medium">⏰ ${customTime}</span>`;
         }
-        if (customP1 || customP2) {
-          badgeHtml += `<span class="px-2 py-0.5 rounded-md bg-rose-50 text-[#881337] border border-rose-200 text-[10px] font-medium">💌 Kèm tâm sự riêng</span>`;
+        if (hasCustomMsg) {
+          badgeHtml += `<span class="px-2 py-0.5 rounded-md bg-rose-50 text-[#70142C] border border-rose-200 text-[10px] font-medium">💌 Kèm tâm sự riêng</span>`;
         }
         badgeContainer.innerHTML = badgeHtml;
         badgeContainer.classList.toggle('hidden', !badgeHtml);
@@ -1119,7 +1284,16 @@
       // Indicator badge below inputs
       const msgBadge = document.getElementById('customMsgBadge');
       if (msgBadge) {
-        msgBadge.classList.toggle('hidden', !(customP1 || customP2));
+        msgBadge.classList.toggle('hidden', !hasCustomMsg);
+      }
+
+      const hintEl = document.getElementById('customMsgStatusHint');
+      if (hintEl) {
+        if (hasCustomMsg) {
+          hintEl.innerHTML = '<span class="text-[#70142C] font-semibold">✨ Đã phát hiện chỉnh sửa riêng (sẽ gắn vào link &amp; QR)</span>';
+        } else {
+          hintEl.innerHTML = '<span class="text-stone-500">💡 Đã điền sẵn từ Cài đặt chung. Bạn chỉ cần sửa lại vài câu chữ.</span>';
+        }
       }
 
       const canvas = document.getElementById('qrCodeCanvas');
@@ -1129,7 +1303,7 @@
           width: 240,
           margin: 1,
           color: {
-            dark: '#881337',
+            dark: '#70142C',
             light: '#FFFFFF'
           },
           errorCorrectionLevel: errLevel
@@ -1172,35 +1346,60 @@
     }
 
     /* =====================================================================
-       GRADUATION QR BADGE GENERATOR (ĐỒNG BỘ ĐỘNG THEO CẤU HÌNH)
+       GRADUATION QR BADGE GENERATOR (CHIP/STORY THIỆP MỜI CAO CẤP CHUẨN MẪU)
        ===================================================================== */
-    function downloadGraduationBadge() {
+    function downloadGraduationBadge(guestParam) {
       const badgeCanvas = document.getElementById('badgeCanvas');
       const qrCanvas = document.getElementById('qrCodeCanvas');
-      if (!badgeCanvas || !qrCanvas) return;
+      if (!badgeCanvas) return;
 
-      // Lấy cấu hình sự kiện hiện tại (từ form hoặc config đã tải)
+      // 1. Xác định thông tin khách mời
+      let targetGuestName = currentGuestName || 'Việt Hoàng';
+      let targetCustomTime = document.getElementById('guestCustomTimeInput')?.value.trim() || '';
+      let targetSalutation = document.getElementById('salutationSelect')?.value || 'Gửi';
+      let targetP1 = document.getElementById('guestCustomP1Input')?.value.trim() || '';
+      let targetP2 = document.getElementById('guestCustomP2Input')?.value.trim() || '';
+
+      if (typeof guestParam === 'string' && guestParam.trim()) {
+        targetGuestName = guestParam.trim();
+        const found = guestList.find(g => g.name.toLowerCase() === targetGuestName.toLowerCase());
+        if (found) {
+          if (found.time) targetCustomTime = found.time;
+          if (found.salutation) targetSalutation = found.salutation;
+          if (found.p1) targetP1 = found.p1;
+          if (found.p2) targetP2 = found.p2;
+        }
+      } else if (typeof guestParam === 'object' && guestParam !== null) {
+        if (guestParam.name) targetGuestName = guestParam.name;
+        if (guestParam.time) targetCustomTime = guestParam.time;
+        if (guestParam.salutation) targetSalutation = guestParam.salutation;
+        if (guestParam.p1) targetP1 = guestParam.p1;
+        if (guestParam.p2) targetP2 = guestParam.p2;
+      }
+
+      // 2. Lấy cấu hình sự kiện
       const hostName = document.getElementById('cfgHostName')?.value.trim() || currentHostConfig?.hostName || 'Đỗ Quang An';
       const rawSchool = document.getElementById('cfgSchoolName')?.value.trim() || currentHostConfig?.schoolName || 'Trường ĐH Khoa học Tự nhiên';
       const eventDate = document.getElementById('cfgEventDate')?.value.trim() || currentHostConfig?.eventDate || 'Thứ 5, 26.11.2026';
-      const customTime = document.getElementById('guestCustomTimeInput')?.value.trim();
-      const eventTime = customTime || document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '10:00';
+      const defaultEventTime = document.getElementById('cfgEventTime')?.value.trim() || currentHostConfig?.eventTime || '11:00';
+      const eventTime = targetCustomTime || defaultEventTime;
       const venueName = document.getElementById('cfgVenueName')?.value.trim() || currentHostConfig?.venueName || 'ĐH Khoa học Tự nhiên';
-      const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || '227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM';
+      const venueAddress = document.getElementById('cfgVenueAddress')?.value.trim() || currentHostConfig?.venueAddress || 'Cơ sở 1 – 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.';
 
-      const guestName = currentGuestName || 'Bạn thân mến';
-      const dateTimeStr = eventTime ? `${eventDate}   •   ${eventTime}` : eventDate;
-      const { url, slug } = getFullInviteURL(currentGuestName);
+      const dateTimeStr = eventTime ? `${eventDate} • ${eventTime}` : eventDate;
+      const { url, slug } = getFullInviteURL(targetGuestName);
 
       const renderBadgeWithQR = (qrSource) => {
         const ctx = badgeCanvas.getContext('2d');
         const width = 1080;
-        const height = 1350;
+        const height = 1445;
         badgeCanvas.width = width;
         badgeCanvas.height = height;
 
-        // Helper: draw rounded rect with fallback
+        // Helper: draw rounded rectangle
         const drawRoundedRect = (x, y, w, h, r) => {
+          if (r > w / 2) r = w / 2;
+          if (r > h / 2) r = h / 2;
           ctx.beginPath();
           ctx.moveTo(x + r, y);
           ctx.lineTo(x + w - r, y);
@@ -1209,305 +1408,287 @@
           ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
           ctx.lineTo(x + r, y + h);
           ctx.arcTo(x, y + h, x, y + h - r, r);
-          ctx.lineTo(x, y + r);
+          ctx.lineTo(x + r, y);
           ctx.arcTo(x, y, x + r, y, r);
           ctx.closePath();
         };
 
-        // Helper: draw diamond ornament
-        const drawDiamond = (x, y, sz, fill) => {
+        // Helper: draw 4-point sparkle star
+        const drawSparkle = (cx, cy, sz, fill) => {
           ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(x, y - sz);
-          ctx.lineTo(x + sz, y);
-          ctx.lineTo(x, y + sz);
-          ctx.lineTo(x - sz, y);
-          ctx.closePath();
           ctx.fillStyle = fill;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - sz);
+          ctx.quadraticCurveTo(cx, cy, cx + sz, cy);
+          ctx.quadraticCurveTo(cx, cy, cx, cy + sz);
+          ctx.quadraticCurveTo(cx, cy, cx - sz, cy);
+          ctx.quadraticCurveTo(cx, cy, cx, cy - sz);
+          ctx.closePath();
           ctx.fill();
           ctx.restore();
         };
 
-        // 1. Nền thẻ thiệp: Radial gradient giấy mỹ thuật cao cấp
-        const grad = ctx.createRadialGradient(width / 2, height / 2, 60, width / 2, height / 2, 780);
-        grad.addColorStop(0, '#FCFAF6');
-        grad.addColorStop(0.75, '#F8F4EC');
-        grad.addColorStop(1, '#F2EBE0');
-        ctx.fillStyle = grad;
+        // Helper: smart wrap text for address
+        const wrapAddressText = (text, maxWidth) => {
+          const words = text.split(' ');
+          const lines = [];
+          let cur = '';
+          for (let i = 0; i < words.length; i++) {
+            const test = cur ? cur + ' ' + words[i] : words[i];
+            if (ctx.measureText(test).width > maxWidth && cur) {
+              lines.push(cur);
+              cur = words[i];
+            } else {
+              cur = test;
+            }
+          }
+          if (cur) lines.push(cur);
+          return lines;
+        };
+
+        // 1. Nền thẻ thiệp: Warm cream paper
+        ctx.fillStyle = '#F7F3EA';
         ctx.fillRect(0, 0, width, height);
 
-        // 2. Viền đôi hoàng gia & góc hoa văn
-        // Viền ngoài ánh kim đồng cổ
-        ctx.strokeStyle = 'rgba(197, 160, 89, 0.45)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(40, 40, width - 80, height - 80);
-
-        // Viền chính đỏ rượu Burgundy
-        ctx.strokeStyle = '#881337';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(50, 50, width - 100, height - 100);
-
-        // Viền chỉ vàng mảnh bên trong
-        ctx.strokeStyle = '#C5A059';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(58, 58, width - 116, height - 116);
-
-        // 4 góc kim cương hoa văn
-        [
-          [54, 54],
-          [width - 54, 54],
-          [54, height - 54],
-          [width - 54, height - 54]
-        ].forEach(([cx, cy]) => {
-          drawDiamond(cx, cy, 7, '#881337');
-        });
-
-        // 3. Tiêu đề trường học & Đơn vị chủ quản
-        drawDiamond(width / 2 - 24, 90, 4, '#C5A059');
-        drawDiamond(width / 2, 88, 6, '#881337');
-        drawDiamond(width / 2 + 24, 90, 4, '#C5A059');
-
-        let schoolHeader = rawSchool.toUpperCase();
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#881337';
-        let schoolFontSize = 23;
-        ctx.font = `600 ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
-        while (ctx.measureText(schoolHeader).width > width - 180 && schoolFontSize > 16) {
-          schoolFontSize -= 1;
-          ctx.font = `600 ${schoolFontSize}px "Be Vietnam Pro", sans-serif`;
+        // Dot Grid Pattern
+        const dotSpacing = 30.5;
+        const dotR = 1.6;
+        ctx.fillStyle = '#DDD6CB';
+        for (let x = 15; x < width; x += dotSpacing) {
+          for (let y = 15; y < height; y += dotSpacing) {
+            ctx.beginPath();
+            ctx.arc(x, y, dotR, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
-        ctx.fillText(schoolHeader, width / 2, 118);
 
-        ctx.fillStyle = '#6B5E62';
-        ctx.font = '500 14px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH', width / 2, 145);
+        // 2. Header (Pill + Đơn vị chủ quản)
+        const headerY = 96;
+        const schoolText = rawSchool.toUpperCase();
+        const univText = 'ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH';
 
-        // Đường chỉ mảnh phân cách kèm quả trám chính giữa
-        ctx.strokeStyle = '#C5A059';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(220, 166);
-        ctx.lineTo(width / 2 - 20, 166);
-        ctx.stroke();
+        ctx.font = 'bold 16px "Be Vietnam Pro", sans-serif';
+        const schoolMetrics = ctx.measureText(schoolText);
+        const pillPadX = 24;
+        const pillH = 42;
+        const pillW = schoolMetrics.width + pillPadX * 2;
 
-        drawDiamond(width / 2, 166, 4, '#881337');
+        ctx.font = '600 16px "Be Vietnam Pro", sans-serif';
+        const univMetrics = ctx.measureText(univText);
+        const headerGap = 20;
+        const totalHeaderW = pillW + headerGap + univMetrics.width;
+        const startX = (width - totalHeaderW) / 2;
 
-        ctx.beginPath();
-        ctx.moveTo(width / 2 + 20, 166);
-        ctx.lineTo(width - 220, 166);
-        ctx.stroke();
+        // Draw pill badge
+        drawRoundedRect(startX, headerY - pillH / 2, pillW, pillH, pillH / 2);
+        ctx.fillStyle = '#F3D7DC';
+        ctx.fill();
 
-        // 4. Dòng định danh sự kiện
-        ctx.fillStyle = '#B48C36';
-        ctx.font = '600 13px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('—   GRADUATION INVITATION  •  CLASS OF 2026   —', width / 2, 192);
+        // Pill text
+        ctx.fillStyle = '#5A1220';
+        ctx.font = 'bold 16px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(schoolText, startX + pillW / 2, headerY);
 
-        // 5. Tiêu đề chính Lễ Tốt Nghiệp (Font Lora thanh thoát)
-        ctx.fillStyle = '#1F1618';
-        ctx.font = 'italic 62px "Lora", "Be Vietnam Pro", Georgia, serif';
-        ctx.fillText('Lễ Tốt Nghiệp', width / 2, 248);
+        // Right institution text
+        ctx.fillStyle = '#8A8278';
+        ctx.font = '600 16px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(univText, startX + pillW + headerGap, headerY);
 
-        // 6. Khu vực khách mời danh dự (Biển tên sang trọng)
-        const guestTop = 318;
-        ctx.fillStyle = '#827378';
-        ctx.font = '500 13px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('THƯ MỜI THAM DỰ TRÂN TRỌNG GỬI ĐẾN', width / 2, guestTop);
+        // 3. Tiêu đề chính: Lễ Tốt Nghiệp.
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#300A14';
+        ctx.font = '600 92px "Lora", "Playfair Display", Georgia, serif';
+        ctx.fillText('Lễ Tốt Nghiệp.', width / 2, 230);
+
+        // 4. Dòng định danh sự kiện: GRADUATION INVITATION • CLASS OF 2026
+        const tagY = 296;
+        const tagText = 'GRADUATION INVITATION • CLASS OF 2026';
+        ctx.font = 'bold 14.5px "Be Vietnam Pro", sans-serif';
+        const tagMetrics = ctx.measureText(tagText);
+        const tagPadX = 28;
+        const tagH = 40;
+        const tagW = tagMetrics.width + tagPadX * 2;
+
+        drawRoundedRect((width - tagW) / 2, tagY - tagH / 2, tagW, tagH, tagH / 2);
+        ctx.fillStyle = '#CDA799';
+        ctx.fill();
+
+        ctx.fillStyle = '#3A211A';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(tagText, width / 2, tagY);
+
+        // 5. Khu vực khách mời danh dự
+        const labelY = 350;
+        ctx.fillStyle = '#756A67';
+        ctx.font = '600 14px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('THƯ MỜI THAM DỰ TRÂN TRỌNG GỬI ĐẾN', width / 2, labelY);
 
         let guestFontSize = 46;
-        ctx.font = `bold ${guestFontSize}px "Lora", "Be Vietnam Pro", Georgia, serif`;
-        let gnW = ctx.measureText(guestName).width;
-        while (gnW > width - 260 && guestFontSize > 28) {
+        ctx.font = `bold ${guestFontSize}px "Lora", "Playfair Display", Georgia, serif`;
+        let gnW = ctx.measureText(targetGuestName).width;
+        while (gnW > width - 280 && guestFontSize > 26) {
           guestFontSize -= 2;
-          ctx.font = `bold ${guestFontSize}px "Lora", "Be Vietnam Pro", Georgia, serif`;
-          gnW = ctx.measureText(guestName).width;
+          ctx.font = `bold ${guestFontSize}px "Lora", "Playfair Display", Georgia, serif`;
+          gnW = ctx.measureText(targetGuestName).width;
         }
 
-        const plaqueW = Math.max(520, Math.min(width - 140, gnW + 160));
-        const plaqueH = 70;
-        const px = (width - plaqueW) / 2;
-        const py = guestTop + 16;
+        const boxW = Math.max(460, Math.min(width - 160, gnW + 140));
+        const boxH = 76;
+        const boxX = (width - boxW) / 2;
+        const boxY = 378;
 
-        drawRoundedRect(px, py, plaqueW, plaqueH, 18);
-        ctx.fillStyle = '#FAF6F0';
+        drawRoundedRect(boxX, boxY, boxW, boxH, 16);
+        ctx.fillStyle = '#FAF7F2';
         ctx.fill();
-        ctx.strokeStyle = '#881337';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#CDA799';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        drawRoundedRect(px + 4, py + 4, plaqueW - 8, plaqueH - 8, 14);
-        ctx.strokeStyle = 'rgba(197, 160, 89, 0.7)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.fillStyle = '#151111';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = `bold ${guestFontSize}px "Lora", "Playfair Display", Georgia, serif`;
+        ctx.fillText(targetGuestName, width / 2, boxY + boxH / 2);
 
-        drawDiamond(width / 2 - gnW / 2 - 26, py + plaqueH / 2, 5, '#C5A059');
-        ctx.fillStyle = '#881337';
-        ctx.font = `bold ${guestFontSize}px "Lora", "Be Vietnam Pro", Georgia, serif`;
-        ctx.fillText(guestName, width / 2, py + plaqueH / 2 + (guestFontSize * 0.35));
-        drawDiamond(width / 2 + gnW / 2 + 26, py + plaqueH / 2, 5, '#C5A059');
+        // 6. Khung mã QR
+        const qrCardW = 460;
+        const qrCardH = 440;
+        const qrCardX = (width - qrCardW) / 2;
+        const qrCardY = 488;
 
-        // 7. Khung mã QR nổi 3D kèm viền vàng & con dấu trường
-        const qrCardSz = 430;
-        const qx = (width - qrCardSz) / 2;
-        const qy = 435;
-
+        // Outer terracotta rounded card with soft shadow
         ctx.save();
-        ctx.shadowColor = 'rgba(136, 19, 55, 0.08)';
+        ctx.shadowColor = 'rgba(180, 120, 110, 0.28)';
         ctx.shadowBlur = 24;
         ctx.shadowOffsetY = 8;
-        drawRoundedRect(qx, qy, qrCardSz, qrCardSz, 22);
-        ctx.fillStyle = '#FFFFFF';
+        drawRoundedRect(qrCardX, qrCardY, qrCardW, qrCardH, 28);
+        ctx.fillStyle = '#CDA095';
         ctx.fill();
         ctx.restore();
 
-        drawRoundedRect(qx, qy, qrCardSz, qrCardSz, 22);
-        ctx.strokeStyle = '#C5A059';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        drawRoundedRect(qx + 5, qy + 5, qrCardSz - 10, qrCardSz - 10, 17);
-        ctx.strokeStyle = 'rgba(136, 19, 55, 0.2)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        const qrSize = 360;
-        const qrX = (width - qrSize) / 2;
-        const qrY = qy + (qrCardSz - qrSize) / 2;
-        ctx.drawImage(qrSource, qrX, qrY, qrSize, qrSize);
-
-        // Con dấu thương hiệu HCMUS tâm mã QR
-        const sealR = 38;
-        const sealCX = width / 2;
-        const sealCY = qy + qrCardSz / 2;
-
-        ctx.beginPath();
-        ctx.arc(sealCX, sealCY, sealR, 0, Math.PI * 2);
+        // Inner white rounded card
+        const innerPad = 22;
+        const innerW = qrCardW - innerPad * 2;
+        const innerH = qrCardH - innerPad * 2;
+        const innerX = qrCardX + innerPad;
+        const innerY = qrCardY + innerPad;
+        drawRoundedRect(innerX, innerY, innerW, innerH, 22);
         ctx.fillStyle = '#FFFFFF';
         ctx.fill();
-        ctx.strokeStyle = '#881337';
-        ctx.lineWidth = 3;
-        ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(sealCX, sealCY, sealR - 4, 0, Math.PI * 2);
-        ctx.strokeStyle = '#C5A059';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        // Draw QR code image
+        const qrSize = 356;
+        const qrX = (width - qrSize) / 2;
+        const qrY = innerY + (innerH - qrSize) / 2;
+        ctx.drawImage(qrSource, qrX, qrY, qrSize, qrSize);
 
-        ctx.fillStyle = '#881337';
-        ctx.font = 'bold 15px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('HCMUS', sealCX, sealCY + 5);
-
-        // Hướng dẫn quét mã QR
-        ctx.fillStyle = '#701A35';
-        ctx.font = '600 12px "Be Vietnam Pro", sans-serif';
-        ctx.fillText('✦   QUÉT MÃ QR ĐỂ MỞ THIỆP MỜI & CHỈ ĐƯỜNG   ✦', width / 2, qy + qrCardSz + 25);
-
-        // 8. Bảng chi tiết sự kiện (Thời gian & Địa điểm)
-        const infoW = 760;
-        const infoH = 142;
-        const ix = (width - infoW) / 2;
-        const iy = 935;
-
-        drawRoundedRect(ix, iy, infoW, infoH, 16);
-        ctx.fillStyle = '#FEFBF6';
+        // Center badge on QR code (White pill with HCMUS)
+        const badgeW = 124;
+        const badgeH = 48;
+        const badgeX = qrX + (qrSize - badgeW) / 2;
+        const badgeY = qrY + (qrSize - badgeH) / 2;
+        drawRoundedRect(badgeX, badgeY, badgeW, badgeH, 10);
+        ctx.fillStyle = '#FFFFFF';
         ctx.fill();
-        ctx.strokeStyle = 'rgba(197, 160, 89, 0.8)';
-        ctx.lineWidth = 1;
+
+        ctx.fillStyle = '#70142C';
+        ctx.font = 'bold 21px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('HCMUS', width / 2, badgeY + badgeH / 2);
+
+        // Subtitle below QR Card
+        const qrSubY = 966;
+        ctx.fillStyle = '#70142C';
+        ctx.font = '700 13.5px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('✦   QUÉT MÃ QR ĐỂ MỞ THIỆP MỜI & CHỈ ĐƯỜNG   ✦', width / 2, qrSubY);
+
+        // 7. Hai đường gạch phân cách và Thông tin sự kiện 2 cột
+        const lineY1 = 1008;
+        const lineY2 = 1222;
+        const lineX1 = 96;
+        const lineX2 = width - 96;
+
+        ctx.strokeStyle = '#D4CDC6';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(lineX1, lineY1);
+        ctx.lineTo(lineX2, lineY1);
+        ctx.moveTo(lineX1, lineY2);
+        ctx.lineTo(lineX2, lineY2);
         ctx.stroke();
 
-        const bLen = 16;
-        const brackets = [
-          [ix + 6, iy + 6, 1, 1],
-          [ix + infoW - 6, iy + 6, -1, 1],
-          [ix + 6, iy + infoH - 6, 1, -1],
-          [ix + infoW - 6, iy + infoH - 6, -1, -1]
-        ];
-        ctx.strokeStyle = '#881337';
-        ctx.lineWidth = 2;
-        brackets.forEach(([bx, by, dx, dy]) => {
-          ctx.beginPath();
-          ctx.moveTo(bx + dx * bLen, by);
-          ctx.lineTo(bx, by);
-          ctx.lineTo(bx, by + dy * bLen);
-          ctx.stroke();
+        // Cột 1: THỜI GIAN
+        const col1X = lineX1;
+        const col1W = 440;
+        ctx.fillStyle = '#70142C';
+        ctx.font = '700 14px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('01 // THỜI GIAN', col1X, 1042);
+
+        ctx.fillStyle = '#151111';
+        let dtSize = 24;
+        ctx.font = `bold ${dtSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(dateTimeStr).width > col1W - 20 && dtSize > 16) {
+          dtSize -= 1;
+          ctx.font = `bold ${dtSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(dateTimeStr, col1X, 1084);
+
+        // Cột 2: ĐỊA ĐIỂM
+        const col2X = 575;
+        const col2W = lineX2 - col2X;
+        ctx.fillStyle = '#70142C';
+        ctx.font = '700 14px "Be Vietnam Pro", sans-serif';
+        ctx.fillText('02 // ĐỊA ĐIỂM', col2X, 1042);
+
+        ctx.fillStyle = '#151111';
+        let vnSize = 24;
+        ctx.font = `bold ${vnSize}px "Be Vietnam Pro", sans-serif`;
+        while (ctx.measureText(venueName).width > col2W - 10 && vnSize > 16) {
+          vnSize -= 1;
+          ctx.font = `bold ${vnSize}px "Be Vietnam Pro", sans-serif`;
+        }
+        ctx.fillText(venueName, col2X, 1084);
+
+        ctx.fillStyle = '#66615D';
+        ctx.font = '500 15.5px "Be Vietnam Pro", sans-serif';
+        const addrLines = wrapAddressText(venueAddress, col2W);
+        addrLines.forEach((line, idx) => {
+          ctx.fillText(line, col2X, 1120 + idx * 26);
         });
 
-        // Dòng ngày giờ
-        ctx.fillStyle = '#1F1618';
-        let dtFontSize = 23;
-        ctx.font = `600 ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
-        while (ctx.measureText(dateTimeStr).width > infoW - 80 && dtFontSize > 16) {
-          dtFontSize -= 1;
-          ctx.font = `600 ${dtFontSize}px "Be Vietnam Pro", sans-serif`;
-        }
-        ctx.fillText(dateTimeStr, width / 2, iy + 34);
+        // 8. Chân trang và Chữ ký chủ nhân
+        ctx.fillStyle = '#6B635E';
+        ctx.font = '400 16px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('Rất hân hạnh được đón tiếp bạn trong ngày vui này!', width / 2, 1266);
 
-        // Đường gạch trang trí trong bảng
-        ctx.strokeStyle = 'rgba(197, 160, 89, 0.45)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(ix + 50, iy + 60);
-        ctx.lineTo(width / 2 - 15, iy + 60);
-        ctx.stroke();
-
-        drawDiamond(width / 2, iy + 60, 3, '#881337');
-
-        ctx.beginPath();
-        ctx.moveTo(width / 2 + 15, iy + 60);
-        ctx.lineTo(ix + infoW - 50, iy + 60);
-        ctx.stroke();
-
-        // Dòng địa điểm
-        ctx.fillStyle = '#881337';
-        let venueFontSize = 19;
-        ctx.font = `600 ${venueFontSize}px "Be Vietnam Pro", sans-serif`;
-        let displayVenue = venueName || 'Trường ĐH Khoa học Tự nhiên';
-        if (!displayVenue.toLowerCase().includes('khoa học tự nhiên')) {
-          displayVenue = `Trường ĐH Khoa học Tự nhiên • ${displayVenue}`;
-        }
-        ctx.fillText(displayVenue, width / 2, iy + 86);
-
-        // Dòng địa chỉ cụ thể
-        ctx.fillStyle = '#5C4E52';
-        let addrFontSize = 16;
-        ctx.font = `500 ${addrFontSize}px "Be Vietnam Pro", sans-serif`;
-        while (ctx.measureText(venueAddress).width > infoW - 60 && addrFontSize > 12) {
-          addrFontSize -= 1;
-          ctx.font = `500 ${addrFontSize}px "Be Vietnam Pro", sans-serif`;
-        }
-        ctx.fillText(venueAddress, width / 2, iy + 114);
-
-        // 9. Lời mời và Chữ ký chủ nhân buổi lễ
-        const sigY = 1135;
-        ctx.fillStyle = '#7D6F73';
-        ctx.font = 'italic 16px "Lora", Georgia, serif';
-        ctx.fillText('Rất hân hạnh được đón tiếp bạn trong ngày vui này!', width / 2, sigY);
-
-        ctx.fillStyle = '#881337';
+        ctx.fillStyle = '#200D13';
         ctx.font = 'italic 28px "Lora", Georgia, serif';
-        ctx.fillText('Thân mời từ: ' + hostName, width / 2, sigY + 40);
+        ctx.fillText('Thân mời từ ' + hostName, width / 2, 1320);
 
-        // Hoa văn đáy
-        ctx.strokeStyle = '#C5A059';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(width / 2 - 60, sigY + 75);
-        ctx.lineTo(width / 2 - 15, sigY + 75);
-        ctx.stroke();
+        // Ngôi sao sparkle 4 cánh nhẹ góc phải
+        drawSparkle(918, 1262, 22, 'rgba(255, 255, 255, 0.75)');
 
-        drawDiamond(width / 2, sigY + 75, 4, '#881337');
-
-        ctx.beginPath();
-        ctx.moveTo(width / 2 + 15, sigY + 75);
-        ctx.lineTo(width / 2 + 60, sigY + 75);
-        ctx.stroke();
-
-        // 10. Tải về file ảnh PNG chất lượng cao
+        // 9. Tải về file ảnh PNG chất lượng cao
         const link = document.createElement('a');
         link.download = `ThiepMoi-${slug}.png`;
         link.href = badgeCanvas.toDataURL('image/png');
         link.click();
-        showStatus('Đã tải thiệp mời ảnh kèm mã QR cao cấp!');
+        showStatus(`Đã tải thiệp mời ảnh kèm mã QR cho "${targetGuestName}"!`);
       };
 
       // Tạo QR độ nét cao độc lập để khi render lên ảnh 1080p luôn sắc nét
@@ -1515,9 +1696,9 @@
       const startRender = () => {
         if (typeof QRCode !== 'undefined') {
           QRCode.toCanvas(offscreenQR, url, {
-            width: 440,
+            width: 480,
             margin: 1,
-            color: { dark: '#881337', light: '#FFFFFF' },
+            color: { dark: '#70142C', light: '#FFFFFF' },
             errorCorrectionLevel: 'H'
           }, (err) => {
             renderBadgeWithQR(err ? qrCanvas : offscreenQR);
@@ -1529,10 +1710,11 @@
 
       if (document.fonts) {
         Promise.all([
-          document.fonts.load('italic 62px "Lora"', 'Lễ Tốt Nghiệp'),
-          document.fonts.load('bold 46px "Lora"', guestName),
-          document.fonts.load('italic 28px "Lora"', 'Thân mời từ: ' + hostName),
-          document.fonts.load('600 23px "Be Vietnam Pro"', dateTimeStr),
+          document.fonts.load('600 92px "Lora"', 'Lễ Tốt Nghiệp.'),
+          document.fonts.load('bold 46px "Lora"', targetGuestName),
+          document.fonts.load('italic 28px "Lora"', 'Thân mời từ ' + hostName),
+          document.fonts.load('bold 16px "Be Vietnam Pro"', rawSchool.toUpperCase()),
+          document.fonts.load('bold 24px "Be Vietnam Pro"', dateTimeStr),
           document.fonts.ready
         ]).then(() => {
           startRender();
@@ -1584,7 +1766,7 @@
     function saveCurrentGuestToList() {
       const name = currentGuestName.trim();
       if (!name) return;
-      const { url, slug, customTime, customP1, customP2, salutation } = getFullInviteURL(name);
+      const { url, slug, customTime, customP1, customP2, salutation, isP1Custom, isP2Custom } = getFullInviteURL(name);
 
       const existingIndex = guestList.findIndex(g => g.name.toLowerCase() === name.toLowerCase());
       const guestObj = {
@@ -1593,8 +1775,8 @@
         slug: slug,
         time: customTime || '',
         salutation: salutation || 'Gửi',
-        p1: customP1 || '',
-        p2: customP2 || '',
+        p1: isP1Custom ? customP1 : '',
+        p2: isP2Custom ? customP2 : '',
         url: url,
         date: new Date().toLocaleDateString('vi-VN')
       };
@@ -1619,10 +1801,12 @@
       if (salutationSelect && g.salutation) salutationSelect.value = g.salutation;
       const timeInput = document.getElementById('guestCustomTimeInput');
       if (timeInput) timeInput.value = g.time || '';
+
+      const defaults = getDefaultGreetingParas();
       const p1Input = document.getElementById('guestCustomPara1Input');
-      if (p1Input) p1Input.value = g.p1 || '';
+      if (p1Input) p1Input.value = (g.p1 && g.p1.trim()) ? g.p1.trim() : defaults.p1;
       const p2Input = document.getElementById('guestCustomPara2Input');
-      if (p2Input) p2Input.value = g.p2 || '';
+      if (p2Input) p2Input.value = (g.p2 && g.p2.trim()) ? g.p2.trim() : defaults.p2;
 
       switchTab('single');
       updateGeneratedResult();
@@ -1673,8 +1857,9 @@
               <td class="py-3 px-4 text-stone-400 text-[11px]">${g.date || 'Hôm nay'}</td>
               <td class="py-3 px-4 text-right space-x-1 sm:space-x-2">
                 <button onclick="loadGuestToEditor('${g.id}')" class="text-indigo-600 hover:underline font-semibold text-xs" title="Nạp lại để sửa hoặc tải ảnh">✏️ Sửa</button>
-                <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#881337] font-medium text-xs" title="Sao chép link">📋 Copy</button>
-                <button onclick="selectGuestForQR('${g.name}')" class="text-[#881337] hover:underline font-medium text-xs" title="Xem mã QR">QR</button>
+                <button onclick="downloadGraduationBadge('${g.name}')" class="text-[#70142C] hover:underline font-semibold text-xs" title="Tải thẻ thiệp ảnh kèm mã QR">🎨 Thẻ</button>
+                <button onclick="copyGuestLink('${url}')" class="text-stone-600 hover:text-[#70142C] font-medium text-xs" title="Sao chép link">📋 Copy</button>
+                <button onclick="selectGuestForQR('${g.name}')" class="text-stone-600 hover:underline font-medium text-xs" title="Xem mã QR">QR</button>
                 <a href="${url}" target="_blank" class="text-stone-600 hover:text-black font-medium text-xs" title="Mở xem">Mở ↗</a>
                 <button onclick="deleteGuest('${g.id}')" class="text-rose-600 hover:underline font-medium text-xs" title="Xóa">✕</button>
               </td>
@@ -1704,10 +1889,13 @@
                 <button onclick="loadGuestToEditor('${g.id}')" class="flex-1 py-1.5 px-2 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold text-center touch-manipulation">
                   ✏️ Sửa
                 </button>
+                <button onclick="downloadGraduationBadge('${g.name}')" class="flex-1 py-1.5 px-2 rounded-lg bg-[#70142C]/10 text-[#70142C] text-xs font-semibold text-center touch-manipulation">
+                  🎨 Thẻ
+                </button>
                 <button onclick="copyGuestLink('${url}')" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-medium text-center touch-manipulation">
                   📋 Copy
                 </button>
-                <button onclick="selectGuestForQR('${g.name}')" class="flex-1 py-1.5 px-2 rounded-lg bg-[#881337]/10 text-[#881337] text-xs font-semibold text-center touch-manipulation">
+                <button onclick="selectGuestForQR('${g.name}')" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-semibold text-center touch-manipulation">
                   📱 QR
                 </button>
                 <a href="${url}" target="_blank" class="flex-1 py-1.5 px-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-medium text-center touch-manipulation">
@@ -1830,6 +2018,7 @@
 
     function populateConfigInputs(cfg) {
       if (!cfg) return;
+      const oldDefaults = typeof getDefaultGreetingParas === 'function' ? getDefaultGreetingParas() : null;
       currentHostConfig = cfg;
       if (cfg.hostName && document.getElementById('cfgHostName')) document.getElementById('cfgHostName').value = cfg.hostName;
       if (cfg.schoolName && document.getElementById('cfgSchoolName')) document.getElementById('cfgSchoolName').value = cfg.schoolName;
@@ -1841,6 +2030,21 @@
       if (cfg.greetingPrefix && document.getElementById('cfgGreetingPrefix')) document.getElementById('cfgGreetingPrefix').value = cfg.greetingPrefix;
       if (cfg.greetingPara1 && document.getElementById('cfgGreetingPara1')) document.getElementById('cfgGreetingPara1').value = cfg.greetingPara1;
       if (cfg.greetingPara2 && document.getElementById('cfgGreetingPara2')) document.getElementById('cfgGreetingPara2').value = cfg.greetingPara2;
+
+      // Tự động điền/cập nhật vào ô tâm sự riêng nếu đang trống hoặc đang theo lời ngỏ cũ
+      if (typeof getDefaultGreetingParas === 'function') {
+        const p1Input = document.getElementById('guestCustomPara1Input');
+        const p2Input = document.getElementById('guestCustomPara2Input');
+        const newDefaults = getDefaultGreetingParas();
+        if (p1Input && (!p1Input.value.trim() || (oldDefaults && p1Input.value.trim() === oldDefaults.p1))) {
+          p1Input.value = newDefaults.p1;
+        }
+        if (p2Input && (!p2Input.value.trim() || (oldDefaults && p2Input.value.trim() === oldDefaults.p2))) {
+          p2Input.value = newDefaults.p2;
+        }
+      }
+
+      updatePreviewCardDetails();
     }
 
     function loadHostSettings() {
@@ -1963,6 +2167,7 @@
         const el = document.getElementById(id);
         if (el) {
           el.addEventListener('input', () => {
+            updatePreviewCardDetails();
             clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => {
               saveHostSettings(true);
@@ -2021,9 +2226,13 @@
   </script>
   <!-- Offscreen Font Preloader for Canvas High-Fidelity Rendering -->
   <div style="position:fixed;left:-9999px;top:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
-    <span style="font-family:'Lora',serif;font-style:italic;font-weight:700;">Lễ Tốt Nghiệp Thân mời từ Đỗ Quang An</span>
+    <span style="font-family:'Lora',serif;font-weight:600;">Lễ Tốt Nghiệp.</span>
     <span style="font-family:'Lora',serif;font-weight:700;">Việt Hoàng Minh Khoa Bạn thân mến</span>
-    <span style="font-family:'Lora',serif;font-style:italic;font-weight:400;">Lễ Tốt Nghiệp</span>
+    <span style="font-family:'Lora',serif;font-style:italic;font-weight:500;">Thân mời từ Đỗ Quang An</span>
+    <span style="font-family:'Be Vietnam Pro',sans-serif;font-weight:700;">TRƯỜNG ĐH KHOA HỌC TỰ NHIÊN GRADUATION INVITATION CLASS OF 2026 01 // THỜI GIAN 02 // ĐỊA ĐIỂM HCMUS</span>
+    <span style="font-family:'Be Vietnam Pro',sans-serif;font-weight:600;">ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH THƯ MỜI THAM DỰ TRÂN TRỌNG GỬI ĐẾN</span>
+    <span style="font-family:'Be Vietnam Pro',sans-serif;font-weight:500;">Thứ 5, 26.11.2026 • 11:00 Cơ sở 1 – 227 Nguyễn Văn Cừ</span>
+    <span style="font-family:'Be Vietnam Pro',sans-serif;font-weight:400;">Rất hân hạnh được đón tiếp bạn trong ngày vui này!</span>
   </div>
 </body>
 </html>

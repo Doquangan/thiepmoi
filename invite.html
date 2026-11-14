@@ -120,6 +120,11 @@
     .safe-bottom {
       padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     }
+
+    /* Đảm bảo nhận ký tự xuống dòng từ Cài đặt chung hoặc lời nhắn riêng */
+    #greetingPara1, #greetingPara2 {
+      white-space: pre-line;
+    }
   </style>
 </head>
 <body class="paper-grain min-h-screen selection:bg-[#881337] selection:text-white flex flex-col justify-between">
@@ -274,12 +279,8 @@
             <span id="salutationPrefix">Mời</span> <span class="guest-name-display text-[#881337] font-semibold underline decoration-[#881337]/30 underline-offset-4 break-words">Bạn của tôi</span>,
           </p>
           <div id="greetingMessageContainer" class="space-y-3.5 sm:space-y-4">
-            <p id="greetingPara1">
-              Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.
-            </p>
-            <p id="greetingPara2">
-              Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.
-            </p>
+            <p id="greetingPara1" class="whitespace-pre-line">Sau bốn năm gắn bó với giảng đường Tự nhiên, cuối cùng mình cũng chuẩn bị khép lại hành trình sinh viên bằng buổi lễ tốt nghiệp sắp tới.</p>
+            <p id="greetingPara2" class="whitespace-pre-line">Sẽ thật trọn vẹn nếu ngày hôm đó có sự hiện diện của bạn ở sân trường — cùng chụp vài tấm ảnh kỷ niệm và chia sẻ khoảnh khắc đáng nhớ này trước khi bước sang chặng đường mới.</p>
           </div>
         </div>
 
@@ -449,6 +450,20 @@
       return 'Bạn của tôi';
     }
 
+    // Xử lý text đoạn tâm sự: giữ nguyên ký tự xuống dòng (hỗ trợ \n, \r\n, <br>)
+    function setGreetingParagraph(elementId, text) {
+      const el = document.getElementById(elementId);
+      if (!el || text === undefined || text === null) return;
+      const clean = String(text)
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .replace(/\\n/g, '\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .trim();
+      if (!clean) return;
+      el.textContent = clean;
+    }
+
     function updateConfigFields(cfg) {
       if (!cfg) return;
       if (cfg.hostName) {
@@ -464,12 +479,10 @@
         if (el) el.textContent = cfg.greetingPrefix;
       }
       if (cfg.greetingPara1) {
-        const el = document.getElementById('greetingPara1');
-        if (el) el.textContent = cfg.greetingPara1;
+        setGreetingParagraph('greetingPara1', cfg.greetingPara1);
       }
       if (cfg.greetingPara2) {
-        const el = document.getElementById('greetingPara2');
-        if (el) el.textContent = cfg.greetingPara2;
+        setGreetingParagraph('greetingPara2', cfg.greetingPara2);
       }
       if (cfg.eventDate) {
         const el = document.getElementById('eventDateDisplay');
@@ -509,12 +522,10 @@
         if (el) el.textContent = customTime.trim();
       }
       if (customP1 && customP1.trim()) {
-        const el = document.getElementById('greetingPara1');
-        if (el) el.textContent = customP1.trim();
+        setGreetingParagraph('greetingPara1', customP1);
       }
       if (customP2 && customP2.trim()) {
-        const el = document.getElementById('greetingPara2');
-        if (el) el.textContent = customP2.trim();
+        setGreetingParagraph('greetingPara2', customP2);
       }
       if (customMsg && customMsg.trim()) {
         try {
@@ -524,12 +535,10 @@
             if (el) el.textContent = decoded.time;
           }
           if (decoded.p1) {
-            const el = document.getElementById('greetingPara1');
-            if (el) el.textContent = decoded.p1;
+            setGreetingParagraph('greetingPara1', decoded.p1);
           }
           if (decoded.p2) {
-            const el = document.getElementById('greetingPara2');
-            if (el) el.textContent = decoded.p2;
+            setGreetingParagraph('greetingPara2', decoded.p2);
           }
         } catch(e) {}
       }
