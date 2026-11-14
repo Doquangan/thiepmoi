@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
 
   <!-- QR Code Library (Local with CDN fallback) -->
   <script src="/assets/qrcode.min.js"></script>
@@ -46,7 +46,7 @@
     }
 
     .font-editorial {
-      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-family: 'Playfair Display', 'Be Vietnam Pro', Georgia, serif;
     }
 
     .paper-grain {
@@ -1228,7 +1228,7 @@
 
         // 5. Tiêu đề chính Lễ Tốt Nghiệp
         ctx.fillStyle = '#1F1618';
-        ctx.font = 'italic 70px "Cormorant Garamond", Georgia, serif';
+        ctx.font = 'italic 70px "Playfair Display", "Be Vietnam Pro", Georgia, serif';
         ctx.fillText('Lễ Tốt Nghiệp', width / 2, 310);
 
         // 6. Lời dẫn & Tên khách mời
@@ -1238,11 +1238,11 @@
 
         ctx.fillStyle = '#881337';
         let guestFontSize = 64;
-        ctx.font = `bold ${guestFontSize}px "Cormorant Garamond", Georgia, serif`;
+        ctx.font = `bold ${guestFontSize}px "Playfair Display", "Be Vietnam Pro", Georgia, serif`;
         const guestName = currentGuestName || 'Bạn thân mến';
         while (ctx.measureText(guestName).width > width - 140 && guestFontSize > 36) {
           guestFontSize -= 2;
-          ctx.font = `bold ${guestFontSize}px "Cormorant Garamond", Georgia, serif`;
+          ctx.font = `bold ${guestFontSize}px "Playfair Display", "Be Vietnam Pro", Georgia, serif`;
         }
         ctx.fillText(guestName, width / 2, 480);
 
@@ -1290,7 +1290,7 @@
 
         // 10. Chữ ký người mời (Động theo cấu hình)
         ctx.fillStyle = '#881337';
-        ctx.font = 'italic 34px "Cormorant Garamond", Georgia, serif';
+        ctx.font = 'italic 34px "Playfair Display", "Be Vietnam Pro", Georgia, serif';
         ctx.fillText('Thân mời từ: ' + hostName, width / 2, 1210);
 
         // 11. Tải về file ảnh
@@ -1302,8 +1302,17 @@
         showStatus('Đã tải thiệp mời ảnh kèm mã QR!');
       };
 
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(renderBadge);
+      if (document.fonts) {
+        Promise.all([
+          document.fonts.load('italic 70px "Playfair Display"'),
+          document.fonts.load('bold 64px "Playfair Display"'),
+          document.fonts.load('italic 34px "Playfair Display"'),
+          document.fonts.load('bold 28px "Be Vietnam Pro"')
+        ]).then(() => {
+          renderBadge();
+        }).catch(() => {
+          renderBadge();
+        });
       } else {
         renderBadge();
       }
