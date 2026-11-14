@@ -87,6 +87,28 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Local Wish Form Submission Handler (Mock Netlify Forms)
+  if ((pathname === '/__forms.html' || pathname === '/') && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const params = new URLSearchParams(body);
+        if (params.get('form-name') === 'wishes') {
+          console.log(`\n======================================================`);
+          console.log(`💌 [TIN NHẮN MỚI TỪ BẠN BÈ - LOCALHOST TEST]`);
+          console.log(`👤 Người gửi: ${params.get('senderName') || 'Bạn của tôi'}`);
+          console.log(`💬 Lời nhắn:  ${params.get('message') || '(Trống)'}`);
+          console.log(`🔗 Link thiệp: ${params.get('guestUrl') || '/'}`);
+          console.log(`======================================================\n`);
+        }
+      } catch (e) {}
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('OK');
+    });
+    return;
+  }
+
   // Config JSON endpoint
   if (pathname === '/event-config.json') {
     const configPath = path.join(ROOT_DIR, 'event-config.json');
