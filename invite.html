@@ -462,16 +462,16 @@
        ===================================================================== -->
   <div id="chatBubbleContainer" class="fixed bottom-[4.5rem] left-4 sm:bottom-20 sm:left-6 z-30 select-none">
     
-    <!-- Cloudy Tooltip (Đám mây gợi ý mờ mờ nhấp nháy thở nhẹ) -->
+    <!-- Cloudy Tooltip (Đám mây gợi ý mờ mờ nhấp nháy thở nhẹ, mở rộng ngang dễ đọc) -->
     <div id="chatCloudTooltip" onclick="openChatWindow()"
-      class="absolute bottom-full left-0 mb-2 cursor-pointer animate-cloud-pulse transition-all duration-300 pointer-events-auto"
+      class="absolute bottom-full left-0 mb-2.5 cursor-pointer animate-cloud-pulse transition-all duration-300 pointer-events-auto w-max max-w-[calc(100vw-3rem)] sm:max-w-xs"
       title="Nhấn để gửi lời nhắn riêng cho Quang An nè">
-      <div class="relative px-3.5 py-2 rounded-2xl bg-white/75 border border-[#881337]/20 shadow-md backdrop-blur-md max-w-[210px] sm:max-w-[240px]">
-        <p class="text-[11px] sm:text-xs font-medium text-[#70142C] leading-snug">
+      <div class="relative px-4 py-2 rounded-2xl bg-white/85 border border-[#881337]/20 shadow-lg backdrop-blur-md">
+        <p class="text-xs sm:text-[13px] font-medium text-[#70142C] leading-normal whitespace-nowrap">
           Bạn có điều gì muốn gửi đến mình hem? ✨
         </p>
-        <!-- Cloud tails (đuôi đám mây hướng về bong bóng chat) -->
-        <span class="absolute -bottom-1.5 left-5 w-3 h-3 bg-white/75 rotate-45 border-r border-b border-[#881337]/20"></span>
+        <!-- Cloud tail (đuôi đám mây hướng về bong bóng chat) -->
+        <span class="absolute -bottom-1.5 left-5 w-3 h-3 bg-white/85 rotate-45 border-r border-b border-[#881337]/20"></span>
       </div>
     </div>
 
